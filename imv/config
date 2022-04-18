@@ -1,0 +1,5 @@
+[binds]
+
+l = next
+
+h = prev

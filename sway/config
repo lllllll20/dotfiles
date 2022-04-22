@@ -212,7 +212,7 @@ focus_follows_mouse no
     
     bindsym $mod+Mod1+n exec ~/.config/sway/scripts/hidescratchpad.sh "foot nvim ~/notes/Quick_notes.md"
 
-    bindsym $mod+Control+n exec ~/.config/sway/scripts/hidescratchpad.sh "foot openradnotes.sh"
+    bindsym $mod+Control+n exec ~/.config/sway/scripts/hidescratchpad.sh "foot -a footws2 openradnotes.sh"
 
     bindsym $mod+Control+p exec ~/.config/sway/scripts/hidescratchpad.sh "foot -a fc openphonenote.sh"
 
@@ -430,7 +430,6 @@ bar {
 
 # Autostart
 exec wl-paste -t text --watch clipman store --no-persist
-exec ~/.config/sway/scripts/autostart.sh
 exec ~/.config/sway/scripts/gotoprev.sh
 exec udiskie
 exec playerctl daemon
@@ -438,6 +437,7 @@ exec mako
 exec mpDris2
 exec_always nm-applet --indicator
 exec_always blueman-applet
+exec_always ~/.config/sway/scripts/autostart.sh
 
 
 set $gnome-schema org.gnome.desktop.interface

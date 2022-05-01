@@ -1,7 +1,7 @@
 require("packer").startup(function()
 	use("wbthomason/packer.nvim")
 	use("bluz71/vim-nightfly-guicolors")
-	use("vim-airline/vim-airline")
+--	use("vim-airline/vim-airline")
 	use("nvim-lua/popup.nvim")
 	use("nvim-lua/plenary.nvim")
 	use("nvim-telescope/telescope.nvim")
@@ -17,6 +17,10 @@ require("packer").startup(function()
 			require("Comment").setup()
 		end,
 	})
+  use ({
+  'nvim-lualine/lualine.nvim',
+  requires = { 'kyazdani42/nvim-web-devicons', opt = true }
+})
 	use({ "nvim-telescope/telescope-fzf-native.nvim", run = "make" })
 	use({ "windwp/nvim-autopairs" })
 	use({ "saadparwaiz1/cmp_luasnip" })
@@ -36,6 +40,39 @@ end)
 
 -- ENVS
 HOME = os.getenv("HOME")
+
+-- lualine
+
+require('lualine').setup {
+  options = {
+    icons_enabled = true,
+    theme = 'nightfly',
+    component_separators = { left = '', right = ''},
+    section_separators = { left = '', right = ''},
+    disabled_filetypes = {},
+    always_divide_middle = true,
+    globalstatus = false,
+  },
+  sections = {
+    lualine_a = {'mode'},
+    lualine_b = {'branch', 'diff', 'diagnostics'},
+    lualine_c = {'filename'},
+    lualine_x = {'encoding', 'fileformat', 'filetype'},
+    lualine_y = {'progress'},
+    lualine_z = {'location'}
+  },
+  inactive_sections = {
+    lualine_a = {},
+    lualine_b = {},
+    lualine_c = {'filename'},
+    lualine_x = {'location'},
+    lualine_y = {},
+    lualine_z = {}
+  },
+  tabline = {},
+  extensions = {}
+}
+
 
 --Treesitter
 
@@ -352,8 +389,8 @@ keymap(
 keymap("n", "<leader>fb", '<cmd>Telescope file_browser<CR>', default_opts)
 keymap("n", "<leader>ft", '<cmd>lua require("telescope.builtin").filetypes()<CR>', default_opts)
 keymap("n", "<leader>h", '<cmd>lua require("telescope.builtin").help_tags()<CR>', default_opts)
-keymap("n", "<leader>ld", '<cmd>lua require("telescope.builtin").lsp_document_diagnostics()<CR>', default_opts)
-keymap("n", "<leader>ls", '<cmd>lua require("telescope.builtin").lsp_document_symbols()<CR>', default_opts)
+keymap("n", "<leader>dd", '<cmd>lua require("telescope.builtin").lsp_document_diagnostics()<CR>', default_opts)
+keymap("n", "<leader>ds", '<cmd>lua require("telescope.builtin").lsp_document_symbols()<CR>', default_opts)
 
 keymap("n", "sb", '<cmd>lua require("telescope.builtin").current_buffer_fuzzy_find()<CR>', default_opts)
 keymap("n", "<leader>lg", '<cmd>lua require("telescope.builtin").live_grep()<CR>', default_opts)
@@ -370,7 +407,7 @@ Changebuf = function()
 end
 
 -- Keybindings - buffers
-keymap("n", "<leader>lb", "<cmd>lua Changebuf()<CR>", default_opts)
+keymap("n", "<leader>ls", "<cmd>lua Changebuf()<CR>", default_opts)
 keymap("n", "<c-n>", "<cmd>bn<CR>", default_opts)
 keymap("n", "<c-p>", "<cmd>bp<CR>", default_opts)
 keymap("n", "<leader>bd", "<cmd>bd<CR>", default_opts)

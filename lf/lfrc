@@ -9,7 +9,7 @@ set icons
 # Custom Functions
 
 cmd open ${{
-    sway scratchpad show
+    #swaymsg scratchpad show
     lf -remote "send unselect \"${myfiles[@]}\""
     readarray -t myfiles < <(printf "%s" "$fx")
     length=${#myfiles[@]}
@@ -29,7 +29,7 @@ cmd open ${{
 }}
 
 cmd openwith ${{
-sway scratchpad show
+#swaymsg scratchpad show
 readarray -t myfiles < <(printf "%s" "$fx")
 setsid -f $1 "${myfiles[@]}" >/dev/null 2>&1 
 lf -remote "send unselect \"${myfiles[@]}\""

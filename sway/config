@@ -169,7 +169,7 @@ focus_follows_mouse no
     assign [app_id="nemo"]: workspace number 6
     for_window [app_id="nemo"] focus
     bindsym $mod+f exec ~/.config/sway/scripts/hideandfocus.sh nemo
-    bindsym $mod+r exec localc ~/work_docs/ST4/Rota/"Senior Rota Feb-Aug 2022.xlsx"
+    bindsym $mod+r exec localc ~/work_docs/ST4/Rota/"Senior Rota April to July 22.xlsx"
     bindsym $mod+w exec nemo ~/work_docs/ST4/
 
     assign [app_id="org.keepassxc.KeePassXC"]: workspace number 7

@@ -336,6 +336,16 @@ keymap("n", "<leader>e", ":wq<CR>", default_opts)
 keymap("n", "<leader>w", ":w<CR>", default_opts)
 
 -- Keybindings - toggles
+keymap("n", "<leader>ch", "<c-w>h", default_opts)
+keymap("n", "<leader>cl", "<c-w>l", default_opts)
+keymap("n", "<leader>cj", "<c-w>j", default_opts)
+keymap("n", "<leader>ck", "<c-w>k", default_opts)
+
+-- Keybindings - splits
+keymap("n", "<leader>sh", ":split<CR>", default_opts)
+keymap("n", "<leader>sv", ":vsplit<CR>", default_opts)
+
+-- Keybindings - toggles
 keymap("n", "<leader>nh", ":nohl<CR>", default_opts)
 keymap("n", "<leader>nn", ":set invnumber<CR>", default_opts)
 

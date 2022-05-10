@@ -9,7 +9,7 @@ set icons
 # Custom Functions
 
 cmd open ${{
-    #swaymsg scratchpad show
+    swaymsg scratchpad show
     lf -remote "send unselect \"${myfiles[@]}\""
     readarray -t myfiles < <(printf "%s" "$fx")
     length=${#myfiles[@]}
@@ -24,12 +24,19 @@ cmd open ${{
         esac
     done
     if (( ${#myfiles[@]} > 0 )); then
-    setsid -f foot -a footws2 nvim "${myfiles[@]}" >/dev/null 2>&1
+    #setsid -f foot -a footws2 nvim "${myfiles[@]}" >/dev/null 2>&1
+	    if wlrctl window focus "neovim" == true;
+	    then
+            nvim --server /tmp/nvim.pipe --remote "${myfiles[@]}" >/dev/null 2>&1
+        else
+            setsid -f foot -a neovim nvim --listen /tmp/nvim.pipe "${myfiles[@]}" >/dev/null 2>&1
+        fi
+    # swaymsg workspace 2
     fi
 }}
 
 cmd openwith ${{
-#swaymsg scratchpad show
+swaymsg scratchpad show
 readarray -t myfiles < <(printf "%s" "$fx")
 setsid -f $1 "${myfiles[@]}" >/dev/null 2>&1 
 lf -remote "send unselect \"${myfiles[@]}\""
@@ -75,6 +82,10 @@ cmd youtube ${{
     if [[ ${HOSTNAME} = "desktop" ]]; then
         lf -remote "send cd ~/phone_media/Youtube"
     fi
+}}
+
+cmd usb ${{
+    lf -remote "send cd /run/media/"$USER"/"
 }}
 
 cmd mkdirectory ${{
@@ -414,3 +425,4 @@ map <c-x> movefiles
 map fct copyfiles
 map <c-c> copyfiles
 map gyt youtube 
+map gus usb 

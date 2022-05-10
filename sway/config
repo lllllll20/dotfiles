@@ -131,6 +131,9 @@ focus_follows_mouse no
     for_window [app_id="firefox"] focus
     bindsym $mod+b exec ~/.config/sway/scripts/hideandfocus.sh firefox
     bindsym $mod+shift+b exec ~/.config/sway/scripts/hidescratchpad.sh "firefox --private-window"
+    
+    assign [app_id="neovim"]: workspace number 2
+    for_window [app_id="neovim"] focus
 
     assign [app_id="footws2"]: workspace number 2
     for_window [app_id="footws2"] focus

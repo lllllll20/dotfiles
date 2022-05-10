@@ -337,14 +337,16 @@ keymap("n", "<leader>e", ":wq<CR>", default_opts)
 keymap("n", "<leader>w", ":w<CR>", default_opts)
 
 -- Keybindings - toggles
-keymap("n", "<leader>ch", "<c-w>h", default_opts)
-keymap("n", "<leader>cl", "<c-w>l", default_opts)
-keymap("n", "<leader>cj", "<c-w>j", default_opts)
-keymap("n", "<leader>ck", "<c-w>k", default_opts)
+keymap("n", "<a-m>", "<c-w>w", default_opts)
+-- keymap("n", "<c-h>", "<c-w>h", default_opts)
+-- keymap("n", "<c-l>", "<c-w>l", default_opts)
+--keymap("n", "<c-j>", "<c-w>j", default_opts)
+--keymap("n", "<c-k>", "<c-w>k", default_opts)
 
 -- Keybindings - splits
-keymap("n", "<leader>sh", ":split<CR>", default_opts)
-keymap("n", "<leader>sv", ":vsplit<CR>", default_opts)
+--keymap("n", "<leader>sh", ":split<CR>", default_opts)
+keymap("n", "<a-v>", ":vsplit<CR>", default_opts)
+keymap("n", "<a-h>", ":split<CR>", default_opts)
 
 -- Keybindings - toggles
 keymap("n", "<leader>nh", ":nohl<CR>", default_opts)

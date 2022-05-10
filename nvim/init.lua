@@ -321,6 +321,8 @@ vim.o.splitright = true -- vertical split to the right
 vim.o.splitbelow = true -- horizontal split to the bottom
 vim.o.ignorecase = true -- ignore case letters when search
 vim.o.smartcase = true -- ignore lowercase for the whole pattern
+vim.o.laststatus = 3 -- ignore lowercase for the whole pattern
+vim.cmd([[highlight WinSeparator guibg=None]]) -- set colorscheme
 
 -- Local to window (vim.wo)
 
@@ -337,7 +339,7 @@ keymap("n", "<leader>e", ":wq<CR>", default_opts)
 keymap("n", "<leader>w", ":w<CR>", default_opts)
 
 -- Keybindings - toggles
-keymap("n", "<a-m>", "<c-w>w", default_opts)
+keymap("n", "<a-c>", "<c-w>w", default_opts)
 -- keymap("n", "<c-h>", "<c-w>h", default_opts)
 -- keymap("n", "<c-l>", "<c-w>l", default_opts)
 --keymap("n", "<c-j>", "<c-w>j", default_opts)
@@ -372,8 +374,8 @@ keymap("n", "n", "nzz", default_opts)
 keymap("n", "N", "Nzz", default_opts)
 keymap("n", "J", "mzJ`z", default_opts)
 
-keymap("", "<A-p>", ":cprev<CR>", default_opts)
-keymap("", "<A-n>", ":cnext<CR>", default_opts)
+keymap("", "<c-p>", ":cprev<CR>", default_opts)
+keymap("", "<c-n>", ":cnext<CR>", default_opts)
 
 -- Keybindings - formatting
 keymap("n", "<leader>id", ":-r !dateheader.sh<CR>", default_opts)
@@ -383,6 +385,7 @@ keymap("n", "<leader>ib", "i#!/usr/bin/", default_opts)
 
 -- Keybindings - misc
 keymap("n", "<leader>lf", "<cmd>lua lf_select_current_file()<CR>", default_opts)
+keymap("n", "<f2>", "<cmd>lua lf_select_current_file()<CR>", default_opts)
 keymap("i", "<c-b>", "<cmd>normal o<CR>", default_opts)
 
 -- Keybindings - telescope
@@ -421,8 +424,8 @@ end
 
 -- Keybindings - buffers
 keymap("n", "<leader>ls", "<cmd>lua Changebuf()<CR>", default_opts)
-keymap("n", "<c-n>", "<cmd>bn<CR>", default_opts)
-keymap("n", "<c-p>", "<cmd>bp<CR>", default_opts)
+keymap("n", "<a-n>", "<cmd>bn<CR>", default_opts)
+keymap("n", "<a-p>", "<cmd>bp<CR>", default_opts)
 keymap("n", "<leader>bd", "<cmd>bd<CR>", default_opts)
 
 -- functions for terminal compile / run
@@ -531,6 +534,7 @@ keymap("n", "<F7>", "<cmd>lua mycloseterm()<CR>", default_opts)
 keymap("n", "<F5>", "<Cmd>lua vim.lsp.buf.formatting()<CR>", default_opts)
 
 -- autocommands
---vim.api.nvim_create_autocmd("BufEnter", { command = "echo 'Hello'", })
---https://www.youtube.com/watch?v=ekMIIAqTZ34
+--local saveonwrite = vim.api.nvim_create_augroup("saveonwrite", { clear = true, })
+--vim.api.nvim_create_autocmd("BufEnter", { callback = function() lf_select_current_file() end, group = saveonwrite,})
+--vim.api.nvim_create_autocmd("BufEnter", { command = "echo 'Hello'", group = saveonwrite})
 

@@ -8,11 +8,6 @@ require("packer").startup(function()
   use("nvim-telescope/telescope-file-browser.nvim")
 	use("neovim/nvim-lspconfig")
 	use("williamboman/nvim-lsp-installer")
-  use({
-     'L3MON4D3/LuaSnip',
-    after = 'nvim-cmp',
-    config = function() require('config.snippets') end,
-   })
 	use("kyazdani42/nvim-web-devicons")
 	use("jose-elias-alvarez/null-ls.nvim")
 	use({
@@ -27,17 +22,8 @@ require("packer").startup(function()
 })
 	use({ "nvim-telescope/telescope-fzf-native.nvim", run = "make" })
 	use({ "windwp/nvim-autopairs" })
-	use({ "saadparwaiz1/cmp_luasnip" })
-	use({ "hrsh7th/cmp-nvim-lsp" })
-	use({ "hrsh7th/cmp-path" })
-	use({
-		"hrsh7th/nvim-cmp",
-		requires = {
-			"hrsh7th/cmp-buffer",
-		},
 		use({
 			"nvim-treesitter/nvim-treesitter",
 			run = ":TSUpdate",
-		}),
-	})
+		})
 end)

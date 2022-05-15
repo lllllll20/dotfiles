@@ -8,11 +8,11 @@ require("packer").startup(function()
   use("nvim-telescope/telescope-file-browser.nvim")
 	use("neovim/nvim-lspconfig")
 	use("williamboman/nvim-lsp-installer")
-	use({
-    "L3MON4D3/LuaSnip",
-    after = "nvim-cmp",
-    config = function() require("config.snippets") end,
-  })
+  use({
+     'L3MON4D3/LuaSnip',
+    after = 'nvim-cmp',
+    config = function() require('config.snippets') end,
+   })
 	use("kyazdani42/nvim-web-devicons")
 	use("jose-elias-alvarez/null-ls.nvim")
 	use({

@@ -36,7 +36,7 @@ set $menu wofi --show run
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
 #output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 
-set $background ~/computing/wallpapers/"139.jpg"
+set $background ~/computing/wallpapers/"124.jpg"
 output * bg $background fill
 
 ### Lock screen
@@ -215,7 +215,9 @@ focus_follows_mouse no
     
     bindsym $mod+Mod1+n exec ~/.config/sway/scripts/hidescratchpad.sh "foot nvim ~/notes/Quick_notes.md"
 
-    bindsym $mod+Control+n exec ~/.config/sway/scripts/hidescratchpad.sh "foot -a footws2 openradnotes.sh"
+    bindsym $mod+Control+n exec ~/.config/sway/scripts/hidescratchpad.sh "openradnotes.sh"
+    
+    bindsym $mod+v exec ~/.config/sway/scripts/hidescratchpad.sh "scratchbuffer.sh"
 
     bindsym $mod+Control+p exec ~/.config/sway/scripts/hidescratchpad.sh "foot -a fc openphonenote.sh"
 

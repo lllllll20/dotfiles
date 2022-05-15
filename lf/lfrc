@@ -99,7 +99,13 @@ cmd mkdirectory ${{
 cmd mkfile ${{
   IFS=
   read -rp "File Name: "
-  $EDITOR "${REPLY}"
+  swaymsg scratchpad show
+  if wlrctl window focus "neovim" == true;
+  then
+    nvim --server /tmp/nvim.pipe --remote "${REPLY}" >/dev/null 2>&1
+  else
+    setsid -f foot -a neovim nvim --listen /tmp/nvim.pipe "${REPLY}" >/dev/null 2>&1
+  fi
   unset IFS
 }}
 

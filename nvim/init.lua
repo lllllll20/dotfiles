@@ -1,4 +1,5 @@
 require("packerconfig")
+require("luasnip-config")
 -- require("packer").startup(function()
 -- 	use("wbthomason/packer.nvim")
 -- 	use("bluz71/vim-nightfly-guicolors")
@@ -212,83 +213,86 @@ local lsp_symbols = {
 	TypeParameter = "   (TypeParameter)",
 }
 
--- luasnip setup
+
+-- nvim-cmp setup
+local has_words_before = function()
+  local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+  return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+end
+
 local luasnip = require("luasnip")
+local cmp = require 'cmp'
+cmp.setup {
+  snippet = {
+    expand = function(args)
+      luasnip.lsp_expand(args.body)
+    end,
+  },
+  mapping = cmp.mapping.preset.insert({
+    ['<C-d>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-f>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<CR>'] = cmp.mapping.confirm {
+      behavior = cmp.ConfirmBehavior.Replace,
+      select = true,
+    },
+    ['<c-j>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item()
+      elseif luasnip.expand_or_jumpable() then
+        luasnip.expand_or_jump()
+      else
+        fallback()
+      end
+    end, { 'i', 's' }),
+    ['<c-k>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_prev_item()
+      elseif luasnip.jumpable(-1) then
+        luasnip.jump(-1)
+      else
+        fallback()
+      end
+    end, { 'i', 's' }),
+  }),
+  sources = {
+    { name = 'luasnip' }, -- changes completion order?
+    { name = 'nvim_lsp' },
+  },
+  formatting = {
+    format = function(entry, item)
+      item.kind = lsp_symbols[item.kind]
+      item.menu = ({
+        luasnip = "[Snippet]",
+        buffer = "[Buffer]",
+        nvim_lsp = "[LSP]",
+        path = "[Path]",
+      })[entry.source.name]
 
--- nvim cmp
-
-local cmp = require("cmp")
-cmp.setup({
-	-- completion = {
-	--completeopt = 'menu,menuone,noinsert'
-	--},
-	snippet = {
-		expand = function(args)
-			luasnip.lsp_expand(args.body)
-		end,
-	},
-	mapping = {
-		["<C-k>"] = function(fallback)
-			if cmp.visible() then
-				cmp.select_prev_item()
-			else
-				fallback()
-			end
-		end,
-
-		["<C-j>"] = function(fallback)
-			if cmp.visible() then
-				cmp.select_next_item()
-			else
-				fallback()
-			end
-		end,
-
-		["<c-x>"] = cmp.mapping.close(),
-		["<CR>"] = cmp.mapping.confirm({
-			behavior = cmp.ConfirmBehavior.Replace,
-			select = true,
-		}),
-		--["<Tab>"] = cmp.mapping(cmp.mapping.select_next_item(), { "i", "s" }),
-		--["<S-Tab>"] = cmp.mapping(cmp.mapping.select_prev_item(), { "i", "s" }),
-	},
-	formatting = {
-		format = function(entry, item)
-			item.kind = lsp_symbols[item.kind]
-			item.menu = ({
-				buffer = "[Buffer]",
-				nvim_lsp = "[LSP]",
-				luasnip = "[Snippet]",
-				path = "[Path]",
-			})[entry.source.name]
-
-			return item
-		end,
-	},
-	sources = { { name = "nvim_lsp" }, { name = "buffer" }, { name = "luasnip" }, { name = "path" } },
-})
+      return item
+    end,
+  },
+}
 
 -- Set up telescope
 local actions = require("telescope.actions")
 require("telescope").setup({
-	-- defaults = {
-	--     mappings = {
-	--         i = {
-	--             ["<esc>"] = actions.close,
-	--         },
-	--     },
-	-- },
-	-- pickers = {
-	-- 	current_buffer_fuzzy_find = {
-	-- 		sorting_strategy = "ascending",
-	-- 		layout_config = {
-	-- 			prompt_position = "top",
-	-- 		},
-	-- 	},
-	-- },
-})
+  defaults = {
+    -- Default configuration for telescope goes here:
+    -- config_key = value,
+    mappings = {
+      n = {
+          ['<c-d>'] = require('telescope.actions').delete_buffer
+      }, -- n
+      i = {
+        ['<c-d>'] = require('telescope.actions').delete_buffer
+      } -- i
+    } -- mappings
+  }, -- defaults
+} -- telescope setup
+)
 require("telescope").load_extension("fzf")
-require("telescope").load_extension("file_browser")
+--require("telescope").load_extension("file_browser")
 
 -- Define local variables
 local keymap = vim.api.nvim_set_keymap
@@ -338,7 +342,7 @@ keymap("n", "<leader>q", ":q<CR>", default_opts)
 keymap("n", "<leader>e", ":wq<CR>", default_opts)
 keymap("n", "<leader>w", ":w<CR>", default_opts)
 
--- Keybindings - toggles
+-- Keybindings - window navigation
 keymap("n", "<a-c>", "<c-w>w", default_opts)
 -- keymap("n", "<c-h>", "<c-w>h", default_opts)
 -- keymap("n", "<c-l>", "<c-w>l", default_opts)
@@ -364,16 +368,17 @@ keymap("", "<C-d>", "<C-d>zz", default_opts)
 keymap("", "<C-h>", "^", default_opts)
 keymap("", "<C-l>", "$", default_opts)
 keymap("", "<C-b>", "o<esc>", default_opts)
-keymap("i", "<C-k>", "<up>", default_opts)
-keymap("i", "<C-j>", "<down>", default_opts)
-keymap("i", "<C-h>", "<left>", default_opts)
-keymap("i", "<C-l>", "<Right>", default_opts)
+-- keymap("i", "<C-k>", "<up>", default_opts)
+-- keymap("i", "<C-j>", "<down>", default_opts)
+-- keymap("i", "<C-h>", "<left>", default_opts)
+-- keymap("i", "<C-l>", "<Right>", default_opts)
 keymap("v", "<A-k>", ":move '<-2<CR>gv=gv", default_opts)
 keymap("v", "<A-j>", ":move '>+1<CR>gv=gv", default_opts)
 keymap("n", "n", "nzz", default_opts)
 keymap("n", "N", "Nzz", default_opts)
 keymap("n", "J", "mzJ`z", default_opts)
 
+-- Keybindings - quickfix
 keymap("", "<c-p>", ":cprev<CR>", default_opts)
 keymap("", "<c-n>", ":cnext<CR>", default_opts)
 
@@ -384,7 +389,8 @@ keymap("n", "<leader>il", "<cmd>s/^/[[/<CR><cmd>s/$/]]/<CR>:nohl<CR>", default_o
 keymap("n", "<leader>ib", "i#!/usr/bin/", default_opts)
 
 -- Keybindings - misc
-keymap("n", "<leader>lf", "<cmd>lua lf_select_current_file()<CR>", default_opts)
+keymap("n", "<leader>f", "<cmd>lua lf_select_current_file()<CR>", default_opts)
+keymap("n", "<c-f>", "<cmd>lua lf_select_current_file()<CR>", default_opts)
 keymap("n", "<f2>", "<cmd>lua lf_select_current_file()<CR>", default_opts)
 keymap("i", "<c-b>", "<cmd>normal o<CR>", default_opts)
 
@@ -402,8 +408,7 @@ keymap(
 	default_opts
 )
 
-keymap("n", "<leader>fb", '<cmd>Telescope file_browser<CR>', default_opts)
-keymap("n", "<leader>ft", '<cmd>lua require("telescope.builtin").filetypes()<CR>', default_opts)
+--keymap("n", "<leader>ft", '<cmd>lua require("telescope.builtin").filetypes()<CR>', default_opts)
 keymap("n", "<leader>h", '<cmd>lua require("telescope.builtin").help_tags()<CR>', default_opts)
 keymap("n", "<leader>dd", '<cmd>lua require("telescope.builtin").lsp_document_diagnostics()<CR>', default_opts)
 keymap("n", "<leader>ds", '<cmd>lua require("telescope.builtin").lsp_document_symbols()<CR>', default_opts)
@@ -427,6 +432,8 @@ keymap("n", "<leader>ls", "<cmd>lua Changebuf()<CR>", default_opts)
 keymap("n", "<a-n>", "<cmd>bn<CR>", default_opts)
 keymap("n", "<a-p>", "<cmd>bp<CR>", default_opts)
 keymap("n", "<leader>bd", "<cmd>bd<CR>", default_opts)
+keymap("n", "<leader>cn", "<cmd>lua closenotes()<CR>", default_opts)
+keymap("n", "<leader>sf", ":luafile $MYVIMRC<CR>", default_opts)
 
 -- functions for terminal compile / run
 
@@ -475,7 +482,15 @@ getfilenames = function()
 			if extension == "lua" then
 				runscript("lua ./")
 			elseif extension == "py" then
-				runscript("python ./")
+				getaterm()
+				vim.fn.chansend(vim.b.terminal_job_id, "source " .. HOME .. "/.test/envs/plain/bin/activate" .. Mycr)
+				vim.fn.chansend(vim.b.terminal_job_id, "cd " .. filepath .. Mycr)
+				vim.fn.chansend(
+					vim.b.terminal_job_id,
+					"[ ! -x " .. fullpathname .. " ] && chmod u+x " .. fullpathname .. Mycr
+				)
+				vim.fn.chansend(vim.b.terminal_job_id, "python ./" .. filename .. Mycr)
+
 			elseif extension == "sh" then
 				runscript("./")
 			elseif extension == "c" then
@@ -537,4 +552,25 @@ keymap("n", "<F5>", "<Cmd>lua vim.lsp.buf.formatting()<CR>", default_opts)
 --local saveonwrite = vim.api.nvim_create_augroup("saveonwrite", { clear = true, })
 --vim.api.nvim_create_autocmd("BufEnter", { callback = function() lf_select_current_file() end, group = saveonwrite,})
 --vim.api.nvim_create_autocmd("BufEnter", { command = "echo 'Hello'", group = saveonwrite})
+
+closenotes = function()
+  local buffers = vim.tbl_filter(
+      function(buf) return
+          vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].buflisted
+      end,
+      vim.api.nvim_list_bufs()
+  )
+  local handle = io.popen("find \"${HOME}/notes/Radiology notes\" \\( -path \"${HOME}/notes/Radiology notes/Second Year\" -o -path \"${HOME}/notes/Radiology notes/Third Year\" -o -path \"${HOME}/notes/Radiology notes/Exams/2A Lists.md\" \\) -prune -o -type f -print")
+  if handle then for line in handle:lines() do
+    for _,j in ipairs(buffers) do
+      if vim.api.nvim_buf_is_valid(j) and vim.bo[j].buflisted then
+        if (line == vim.api.nvim_buf_get_name(j)) then
+          vim.api.nvim_buf_delete(j, {})
+        end
+      end
+    end
+  end
+  handle:close()
+  end
+end
 

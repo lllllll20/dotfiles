@@ -21,10 +21,10 @@ end
 
 
 
-
+local HOME = os.getenv("HOME")
 
 -- function getdirs()
---   local data = require("plenary.scandir").scan_dir("/home/iain/notes/Radiology notes/Exams", {
+--   local data = require("plenary.scandir").scan_dir(HOME .. "/notes/Radiology notes/Exams", {
 --     hidden = true,
 --     search_pattern = "2B"
 --   })

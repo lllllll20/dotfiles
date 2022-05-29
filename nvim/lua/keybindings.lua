@@ -33,6 +33,8 @@ keymap("v", "<A-j>", ":move '>+1<CR>gv=gv", default_opts)
 keymap("n", "n", "nzz", default_opts)
 keymap("n", "N", "Nzz", default_opts)
 keymap("n", "J", "mzJ`z", default_opts)
+keymap("i", "<C-l>", "<Right>", default_opts)
+keymap("i", "<C-h>", "<Left>", default_opts)
 
 -- Keybindings - quickfix
 keymap("", "<c-p>", ":cprev<CR>", default_opts)

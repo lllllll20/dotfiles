@@ -8,6 +8,8 @@ set icons
 
 # Custom Functions
 
+
+
 cmd open ${{
     swaymsg scratchpad show
     lf -remote "send unselect \"${myfiles[@]}\""
@@ -102,25 +104,10 @@ cmd mkfile ${{
   swaymsg scratchpad show
   if wlrctl window focus "neovim" == true;
   then
-    nvim --server /tmp/nvim.pipe --remote "${REPLY}" >/dev/null 2>&1
+    nvim --server /tmp/nvim.pipe --remote "${PWD}"/"${REPLY}" >/dev/null 2>&1
   else
-    setsid -f foot -a neovim nvim --listen /tmp/nvim.pipe "${REPLY}" >/dev/null 2>&1
+    setsid -f foot -a neovim nvim --listen /tmp/nvim.pipe "${PWD}"/"${REPLY}" >/dev/null 2>&1
   fi
-  unset IFS
-}}
-
-cmd mkscript ${{
-  IFS=
-  read -rp "Enter script name with extension: "
-  extension="${REPLY##*.}"
-  touch "${REPLY}"
-  chmod u+x "${REPLY}"
-  if [[ "${extension}" == py ]]; then
-      echo "#!/usr/bin/env python" >> "${REPLY}"
-  elif [[ "${extension}" == sh ]]; then
-      echo "#!/usr/bin/bash" >> "${REPLY}"
-  fi
-  $EDITOR "${REPLY}"
   unset IFS
 }}
 
@@ -328,9 +315,14 @@ cmd restore_trash ${{
   trash-restore
 }}
 
+cmd pre-cd ${{
+    echo "$PWD" > /tmp/lfprevdir
+    }}
+
 cmd prevdir ${{
-  lf -remote "send cd \"$OLDPWD\""
-}}
+  goto=$(cat /tmp/lfprevdir)
+  lf -remote "send cd \"${goto}\""
+  }}
 
 cmd fzf_jump ${{
 
@@ -405,7 +397,6 @@ source ~/.local/share/lf/shortcuts
 # More functions
 map fmf mkfile
 map fmd mkdirectory 
-map fms mkscript 
 map fdc docconvert
 map fbr bulkrename
 map <c-f> nemo
@@ -427,6 +418,7 @@ map <c-t> terminal
 map fax addx
 map frx rmx
 map fmt movefiles
+map <backspace2> prevdir
 map <c-x> movefiles
 map fct copyfiles
 map <c-c> copyfiles

@@ -150,6 +150,7 @@ cmd sudomkfile ${{
 cmd copyfilename ${{
   wl-copy "$f"
   lf -remote "send echomsg \"$f copied to clipboard\""
+  swaymsg scratchpad show
 }}
 
 cmd cleanname ${{
@@ -348,6 +349,7 @@ map e
 map f
 map s
 map t
+map gg
 
 # File Openers
 map ee $$EDITOR "$f"
@@ -375,6 +377,8 @@ map ms mark-save
 map mr mark-remove
 map ml mark-load
 map <c-a> glob-select *
+map <c-k> top
+map <c-j> bottom
 map <c-z> glob-unselect *
 map J push 3j
 map K push 3k

@@ -36,7 +36,7 @@ set $menu wofi --show run
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
 #output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 
-set $background ~/computing/wallpapers/"447.jpg"
+set $background /home/iain/computing/wallpapers/"297.jpg"
 output * bg $background fill
 
 ### Lock screen
@@ -154,6 +154,10 @@ focus_follows_mouse no
 
     assign [app_id="mpv"]: workspace number 4
     for_window [app_id="mpv"] focus
+    bindsym $mod+backslash [app_id="mpv"] fullscreen
+
+    assign [app_id="coding"]: workspace number 4
+    for_window [app_id="coding"] focus
 
     assign [app_id="imv"]: workspace number 4
     for_window [app_id="imv"] focus
@@ -226,7 +230,7 @@ focus_follows_mouse no
     bindsym $mod+Mod1+i exec ~/.config/sway/scripts/hidescratchpad.sh "foot -a fc insertfile.sh"
     
 
-    bindsym $mod+c exec foot ~/scripts/launchers/coding.sh 
+    bindsym $mod+c exec ~/scripts/launchers/coding.sh 
 
 ### Run scripts
 
@@ -375,6 +379,23 @@ mode "resize" {
     bindsym Escape mode "default"
 }
     bindsym $mod+Mod1+r mode "resize"
+
+mode "mediacontrols" {
+    bindsym p exec playerctl play-pause
+    bindsym v exec playerctl -p mpv play-pause
+    bindsym j exec playerctl -p mpv position 5-
+    bindsym s exec playerctl -a play-pause
+    bindsym h exec playerctl position 5-
+    bindsym l exec playerctl position 5+
+    bindsym greater exec playerctl next
+    bindsym less exec playerctl previous
+
+    # Return to default mode
+    bindsym Return mode "default"
+    bindsym Escape mode "default"
+    bindsym $mod+Mod1+m mode "default"
+}
+    bindsym $mod+Mod1+m mode "mediacontrols"
 
 mode "poweropts" {
     bindsym Return mode "default"; exec ~/.config/sway/scripts/shutdown.sh

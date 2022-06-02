@@ -59,6 +59,10 @@ getfilenames = function()
 			end
 			if extension == "lua" then
 				runscript("lua ./")
+			elseif extension == "rs" then
+				getaterm()
+				vim.fn.chansend(vim.b.terminal_job_id, "cd " .. filepath .. Mycr)
+				vim.fn.chansend(vim.b.terminal_job_id, "cargo run" .. Mycr)
 			elseif extension == "py" then
 				getaterm()
 				vim.fn.chansend(vim.b.terminal_job_id, "source " .. HOME .. "/.test/envs/plain/bin/activate" .. Mycr)
@@ -76,7 +80,7 @@ getfilenames = function()
 				local noext = splitname[1]
 				vim.fn.chansend(vim.b.terminal_job_id, "cd " .. filepath .. Mycr)
 				vim.fn.chansend(vim.b.terminal_job_id, "gcc -Wall " .. fullpathname .. " -o " .. noext .. Mycr)
-				if vim.loop.fs_stat(noext) ~= nil then
+				if vim.loop.fs_stat(filepath .. noext) ~= nil then
 					vim.fn.chansend(vim.b.terminal_job_id, "[ $? -eq 0 ] && ./" .. noext .. Mycr)
 				end
 			elseif extension == "md" then

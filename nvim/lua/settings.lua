@@ -22,6 +22,7 @@ vim.bo.shiftwidth = 4
 vim.bo.tabstop = 4
 vim.bo.softtabstop = 4
 vim.bo.smartindent = true
+vim.bo.textwidth = 80
 
 -- Colorscheme
 vim.o.termguicolors = true -- enable 24-bit RGB colors

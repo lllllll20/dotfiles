@@ -22,6 +22,8 @@ require("packer").startup(function()
 })
 	use({ "nvim-telescope/telescope-fzf-native.nvim", run = "make" })
   use "onsails/lspkind-nvim"
+  use "mfussenegger/nvim-dap"
+  use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap"} }
   use "hrsh7th/nvim-cmp"
   use "hrsh7th/cmp-nvim-lsp"
   use "hrsh7th/cmp-buffer"

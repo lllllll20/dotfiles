@@ -33,7 +33,6 @@ require("packer").startup(function()
   use "hrsh7th/cmp-nvim-lua"
   use "saadparwaiz1/cmp_luasnip"
   use "L3MON4D3/LuaSnip"
-  use "rafamadriz/friendly-snippets"
 	use({ "windwp/nvim-autopairs" })
 		use({
 			"nvim-treesitter/nvim-treesitter",

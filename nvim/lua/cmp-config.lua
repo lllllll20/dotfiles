@@ -12,7 +12,8 @@ local has_words_before = function()
 end
 -- load snippets
 local luasnip = require("luasnip")
-require("luasnip.loaders.from_vscode").lazy_load()
+--require("luasnip.loaders.from_vscode").lazy_load()
+--require("luasnip.loaders.from_lua").load({ paths = "~/.config/nvim/snippets/" })
 
 -- nvim-cmp setup
 local lspkind = require('lspkind')

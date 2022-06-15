@@ -12,3 +12,7 @@ require("keybindings")
 require("batchloading")
 require("misc")
 require("dap-config")
+require("luasnip-config")
+
+
+

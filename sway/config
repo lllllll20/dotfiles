@@ -179,9 +179,9 @@ focus_follows_mouse no
     bindsym $mod+r exec localc ~/work_docs/ST4/Rota/"Senior Rota April to July 22.xlsx"
     bindsym $mod+w exec nemo ~/work_docs/ST4/
 
-    assign [app_id="org.keepassxc.KeePassXC"]: workspace number 7
-    for_window [app_id="org.keepassxc.KeePassXC"] focus
-    bindsym $mod+p exec ~/.config/sway/scripts/hideandfocus.sh keepassxc
+    assign [app_id="org.gnome.World.Secrets"]: workspace number 7
+    for_window [app_id="org.gnome.World.Secrets"] focus
+    bindsym $mod+p exec ~/.config/sway/scripts/hideandfocus.sh secrets
 
     assign [app_id="ghb"]: workspace number 8
     for_window [app_id="ghb"] focus

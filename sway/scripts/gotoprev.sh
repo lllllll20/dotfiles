@@ -11,7 +11,8 @@ modspace() {
 	    # You can do this with swaymsg, but it is easlier with lswt
 	    [ "$(lswt -t | cut -f5 | grep -c true)" -lt 1 ] &&\
 		# echo "reached move" && swaymsg workspace back_and_forth
-		swaymsg workspace back_and_forth
+		# swaymsg workspace back_and_forth
+        python ~/.config/sway/scripts/viewlast.py --switch
 	;;
     esac
 }

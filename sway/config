@@ -456,7 +456,8 @@ bar {
 
 # Autostart
 exec wl-paste -t text --watch clipman store --no-persist
-exec ~/.config/sway/scripts/gotoprev.sh
+#exec ~/.config/sway/scripts/gotoprev.sh
+exec ~/.config/sway/scripts/onclose.py
 exec python ~/.config/sway/scripts/viewlast.py
 exec udiskie
 exec playerctl daemon

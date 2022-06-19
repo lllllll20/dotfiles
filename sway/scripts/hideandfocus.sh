@@ -12,7 +12,7 @@ if [[ "$1" == "keepassxc" ]]; then
     do
         sleep 0.3
     done
-    setsid -f ~/.config/sway/scripts/waitforkeepass.sh
+#    setsid -f ~/.config/sway/scripts/waitforkeepass.sh
 
 elif [[ "$1" == "footws2" ]]; then
     wlrctl window focus "footws2" || swaymsg exec "foot -a footws2"

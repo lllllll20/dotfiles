@@ -1,0 +1,430 @@
+# Basic Settings
+set preview false 
+#Set previewer ~/scripts/preview.sh
+#set previewer pistol
+set drawbox true
+set ignorecase true
+set icons
+
+# Custom Functions
+
+
+
+cmd open ${{
+    swaymsg scratchpad show
+    lf -remote "send unselect \"${myfiles[@]}\""
+    readarray -t myfiles < <(printf "%s" "$fx")
+    length=${#myfiles[@]}
+    for (( i = 0; i < $length; i++ )) do
+        case $(file --mime-type "${myfiles[i]}" -bL) in
+            inode/directory) unset 'myfiles[i]' ;;
+            text/*|application/json) continue ;;
+            image/*) keeporder.py "${myfiles[i]}" | setsid -f imv 2>/dev/null; unset 'myfiles[i]' ;;
+            video/*) setsid -f mpv "${myfiles[i]}" --quiet >/dev/null 2>&1; unset 'myfiles[i]' ;;
+            audio/*) setsid -f mpv --audio-display=no "${myfiles[i]}" --quiet >/dev/null 2>&1; unset 'myfiles[i]' ;;
+            *) setsid -f xdg-open "${myfiles[i]}" >/dev/null 2>&1; unset 'myfiles[i]' ;;
+        esac
+    done
+    if (( ${#myfiles[@]} > 0 )); then
+    #setsid -f foot -a footws2 nvim "${myfiles[@]}" >/dev/null 2>&1
+	    if wlrctl window focus "neovim" == true;
+	    then
+            nvim --server /tmp/nvim.pipe --remote "${myfiles[@]}" >/dev/null 2>&1
+        else
+            setsid -f foot -a neovim nvim --listen /tmp/nvim.pipe "${myfiles[@]}" >/dev/null 2>&1
+        fi
+    # swaymsg workspace 2
+    fi
+}}
+
+cmd openwith ${{
+swaymsg scratchpad show
+readarray -t myfiles < <(printf "%s" "$fx")
+setsid -f $1 "${myfiles[@]}" >/dev/null 2>&1 
+lf -remote "send unselect \"${myfiles[@]}\""
+}}
+
+cmd neovimdiff ${{
+readarray -t myfiles < <(printf "%s" "$fx")
+lf -remote "send unselect \"${myfiles[@]}\""
+if (( ${#myfiles[@]} == 2 )); then
+    [[ $(file --mime-type "${myfiles[0]}" -bL) == text/* ]] || { exit; }
+    [[ $(file --mime-type "${myfiles[1]}" -bL) == text/* ]] || { exit; }
+    setsid -f foot -a footws2 nvim -d "${myfiles[@]}" >/dev/null 2>&1
+fi
+}}
+
+cmd movefiles ${{
+    readarray -t myfiles < <(printf "%s" "$fx")
+    res="$(find -L ${HOME}/ \( -path "${HOME}/.cache" -o -path "${HOME}/.mozilla" -o -path "${HOME}/.thunderbird" -o -path "${HOME}/.Mail" -o -path "${HOME}/media/photos" -o -path "${HOME}/media/sounds" -o -path "${HOME}/my_docs/archiveddocs" -o -path "${HOME}/.archivedmail" -o -path "${HOME}/.local" -o -path "${HOME}/my_docs/Health" -o -path "${HOME}/.cargo" -o -path "${HOME}/.thumbnails" -o -path "${HOME}/.npm" -o -path "${HOME}/.test/envs/*/lib" -o -path "${HOME}/.Private" -o -path "${HOME}/.zoom" \) -prune -o -type d -print | fzf --color='dark,bg+:#b2ceee,fg+:#080808,hl:#fc514e,hl+:#ff5874' --header='Move files. Select destination:')"
+    [ -z "$res" ] && { exit; }
+
+    for fullpath in "${myfiles[@]}"
+    do
+        filename=$(basename "$fullpath")
+        mv "$fullpath" "$res"/"$filename" #>/dev/null 2>&1 
+    done
+    lf -remote "send unselect \"${myfiles[@]}\""
+}}
+
+cmd copyfiles ${{
+    readarray -t myfiles < <(printf "%s" "$fx")
+    res="$(find -L ${HOME}/ \( -path "${HOME}/.cache" -o -path "${HOME}/.mozilla" -o -path "${HOME}/.thunderbird" -o -path "${HOME}/.Mail" -o -path "${HOME}/media/photos" -o -path "${HOME}/media/sounds" -o -path "${HOME}/my_docs/archiveddocs" -o -path "${HOME}/.archivedmail" -o -path "${HOME}/.local" -o -path "${HOME}/my_docs/Health" -o -path "${HOME}/.cargo" -o -path "${HOME}/.thumbnails" -o -path "${HOME}/.npm" -o -path "${HOME}/.test/envs/*/lib" -o -path "${HOME}/.Private" -o -path "${HOME}/.zoom" \) -prune -o -type d -print | fzf --color='dark,bg+:#b2ceee,fg+:#080808,hl:#fc514e,hl+:#ff5874' --header='Copy files. Select destination:')"
+    [ -z "$res" ] && { exit; }
+
+    for fullpath in "${myfiles[@]}"
+    do
+        filename=$(basename "$fullpath")
+        cp -r "$fullpath" "$res"/"$filename" #>/dev/null 2>&1 
+    done
+    lf -remote "send unselect \"${myfiles[@]}\""
+}}
+
+cmd youtube ${{
+    if [[ ${HOSTNAME} = "desktop" ]]; then
+        lf -remote "send cd ~/phone_media/Youtube"
+    fi
+}}
+
+cmd usb ${{
+    lf -remote "send cd /run/media/"$USER"/"
+}}
+
+cmd mkdirectory ${{
+  IFS=
+  read -p "Directory Name: "
+
+  mkdir "${REPLY}"
+  unset IFS
+}}
+
+cmd mkfile ${{
+  IFS=
+  read -rp "File Name: "
+  swaymsg scratchpad show
+  if wlrctl window focus "neovim" == true;
+  then
+    nvim --server /tmp/nvim.pipe --remote "${PWD}"/"${REPLY}" >/dev/null 2>&1
+  else
+    setsid -f foot -a neovim nvim --listen /tmp/nvim.pipe "${PWD}"/"${REPLY}" >/dev/null 2>&1
+  fi
+  unset IFS
+}}
+
+cmd addx ${{
+  chmod u+x $f
+  lf -remote "send reload"
+}}
+
+cmd rmx ${{
+  chmod u-x $f
+  lf -remote "send reload"
+}}
+
+cmd bulkrename ${{
+    readarray -t myfiles < <(printf "%s" "$fx")
+    qmv --format=do "${myfiles[@]}"
+    lf -remote "send unselect \"${myfiles[@]}\""
+}}
+
+cmd extractaudio ${{
+    readarray -t myfiles < <(printf "%s" "$fx")
+    for file in "${myfiles[@]}"; do
+        name="${file%.*}"
+        ffmpeg -i "$file" -vn "${name}.mp3"
+    done
+}}
+
+cmd copyimage ${{
+  wl-copy < $f
+  lf -remote "send echomsg \"Picture $f copied to clipboard\""
+}}
+
+cmd sudomkfile ${{
+  IFS=
+  read -rp "File Name: "
+  sudo $EDITOR "${REPLY}"
+  unset IFS
+}}
+
+cmd copyfilename ${{
+  wl-copy "$f"
+  lf -remote "send echomsg \"$f copied to clipboard\""
+  swaymsg scratchpad show
+}}
+
+cmd cleanname ${{
+    readarray -t myfiles < <(printf %s "$fx")
+    for filepath in "${myfiles[@]}"; do
+        file=${filepath%%;*}
+        newname=$(echo "$file" | sed 's/[^./_ 0-9A-z]//g' | tr -s " " "_" | tr -d "[" | tr -d "]" | tr -d ",")
+        if [ "$file" != "$newname" ]; then
+            mv "$file" "$newname"
+        fi
+    done
+    lf -remote "send unselect \"${myfiles[@]}\""
+}}
+
+cmd email ${{
+    readarray -t myfiles < <(printf "%s" "$fx")
+    neomutt -a "${myfiles[@]}"
+    lf -remote "send unselect \"${myfiles[@]}\""
+}}
+
+cmd filesize ${{
+    path=$(realpath $f)
+    #if [ -z $path ]; then path=$(printf $f); fi
+    size=$(du -sh "$path" | awk '{print $1}')
+    freespace=$(df -h $path | awk 'FNR == 2 {print $4}')
+    lf -remote "send echomsg \"Size: ${size}, Space on disk: ${freespace}. \""
+}}
+
+cmd copydirectory ${{
+  wl-copy $(pwd)
+  lf -remote "send echomsg \"$pwd copied to clipboard\""
+}}
+
+cmd grabtext ${{
+    cat $f | wl-copy
+    lf -remote "send echomsg \"File contents copied to clipboard\""
+
+}}
+
+cmd nemo ${{
+  sway scratchpad show
+  name=$(pwd)  
+  setsid -f nemo "${name}" >/dev/null 2>&1
+}}
+
+cmd terminal ${{
+  sway scratchpad show
+  setsid -f foot -D "$(pwd)" >/dev/null 2>&1
+}}
+
+cmd docconvert ${{
+    path=$(dirname $f)
+    name=$(basename $f)
+    file=$path/$name
+    gfile=${file%%.*}
+
+  if [[ $f == *.pdf ]]
+  then
+    pdftotext $f $gfile
+  else
+    echo -e "Enter format to convert to: "; read ext
+    case "$f" in
+      *pages|*numbers|*doc|*docx) libreoffice --convert-to $ext $f;;
+      *) pandoc $f -o $gfile.$ext;;
+    esac
+  fi
+}}
+
+cmd unmount ${{
+  udiskie-umount "$f"
+}}
+
+# Archive bindings
+cmd unpackarchive ${{
+  readarray -t myfiles < <(printf "%s" "$fx")
+  lf -remote "send unselect \"${myfiles[@]}\""
+  for file in "${myfiles[@]}"; do
+      if [ -f $f ] ; then
+          path=$(realpath $file)
+          dir=$(dirname $path)
+          case "$file" in
+              *.rar) cd $dir && rar x "$path" ;;
+              *.tar.gz) tar -xzvf "$path" --directory $dir ;;
+              *.tar.bz2) tar -xjvf "$path" --directory $dir ;;
+              *.tar) tar -xvf "$path"  --directory $dir ;;
+              *.zip) unzip "$path" -d $dir ;;
+#              *.Z) cd $dir && uncompress "$path"  ;;
+#              *.7z) cd $dir && 7z x "$path"    ;;
+              *) lf -remote "send echoerr \"Unsupported format\"" ;;
+          esac
+      else
+          lf -remote "send echoerr \"'$file' is not a valid file\""
+      fi
+  done
+}}
+
+cmd zip ${{
+  readarray -t myfiles < <(printf "%s" "$fx")
+  lf -remote "send unselect \"${myfiles[@]}\""
+  for file in "${myfiles[@]}"; do
+    if [ -d "$file" ] ; then
+        zip -r "${file}" "$file"
+    fi
+  done
+}}
+
+
+cmd tar ${{
+  readarray -t myfiles < <(printf "%s" "$fx")
+  lf -remote "send unselect \"${myfiles[@]}\""
+  for file in "${myfiles[@]}"; do
+      if [ -d "$file" ] ; then
+        name=$(basename "$file")
+        path=$(realpath "$file")
+        dir=$(dirname "$path")
+        tar cvf "${file}".tar -C "$dir" ./"$name"
+      fi
+  done
+}}
+
+cmd targz ${{
+  readarray -t myfiles < <(printf "%s" "$fx")
+  lf -remote "send unselect \"${myfiles[@]}\""
+  for file in "${myfiles[@]}"; do
+      if [ -d "$file" ] ; then
+          name=$(basename "$file")
+          path=$(realpath "$file")
+          dir=$(dirname "$path")
+          tar cvzf "${file}".tar.gz -C "$dir" ./"$name"
+      fi
+  done
+}}
+
+cmd tarbz2 ${{
+  readarray -t myfiles < <(printf "%s" "$fx")
+  lf -remote "send unselect \"${myfiles[@]}\""
+  for file in "${myfiles[@]}"; do
+      if [ -d "$file" ] ; then
+          name=$(basename "$file")
+          path=$(realpath "$file")
+          dir=$(dirname "$path")
+          tar cjvf "${file}".tar.bz2 -C "$dir" ./"$name"
+      fi
+  done
+}}
+
+cmd minimise_lf ${{
+    sway scratchpad show
+}}
+
+# Trash cli bindings
+cmd trash ${{
+  readarray -t myfiles < <(printf %s "$fx")
+  for file in "${myfiles[@]}"; do
+      trash-put "$file"
+  done
+  lf -remote "send unselect \"${myfiles[@]}\""
+}}
+
+cmd clear_trash %trash-empty
+
+cmd restore_trash ${{
+  trash-restore
+}}
+
+cmd pre-cd ${{
+    echo "$PWD" > /tmp/lfprevdir
+    }}
+
+cmd prevdir ${{
+  goto=$(cat /tmp/lfprevdir)
+  lf -remote "send cd \"${goto}\""
+  }}
+
+cmd fzf_jump ${{
+
+  res="$(find -L ${HOME}/ \( -path "${HOME}/.cache" -o -path "${HOME}/.mozilla" -o -path "${HOME}/.thunderbird" -o -path "${HOME}/.Mail" -o -path "${HOME}/media/photos" -o -path "${HOME}/media/sounds" -o -path "${HOME}/my_docs/archiveddocs" -o -path "${HOME}/.archivedmail" -o -path "${HOME}/.local" -o -path "${HOME}/my_docs/Health" -o -path "${HOME}/.cargo" -o -path "${HOME}/.thumbnails" -o -path "${HOME}/.npm" -o -path "${HOME}/.test/envs/*/lib" -o -path "${HOME}/.Private" -o -path "${HOME}/.zoom" \) -prune -o -print | fzf --color='dark,bg+:#b2ceee,fg+:#080808,hl:#fc514e,hl+:#ff5874' --header='Jump to location')"
+  [ -z "$res" ] && { exit; }
+
+  if [ -f "$res" ]; then
+    cmd="select"
+  elif [ -d "$res" ]; then
+    cmd="cd"                                                       
+  fi
+  lf -remote "send $id $cmd \"$res\""
+}}
+
+# Bindings
+# Remove some defaults
+map o
+map m
+map n
+map d
+map c
+map e
+map f
+map s
+map t
+map gg
+
+# File Openers
+map ee $$EDITOR "$f"
+
+# Trash Mappings
+map dd trash
+map tc clear_trash
+map tr restore_trash
+
+# Basic Functions
+map . set hidden!
+map DD delete
+map p paste
+map x cut
+map y copy
+map <enter> open
+map r rename
+map H top
+map L bottom
+map R reload
+map c clear
+map u unselect 
+map eje unmount
+map ms mark-save
+map mr mark-remove
+map ml mark-load
+map <c-a> glob-select *
+map <c-k> top
+map <c-j> bottom
+map <c-z> glob-unselect *
+map J push 3j
+map K push 3k
+map <esc> minimise_lf
+map q minimise_lf
+map <c-q> quit
+
+# Special opener functions
+map og openwith gimp
+map ow openwith lowriter
+map od openwith lodraw
+map oc openwith localc
+map oi openwith loimpress
+map of openwith firefox
+map ov openwith vlc
+
+# Movement
+source ~/.local/share/lf/shortcuts
+
+# More functions
+map fmf mkfile
+map fmd mkdirectory 
+map fdc docconvert
+map fbr bulkrename
+map <c-f> nemo
+map s :fzf_jump
+map fem email
+map ffs filesize
+map fci copyimage
+map ffn copyfilename
+map fdn copydirectory
+map fau unpackarchive
+map faz zip
+map fat tar
+map fag targz
+map fab tarbz2
+map fea extractaudio
+map fgt grabtext
+map fnd neovimdiff
+map <c-t> terminal
+map fax addx
+map frx rmx
+map fmt movefiles
+map <backspace2> prevdir
+map <c-x> movefiles
+map fct copyfiles
+map <c-c> copyfiles
+map gyt youtube 
+map gus usb 

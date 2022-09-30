@@ -3,11 +3,10 @@ HOME = os.getenv("HOME")
 
 -- Global options (vim.o)
 vim.o.mouse = "a"
-vim.o.clipboard = "unnamedplus" -- copy/paste to system clipboard
+--vim.o.clipboard = "unnamedplus" -- copy/paste to system clipboard
+vim.o.clipboard = "" -- copy/paste to system clipboard
 vim.o.syntax = "enable" -- enable syntax highlighting
-vim.o.number = true -- show line number
-vim.o.showmatch = true -- highlight matching parenthesis
-vim.o.splitright = true -- vertical split to the right
+vim.o.rnu = true
 vim.o.splitbelow = true -- horizontal split to the bottom
 vim.o.ignorecase = true -- ignore case letters when search
 vim.o.smartcase = true -- ignore lowercase for the whole pattern
@@ -30,4 +29,3 @@ vim.cmd([[colorscheme nightfly]]) -- set colorscheme
 
 -- Remap leader
 vim.g.mapleader = " "
-

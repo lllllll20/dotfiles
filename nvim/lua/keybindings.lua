@@ -37,6 +37,12 @@ keymap("n", "J", "mzJ`z", default_opts)
 keymap("i", "<C-l>", "<Right>", default_opts)
 keymap("i", "<C-h>", "<Left>", default_opts)
 
+-- Keybindings - system clipboard
+keymap("", "<leader>p", "\"+p", default_opts)
+keymap("", "<leader>y", "\"+y", default_opts)
+keymap("", "<leader>d", "\"_d", default_opts)
+keymap("", "<leader>c", "\"_c", default_opts)
+
 -- Keybindings - quickfix
 keymap("", "<c-p>", ":cprev<CR>", default_opts)
 keymap("", "<c-n>", ":cnext<CR>", default_opts)

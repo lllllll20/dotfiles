@@ -2,7 +2,7 @@
 HOME = os.getenv("HOME")
 
 -- Global options (vim.o)
-vim.o.mouse = "a"
+vim.o.mouse = ""
 --vim.o.clipboard = "unnamedplus" -- copy/paste to system clipboard
 vim.o.clipboard = "" -- copy/paste to system clipboard
 vim.o.syntax = "enable" -- enable syntax highlighting

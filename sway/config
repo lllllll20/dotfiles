@@ -36,7 +36,7 @@ set $menu wofi --show run
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
 #output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 
-set $background ~/computing/wallpapers/"273.jpg"
+set $background ~/computing/wallpapers/"340.jpg"
 output * bg $background fill
 
 ### Lock screen
@@ -198,6 +198,7 @@ focus_follows_mouse no
 # Misc program rules
 
     for_window [app_id="nm-connection-editor"] floating enable
+    for_window [app_id="zoom"] floating enable
     for_window [app_id="udiskie"] floating enable, resize set width 1300 height 700
     for_window [app_id="blueman-manager"] floating enable
     for_window [title="Choose Application" app_id="firefox"] floating enable

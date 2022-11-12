@@ -175,9 +175,9 @@ focus_follows_mouse no
 
     assign [app_id="org.gnome.Nautilus"]: workspace number 6
     for_window [app_id="org.gnome.Nautilus"] focus
-    bindsym $mod+f exec ~/.config/sway/scripts/hideandfocus.sh nemo
+    bindsym $mod+f exec ~/.config/sway/scripts/hideandfocus.sh nautilus
     bindsym $mod+r exec localc ~/work_docs/ST5/"SpR rota Aug-Oct 2022.xlsx"
-    bindsym $mod+w exec nemo ~/work_docs/ST4/
+    bindsym $mod+w exec nautilus ~/work_docs/ST5/
 
     assign [app_id="org.gnome.World.Secrets"]: workspace number 7
     for_window [app_id="org.gnome.World.Secrets"] focus
@@ -188,9 +188,6 @@ focus_follows_mouse no
 
     assign [app_id="pavucontrol"]: workspace number 8
     for_window [app_id="pavucontrol"] focus
-
-    assign [app_id="CasterSoundboard"]: workspace number 8
-    for_window [app_id="CasterSoundboard"] focus
 
     assign [app_id="transmission-gtk"]: workspace number 8
     for_window [app_id="transmission-gtk"] focus

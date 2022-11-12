@@ -36,7 +36,7 @@ set $menu wofi --show run
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
 #output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 
-set $background ~/computing/wallpapers/"340.jpg"
+set $background ~/computing/wallpapers/"267.jpg"
 output * bg $background fill
 
 ### Lock screen
@@ -173,8 +173,8 @@ focus_follows_mouse no
     for_window [app_id="email"] focus
     bindsym $mod+Mod1+e exec ~/.config/sway/scripts/hideandfocus.sh "foot -a email neomutt"
 
-    assign [app_id="nemo"]: workspace number 6
-    for_window [app_id="nemo"] focus
+    assign [app_id="org.gnome.Nautilus"]: workspace number 6
+    for_window [app_id="org.gnome.Nautilus"] focus
     bindsym $mod+f exec ~/.config/sway/scripts/hideandfocus.sh nemo
     bindsym $mod+r exec localc ~/work_docs/ST5/"SpR rota Aug-Oct 2022.xlsx"
     bindsym $mod+w exec nemo ~/work_docs/ST4/
@@ -473,9 +473,9 @@ set $gnome-schema org.gnome.desktop.interface
 
 ## GTK settings
 exec_always {
-    gsettings set $gnome-schema gtk-theme 'Arc-Dark'
-    gsettings set $gnome-schema icon-theme 'Papirus-Dark'
-    gsettings set $gnome-schema cursor-theme 'Adwaita'
+    gsettings set $gnome-schema gtk-theme 'adw-gtk3-dark'
+    #gsettings set $gnome-schema icon-theme 'Adwaita'
+    #gsettings set $gnome-schema cursor-theme 'Adwaita'
     gsettings set $gnome-schema font-name 'Roboto 12'
     gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 }

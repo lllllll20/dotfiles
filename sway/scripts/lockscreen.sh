@@ -3,4 +3,4 @@
 export XDG_RUNTIME_DIR=/run/user/$(id -u)
 export WAYLAND_DISPLAY=wayland-1
 
-swaylock -u -i ~/computing/wallpapers/"323.jpg"
+swaylock -u -i ~/computing/wallpapers/"245.jpg"

@@ -41,8 +41,6 @@ output * bg $background fill
 
 ### Lock screen
 
-set $lock swaylock -u -i $background
-
 bindsym $mod+x exec ~/.config/sway/scripts/screentoggle.sh
 
 ### Idle configuration
@@ -55,7 +53,7 @@ bindsym $mod+x exec ~/.config/sway/scripts/screentoggle.sh
 #          before-sleep 'playerctl pause' \
 #          before-sleep 'swaylock -f -c 000000'
 
-# exec swayidle -w \
+exec swayidle -w
 #         timeout 300 "~/.config/sway/scripts/lockscreen.sh" \
 #         timeout 600 'swaymsg "output * dpms off"' \
 #         resume 'swaymsg "output * dpms on"' \

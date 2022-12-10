@@ -6,4 +6,4 @@ export XDG_RUNTIME_DIR
 export WAYLAND_DISPLAY
 
 playerctl pause
-swaylock -u -i ~/computing/wallpapers/"245.jpg"
+# swaylock -u -i ~/computing/wallpapers/"245.jpg"

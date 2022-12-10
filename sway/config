@@ -160,7 +160,6 @@ focus_follows_mouse no
 
     assign [app_id="mpv"]: workspace number 4
     for_window [app_id="mpv"] focus
-    bindsym $mod+backslash [app_id="mpv"] fullscreen
 
     assign [app_id="coding"]: workspace number 4
     for_window [app_id="coding"] focus
@@ -218,7 +217,7 @@ focus_follows_mouse no
     for_window [app_id="fc"] floating enable, resize set width 1300 height 700
 
     bindsym XF86Search exec ~/.config/sway/scripts/hidescratchpad.sh "foot -a fc searchandopen.sh"
-    bindsym $mod+F1 exec ~/.config/sway/scripts/hidescratchpad.sh "foot -a fc searchandopen.sh"
+    bindsym $mod+backslash exec ~/.config/sway/scripts/hidescratchpad.sh "foot -a fc searchandopen.sh"
 
     bindsym $mod+n exec ~/.config/sway/scripts/hidescratchpad.sh "foot -a fc opennote.sh"
     

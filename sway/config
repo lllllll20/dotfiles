@@ -49,12 +49,18 @@ bindsym $mod+x exec ~/.config/sway/scripts/screentoggle.sh
 #
 # Example configuration:
 #
-exec swayidle -w \
-         before-sleep 'playerctl pause' \
-         timeout 300 'swaylock -f -c 000000' \
-         timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
-         before-sleep 'swaylock -f -c 000000'
+# exec swayidle -w \
+#          before-sleep 'playerctl pause' \
+#          timeout 300 'swaylock -f -c 000000' \
+#          timeout 600 'swaymsg "output * dpms off"' resume 'swaymsg "output * dpms on"' \
+#          before-sleep 'swaylock -f -c 000000'
 #
+exec swayidle -w \
+        timeout 300 "$lock" \
+        timeout 600 'swaymsg "output * dpms off"' \
+        resume 'swaymsg "output * dpms on"' \
+        before-sleep "~/.config/sway/scripts/lockscreen.sh"
+
 # This will lock your screen after 300 seconds of inactivity, then turn off
 # your displays after another 300 seconds, and turn your screens back on when
 # resumed. It will also lock your screen before your computer goes to sleep.
@@ -410,8 +416,10 @@ mode "poweropts" {
 #
 # Appearance
 #
-    gaps inner 10
-    gaps outer 5
+    #gaps inner 10
+    gaps inner 0
+    #gaps outer 5
+    gaps outer 0
     font pango:monospace 0
     titlebar_border_thickness 0
     titlebar_padding 0

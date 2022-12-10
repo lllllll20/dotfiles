@@ -56,7 +56,7 @@ bindsym $mod+x exec ~/.config/sway/scripts/screentoggle.sh
 #          before-sleep 'swaylock -f -c 000000'
 #
 exec swayidle -w \
-        timeout 300 "$lock" \
+        timeout 300 "~/.config/sway/scripts/lockscreen.sh" \
         timeout 600 'swaymsg "output * dpms off"' \
         resume 'swaymsg "output * dpms on"' \
         before-sleep "~/.config/sway/scripts/lockscreen.sh"

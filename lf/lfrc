@@ -27,13 +27,14 @@ cmd open ${{
     done
     if (( ${#myfiles[@]} > 0 )); then
     #setsid -f foot -a footws2 nvim "${myfiles[@]}" >/dev/null 2>&1
-	    if wlrctl window focus "neovim" == true;
-	    then
-            nvim --server /tmp/nvim.pipe --remote "${myfiles[@]}" >/dev/null 2>&1
-        else
-            setsid -f foot -a neovim nvim --listen /tmp/nvim.pipe "${myfiles[@]}" >/dev/null 2>&1
-        fi
+	    #if wlrctl window focus "neovim" == true;
+	    #then
+            #nvim --server /tmp/nvim.pipe --remote "${myfiles[@]}" >/dev/null 2>&1
+        #else
+            #setsid -f foot -a neovim nvim --listen /tmp/nvim.pipe "${myfiles[@]}" >/dev/null 2>&1
+        #fi
     # swaymsg workspace 2
+      emacsclient -c -a emacs "${myfiles[@]}" >/dev/null 2>&1
     fi
 }}
 
@@ -102,12 +103,13 @@ cmd mkfile ${{
   IFS=
   read -rp "File Name: "
   swaymsg scratchpad show
-  if wlrctl window focus "neovim" == true;
-  then
-    nvim --server /tmp/nvim.pipe --remote "${PWD}"/"${REPLY}" >/dev/null 2>&1
-  else
-    setsid -f foot -a neovim nvim --listen /tmp/nvim.pipe "${PWD}"/"${REPLY}" >/dev/null 2>&1
-  fi
+  #if wlrctl window focus "neovim" == true;
+  #then
+    #nvim --server /tmp/nvim.pipe --remote "${PWD}"/"${REPLY}" >/dev/null 2>&1
+  #else
+    #setsid -f foot -a neovim nvim --listen /tmp/nvim.pipe "${PWD}"/"${REPLY}" >/dev/null 2>&1
+  #fi
+  setsid -f emacsclient -c -a emacs "${PWD}"/"${REPLY}" >/dev/null 2>&1
   unset IFS
 }}
 
@@ -190,10 +192,10 @@ cmd grabtext ${{
 
 }}
 
-cmd nemo ${{
+cmd nautilus ${{
   sway scratchpad show
   name=$(pwd)  
-  setsid -f nemo "${name}" >/dev/null 2>&1
+  setsid -f nautilus "${name}" >/dev/null 2>&1
 }}
 
 cmd terminal ${{
@@ -403,7 +405,7 @@ map fmf mkfile
 map fmd mkdirectory 
 map fdc docconvert
 map fbr bulkrename
-map <c-f> nemo
+map <c-f> nautilus
 map s :fzf_jump
 map fem email
 map ffs filesize

@@ -185,7 +185,9 @@ focus_follows_mouse no
     assign [app_id="org.gnome.World.Secrets"]: workspace number 7
     for_window [app_id="org.gnome.World.Secrets"] focus
     bindsym $mod+p exec ~/.config/sway/scripts/hideandfocus.sh secrets
-
+    
+    bindsym $mod+o exec emacsclient -c -a emacs
+    
     assign [app_id="ghb"]: workspace number 8
     for_window [app_id="ghb"] focus
 
@@ -467,9 +469,10 @@ exec udiskie
 exec playerctl daemon
 exec mako
 exec mpDris2
-exec_always nm-applet --indicator
-exec_always blueman-applet
-exec_always ~/.config/sway/scripts/autostart.sh
+exec nm-applet --indicator
+exec blueman-applet
+exec ~/.config/sway/scripts/autostart.sh
+exec emacs --daemon
 
 
 set $gnome-schema org.gnome.desktop.interface

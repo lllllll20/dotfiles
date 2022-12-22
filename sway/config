@@ -471,7 +471,7 @@ exec mako
 exec mpDris2
 exec nm-applet --indicator
 exec blueman-applet
-exec ~/.config/sway/scripts/autostart.sh
+exec_always ~/.config/sway/scripts/autostart.sh
 exec emacs --daemon
 
 

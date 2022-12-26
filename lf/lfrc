@@ -1,10 +1,10 @@
-# Basic Settings
 set preview false 
 #Set previewer ~/scripts/preview.sh
 #set previewer pistol
 set drawbox true
 set ignorecase true
 set icons
+# Basic Settings
 
 # Custom Functions
 
@@ -34,7 +34,7 @@ cmd open ${{
             #setsid -f foot -a neovim nvim --listen /tmp/nvim.pipe "${myfiles[@]}" >/dev/null 2>&1
         #fi
     # swaymsg workspace 2
-      emacsclient -c -a emacs "${myfiles[@]}" >/dev/null 2>&1
+      setsid -f emacsclient -c -a emacs "${myfiles[@]}" >/dev/null 2>&1
     fi
 }}
 

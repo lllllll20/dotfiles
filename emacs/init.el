@@ -1,6 +1,16 @@
 ;; -*- mode: elisp -*-
 
+;;start the server
 (server-start)
+
+;; MELPA
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+;; Comment/uncomment this line to enable MELPA Stable if desired.  See `package-archive-priorities`
+;; and `package-pinned-packages`. Most users will not need or want to do this.
+;;(add-to-list 'package-archives '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+(package-initialize)
+
 
 ;; Disable the splash screen (to enable it again, replace the t with 0)
 (setq inhibit-splash-screen 0)
@@ -60,3 +70,11 @@
       :config
       (setq ivy-use-virtual-buffers t
             ivy-count-format "%d/%d "))
+(put 'erase-buffer 'disabled nil)
+
+;; Dired - Hide hidden files
+  (use-package dired-hide-dotfiles
+    :hook
+    (dired-mode . dired-hide-dotfiles-mode)
+    :bind
+    (:map dired-mode-map ("." . dired-hide-dotfiles-mode)))

@@ -94,7 +94,7 @@ keymap("t", "<F7>", "<cmd>lua mycloseterm()<CR>", default_opts)
 keymap("n", "<F7>", "<cmd>lua mycloseterm()<CR>", default_opts)
 
 -- formatter
-keymap("n", "<F5>", "<Cmd>lua vim.lsp.buf.formatting()<CR>", default_opts)
+keymap("n", "<F5>", "<Cmd>lua vim.lsp.buf.format({ async = true })<CR>", default_opts)
 
 -- Keybindings - buffers
 keymap("n", "<leader>ls", "<cmd>lua Changebuf()<CR>", default_opts)

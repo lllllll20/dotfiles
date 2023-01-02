@@ -41,7 +41,7 @@ output * bg $background fill
 
 ### Lock screen
 
-bindsym $mod+x exec ~/.config/sway/scripts/screentoggle.sh
+#bindsym $mod+x exec ~/.config/sway/scripts/screentoggle.sh
 
 ### Idle configuration
 #

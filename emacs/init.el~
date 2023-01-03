@@ -14,9 +14,8 @@
 (unless package-archive-contents
   (package-refresh-contents))
 
-;; what is this?? - required to auto install packages
-(unless (package-installed-p 'use-package)
-   (package-install 'use-package))
+(require 'use-package)
+(setq use-package-always-ensure t)
 
 (require 'use-package)
 (setq use-package-always-ensure t)
@@ -42,8 +41,25 @@
 (global-set-key "\C-cl" 'org-store-link)
 (global-set-key "\C-ca" 'org-agenda)
 
-(use-package doom-themes
-  :init (load-theme 'doom-dracula t))
+
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(custom-enabled-themes '(dracula))
+ '(custom-safe-themes
+   '("fe1c13d75398b1c8fd7fdd1241a55c286b86c3e4ce513c4292d01383de152cb7" default))
+ '(org-agenda-files '("/home/iain/notes/quick_notes.org"))
+ '(package-selected-packages
+   '(projectile dired-hide-dotfiles ivy counsel dracula-theme org-modern)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:family "Liberation Sans" :foundry "1ASC" :slant normal :weight normal :height 158 :width normal)))))
+
 
 ;; Set keyboard shortcuts
 
@@ -67,11 +83,11 @@
 (put 'erase-buffer 'disabled nil)
 
 ;; Dired - Hide hidden files
-(use-package dired-hide-dotfiles
-  :hook
-  (dired-mode . dired-hide-dotfiles-mode)
-  :bind
-  (:map dired-mode-map ("." . dired-hide-dotfiles-mode)))
+  (use-package dired-hide-dotfiles
+    :hook
+    (dired-mode . dired-hide-dotfiles-mode)
+    :bind
+    (:map dired-mode-map ("." . dired-hide-dotfiles-mode)))
 
 (use-package projectile
   :diminish projectile-mode

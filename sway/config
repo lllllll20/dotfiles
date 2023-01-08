@@ -186,7 +186,7 @@ focus_follows_mouse no
     for_window [app_id="org.gnome.World.Secrets"] focus
     bindsym $mod+p exec ~/.config/sway/scripts/hideandfocus.sh secrets
     
-    bindsym $mod+o exec emacsclient -c -e org-capture -a emacs
+    bindsym $mod+o exec emacsclient -c -a emacs
     
     assign [app_id="ghb"]: workspace number 8
     for_window [app_id="ghb"] focus
@@ -234,7 +234,7 @@ focus_follows_mouse no
     bindsym $mod+Mod1+i exec ~/.config/sway/scripts/hidescratchpad.sh "foot -a fc insertfile.sh"
     
 
-    bindsym $mod+c exec emacs -f org-capture
+    bindsym $mod+c exec emacsclient -c -e "(org-capture)" -a emacs
 
 ### Run scripts
 

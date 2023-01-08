@@ -36,7 +36,7 @@ set $menu wofi --show run
 # Default wallpaper (more resolutions are available in /usr/share/backgrounds/sway/)
 #output * bg /usr/share/backgrounds/sway/Sway_Wallpaper_Blue_1920x1080.png fill
 
-set $background ~/computing/wallpapers/"245.jpg"
+set $background ~/computing/wallpapers/"110.jpg"
 output * bg $background fill
 
 ### Lock screen
@@ -186,7 +186,7 @@ focus_follows_mouse no
     for_window [app_id="org.gnome.World.Secrets"] focus
     bindsym $mod+p exec ~/.config/sway/scripts/hideandfocus.sh secrets
     
-    bindsym $mod+o exec emacsclient -c -a emacs
+    bindsym $mod+o exec emacsclient -c -e org-capture -a emacs
     
     assign [app_id="ghb"]: workspace number 8
     for_window [app_id="ghb"] focus
@@ -234,7 +234,7 @@ focus_follows_mouse no
     bindsym $mod+Mod1+i exec ~/.config/sway/scripts/hidescratchpad.sh "foot -a fc insertfile.sh"
     
 
-    bindsym $mod+c exec ~/scripts/launchers/coding.sh 
+    bindsym $mod+c exec emacs -f org-capture
 
 ### Run scripts
 
@@ -423,7 +423,8 @@ mode "poweropts" {
     gaps inner 0
     #gaps outer 5
     gaps outer 0
-    font pango:monospace 0
+    default_border pixel 2
+    #font pango:monospace 0
     titlebar_border_thickness 0
     titlebar_padding 0
 

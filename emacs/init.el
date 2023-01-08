@@ -54,8 +54,12 @@
 (setq org-default-notes-file "~/notes/quick_notes.org")
 
 (setq org-capture-templates
-      '(("n" "Quick Note" entry (file org-default-notes-file)
-	 "* %?" :empty-lines 1)))
+      '(("n" "Quick Note" entry
+	 (file org-default-notes-file)
+	 "* %?" :empty-lines 1)
+	("r" "Recipe" entry
+	 (file+headline "~/notes/My notes/General cooking.org" "Recipes to try")
+	 "** %?\n")))
 
 ;; Ivy
 (ivy-mode 1)
@@ -87,3 +91,16 @@
 
 (use-package counsel-projectile
   :config (counsel-projectile-mode))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(use-package doom-themes dired-hide-dotfiles counsel-projectile)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

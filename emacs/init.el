@@ -22,8 +22,15 @@
 (setq use-package-always-ensure t)
 
 
-;; Disable the splash screen (to enable it again, replace the t with 0)
-(setq inhibit-splash-screen 0)
+;; Visuals 
+(setq inhibit-splash-screen 0) ;Disable the splash screen (to enable it again, replace the t with 0)
+(scroll-bar-mode -1) ; Disable visible scroll bar
+(tool-bar-mode -1) ; Disable toolbar
+(tooltip-mode -1)  ; Disable tooltips
+(set-fringe-mode 10)
+(menu-bar-mode -1)
+
+(set-face-attribute 'default nil :font "Hack" :height 120)
 
 ;; Enable transient mark mode
 (transient-mark-mode 1)
@@ -43,7 +50,7 @@
 (global-set-key "\C-ca" 'org-agenda)
 
 (use-package doom-themes
-  :init (load-theme 'doom-dracula t))
+  :init (load-theme 'doom-gruvbox t))
 
 ;; Set keyboard shortcuts
 
@@ -56,10 +63,13 @@
 (setq org-capture-templates
       '(("n" "Quick Note" entry
 	 (file org-default-notes-file)
-	 "* %?" :empty-lines 1)
+	 "* %?\n %i" :empty-lines 1)
 	("r" "Recipe" entry
 	 (file+headline "~/notes/My notes/General cooking.org" "Recipes to try")
-	 "** %?\n")))
+	 "** %?\n")
+	("j" "Journal entry" entry
+	 (file+datetree "~/notes/journal.org")
+	 "**** %U %^{Title}\n %?" :empty-lines 1)))
 
 ;; Ivy
 (ivy-mode 1)
@@ -77,6 +87,20 @@
   :bind
   (:map dired-mode-map ("." . dired-hide-dotfiles-mode)))
 
+;; Dired - Store backups
+(setq
+   backup-by-copying t      ; don't clobber symlinks
+   backup-directory-alist
+    '(("." . "~/.backups/"))    ; don't litter my fs tree
+   delete-old-versions t
+   kept-new-versions 6
+   kept-old-versions 2
+   version-control t)       ; use versioned backups
+
+;; Avoid lock files
+(setq create-lockfiles nil)
+
+
 (use-package projectile
   :diminish projectile-mode
   :config (projectile-mode)
@@ -91,16 +115,5 @@
 
 (use-package counsel-projectile
   :config (counsel-projectile-mode))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(use-package doom-themes dired-hide-dotfiles counsel-projectile)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
+
+

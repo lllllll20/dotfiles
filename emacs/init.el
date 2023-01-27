@@ -71,15 +71,10 @@
 
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
-
-
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
 
-(use-package ivy-rich
-  :init
-  (ivy-rich-mode 1))
-
+(use-package all-the-icons)
 
 ;; org-capture notes
 
@@ -116,6 +111,9 @@
 
 (put 'erase-buffer 'disabled nil) ; what does this do?
 
+(use-package ivy-rich
+  :init
+  (ivy-rich-mode 1))
 
 (use-package helpful
   :custom
@@ -170,16 +168,116 @@
   :custom ((doom-modeline-height 15)))
 
 
+;; Custom functions
+
+(defun me/counsel-notes ()
+      "list everything recursively"
+      (interactive)
+      (let* ((cands (split-string
+                     (shell-command-to-string "find ~/notes -type f") "\n" t)))
+        (ivy-read "File: " cands
+                  :action #'find-file
+                  :caller 'me/counsel-notes)))
+
+(defun me/batch-open-rad-notes ()
+(mapc #'find-file-noselect
+      (directory-files-recursively "~/notes/Radiology notes/" "")))
+
+
+;(defun me/gdl ()
+;  (interactive)
+;  (dired "~/downloads")) 
+
+
+
+;; Key bindings
+
+;(global-set-key (kbd "C-M-j") 'counsel-switch-buffer)
+;(define-key dired-mode-map (kbd "C-c gdl") 'me/gdl) 
+;(global-set-key (kbd "C-c gdl") 'me/gdl) 
+
+(global-set-key (kbd "C-c gh") (lambda () (interactive) (dired "~/"))) 
+(global-set-key (kbd "C-c gtr") (lambda () (interactive) (dired "~/.local/share/Trash/files"))) 
+(global-set-key (kbd "C-c gdl") (lambda () (interactive) (dired "~/downloads")))
+(global-set-key (kbd "C-c gco") (lambda () (interactive) (dired "~/computing")))
+(global-set-key (kbd "C-c ggh") (lambda () (interactive) (dired "~/computing/git/")))
+(global-set-key (kbd "C-c ggd") (lambda () (interactive) (dired "~/computing/git/dotfiles/")))
+(global-set-key (kbd "C-c gmd") (lambda () (interactive) (dired "~/my_docs")))
+(global-set-key (kbd "C-c gfn") (lambda () (interactive) (dired "~/my_docs/financial/")))
+(global-set-key (kbd "C-c gta") (lambda () (interactive) (dired "~/my_docs/financial/Tax")))
+(global-set-key (kbd "C-c gps") (lambda () (interactive) (dired "~/my_docs/financial/Payslips")))
+(global-set-key (kbd "C-c gwd") (lambda () (interactive) (dired "~/work_docs")))                                
+(global-set-key (kbd "C-c gvi") (lambda () (interactive) (dired "~/media/videos")))                             
+(global-set-key (kbd "C-c gtt") (lambda () (interactive) (dired "~/media/videos/tutorials")))                   
+(global-set-key (kbd "C-c gph") (lambda () (interactive) (dired "~/media/photos")))                             
+(global-set-key (kbd "C-c gwp") (lambda () (interactive) (dired "~/media/pictures/wallpapers")))                
+(global-set-key (kbd "C-c g.c") (lambda () (interactive) (dired "~/.config")))                                  
+(global-set-key (kbd "C-c gmu") (lambda () (interactive) (dired "~/media/music")))                              
+(global-set-key (kbd "C-c gpi") (lambda () (interactive) (dired "~/media/pictures")))                           
+(global-set-key (kbd "C-c gtv") (lambda () (interactive) (dired "~/media/TV")))                                 
+(global-set-key (kbd "C-c gfi") (lambda () (interactive) (dired "~/media/Films")))                              
+(global-set-key (kbd "C-c gws") (lambda () (interactive) (dired "~/media/websites")))                           
+(global-set-key (kbd "C-c gsc") (lambda () (interactive) (dired "~/scripts")))                                  
+(global-set-key (kbd "C-c ggs") (lambda () (interactive) (dired "~/computing/git/scripts/")))                   
+(global-set-key (kbd "C-c g.t") (lambda () (interactive) (dired "~/.test")))                                    
+(global-set-key (kbd "C-c gme") (lambda () (interactive) (dired "~/media")))                                    
+(global-set-key (kbd "C-c grm") (lambda () (interactive) (dired "/run/media/")))                                
+(global-set-key (kbd "C-c gpm") (lambda () (interactive) (dired "~/phone_media")))                              
+(global-set-key (kbd "C-c goc") (lambda () (interactive) (dired "~/work_docs/Oncall")))                         
+(global-set-key (kbd "C-c gst") (lambda () (interactive) (dired "~/work_docs/ST5")))                            
+(global-set-key (kbd "C-c gtb") (lambda () (interactive) (dired "~/work_docs/Reading/Textbooks")))              
+(global-set-key (kbd "C-c g2b") (lambda () (interactive) (dired "~/work_docs/Reading/Textbooks/Exam/2b")))      
+(global-set-key (kbd "C-c gwg") (lambda () (interactive) (dired "~/work_docs/Reading/Guidelines/Ghali_UHW")))   
+(global-set-key (kbd "C-c gss") (lambda () (interactive) (dired "~/media/pictures/screenshots")))               
+(global-set-key (kbd "C-c gsi") (lambda () (interactive) (dired "~/media/pictures/saved_images")))              
+(global-set-key (kbd "C-c gbf") (lambda () (interactive) (dired "~/media/Books/fiction")))                      
+(global-set-key (kbd "C-c gbn") (lambda () (interactive) (dired "~/media/Books/non_fiction")))                  
+(global-set-key (kbd "C-c gbo") (lambda () (interactive) (dired "~/media/Books/")))                             
+(global-set-key (kbd "C-c gvn") (lambda () (interactive) (dired "~/media/videos/new")))                         
+(global-set-key (kbd "C-c gvl") (lambda () (interactive) (dired "~/media/videos/library")))                     
+(global-set-key (kbd "C-c gvi") (lambda () (interactive) (dired "~/media/videos")))                             
+(global-set-key (kbd "C-c gws") (lambda () (interactive) (dired "~/media/websites/")))                          
+(global-set-key (kbd "C-c gtp") (lambda () (interactive) (dired "~/computing/templates")))                      
+(global-set-key (kbd "C-c g.l") (lambda () (interactive) (dired "~/.local")))                                   
+(global-set-key (kbd "C-c gen") (lambda () (interactive) (dired "~/.test/envs")))                               
+(global-set-key (kbd "C-c gts") (lambda () (interactive) (dired "~/.test/scripts/")))                           
+(global-set-key (kbd "C-c glt") (lambda () (interactive) (dired "~/computing/laptop")))                         
+(global-set-key (kbd "C-c gdt") (lambda () (interactive) (dired "~/computing/desktop")))                        
+(global-set-key (kbd "C-c gy1") (lambda () (interactive) (dired "~/work_docs/ST1")))                            
+(global-set-key (kbd "C-c gy2") (lambda () (interactive) (dired "~/work_docs/ST2")))                            
+(global-set-key (kbd "C-c gy3") (lambda () (interactive) (dired "~/work_docs/ST3")))                            
+(global-set-key (kbd "C-c gy4") (lambda () (interactive) (dired "~/work_docs/ST4")))                            
+(global-set-key (kbd "C-c gcp") (lambda () (interactive) (dired "~/.test/cprog")))                              
+(global-set-key (kbd "C-c gsf") (lambda () (interactive) (dired "~/.shellfunctions")))                          
+(global-set-key (kbd "C-c gnn") (lambda () (interactive) (dired "~/notes")))
+(global-set-key (kbd "C-c gwr") (lambda () (interactive) (dired "~/work_docs/ST4/Rota")))
+(global-set-key (kbd "C-c gja") (lambda () (interactive) (dired "~/work_docs/Reading/Journal articles/")))
+(global-set-key (kbd "C-c gba") (lambda () (interactive) (dired "~/.local/share/lf")))
+(global-set-key (kbd "C-c gnv") (lambda () (interactive) (dired "~/.config/nvim")))
+(global-set-key (kbd "C-c gpp") (lambda () (interactive) (dired "~/.local/share/nvim/site/pack/packer/start/")))
+(global-set-key (kbd "C-c gse") (lambda () (interactive) (dired "/etc/))")))
+
+
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+(global-set-key (kbd "<C-M-left>") 'previous-buffer)
+(global-set-key (kbd "<C-M-right>") 'next-buffer)
+
+
+
+
+
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(rainbow-delimiters ivy-rich helpful which-key doom-modeline use-package shrink-path doom-themes dired-hide-dotfiles counsel-projectile compat)))
+   '(all-the-icons-ivy-rich all-the-icons rainbow-delimiters ivy-rich helpful which-key doom-modeline use-package shrink-path doom-themes dired-hide-dotfiles counsel-projectile compat)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
+(put 'dired-find-alternate-file 'disabled nil)

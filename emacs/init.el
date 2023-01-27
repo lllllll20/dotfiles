@@ -261,6 +261,7 @@
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (global-set-key (kbd "<C-M-left>") 'previous-buffer)
 (global-set-key (kbd "<C-M-right>") 'next-buffer)
+(global-set-key (kbd "C-c n") 'me/counsel-notes)
 
 
 

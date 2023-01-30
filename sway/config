@@ -179,7 +179,8 @@ focus_follows_mouse no
     assign [app_id="org.gnome.Nautilus"]: workspace number 6
     for_window [app_id="org.gnome.Nautilus"] focus
     bindsym $mod+f exec ~/.config/sway/scripts/hideandfocus.sh nautilus
-    bindsym $mod+r exec localc ~/work_docs/ST5/Rota/"SpR final rota Nov 22-Jan 23.xlsx"
+    bindsym $mod+r exec localc ~/work_docs/ST5/Rota/"SpR rota from Feb.xlsx"
+    bindsym $mod+Mod1+r exec localc ~/work_docs/ST5/Rota/"Registrar ultrasound rota updated.xlsx"
     bindsym $mod+w exec nautilus ~/work_docs/ST5/
 
     assign [app_id="org.gnome.World.Secrets"]: workspace number 7

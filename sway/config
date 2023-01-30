@@ -384,7 +384,7 @@ mode "resize" {
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
-    bindsym $mod+Mod1+r mode "resize"
+    bindsym $mod+Control+r mode "resize"
 
 mode "mediacontrols" {
     bindsym p exec playerctl play-pause

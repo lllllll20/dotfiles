@@ -221,7 +221,7 @@ focus_follows_mouse no
 
     bindsym $mod+Control+n exec emacsclient -c -e \"(me/batch-open-rad-notes)\" -a emacs
     
-    bindsym $mod+n exec emacsclient -c -e \"(me/counsel-notes)\" -a emacs
+    bindsym $mod+n exec emacsclient -c -e \"(me/vertico-notes)\" -a emacs
     
     bindsym $mod+v exec ~/.config/sway/scripts/hidescratchpad.sh "scratchbuffer.sh"
 

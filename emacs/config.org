@@ -262,22 +262,6 @@
   
 #+end_src
 
-* Helpful
-
-#+begin_src emacs-lisp
-
-(use-package helpful
-  :custom
-  (counsel-describe-function-function #'helpful-callable)
-  (counsel-describe-variable-function #'helpful-variable)
-  :bind
-  ([remap describe-function] . counsel-describe-function)
-  ([remap describe-command] . helpful-command)
-  ([remap describe-variable] . counsel-describe-variable)
-  ([remap describe-key] . helpful-key))
-  
-#+end_src
-
 * Dired
 
 #+begin_src emacs-lisp
@@ -557,7 +541,7 @@
     (global-set-key (kbd "C-x C-b") 'ibuffer)
     (global-set-key (kbd "<C-M-left>") 'previous-buffer)
     (global-set-key (kbd "<C-M-right>") 'next-buffer)
-    (global-set-key (kbd "C-c n") #'me/counsel-notes)
+    (global-set-key (kbd "C-c n") #'me/vertico-notes)
     ;(global-set-key (kbd "C-.") 'other-window)
 
 #+end_src

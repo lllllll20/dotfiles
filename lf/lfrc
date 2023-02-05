@@ -396,6 +396,7 @@ map oc openwith localc
 map oi openwith loimpress
 map of openwith firefox
 map ov openwith vlc
+map om openwith celluloid
 
 # Movement
 source ~/.local/share/lf/shortcuts

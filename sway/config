@@ -464,6 +464,7 @@ bar {
     }
 
 # Autostart
+exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY WAYSOCK
 exec wl-paste -t text --watch clipman store --no-persist
 #exec ~/.config/sway/scripts/gotoprev.sh
 exec ~/.config/sway/scripts/onclose.py
@@ -476,7 +477,7 @@ exec nm-applet --indicator
 exec blueman-applet
 exec_always ~/.config/sway/scripts/autostart.sh
 exec emacs --daemon
-exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY WAYSOCK
+
 
 
 set $gnome-schema org.gnome.desktop.interface

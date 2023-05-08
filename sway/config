@@ -476,6 +476,7 @@ exec nm-applet --indicator
 exec blueman-applet
 exec_always ~/.config/sway/scripts/autostart.sh
 exec emacs --daemon
+exec dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY WAYSOCK
 
 
 set $gnome-schema org.gnome.desktop.interface

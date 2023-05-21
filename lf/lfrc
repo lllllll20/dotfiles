@@ -1,9 +1,10 @@
-set preview false 
+#set preview true 
 #Set previewer ~/scripts/preview.sh
 #set previewer pistol
 set drawbox true
 set ignorecase true
 set icons
+set cursorpreviewfmt "\033[7m"
 # Basic Settings
 
 # Custom Functions

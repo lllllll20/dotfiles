@@ -480,7 +480,7 @@
   (defun me/show-in-lf ()
   "Shows the current file in the lf file browser"
   (interactive)
-  (shell-command (concat "lf -remote \"send select " (buffer-file-name) "\""))
+  (shell-command (concat "lf -remote \"send select '" (buffer-file-name) "'\""))
   (start-process "showinlf" nil "/home/iain/.config/sway/scripts/togglefiles.sh" ""))
 
 

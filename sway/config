@@ -18,7 +18,7 @@ set $term foot
 # Your preferred application launcher
 # Note: pass the final command to swaymsg so that the resulting window can be opened
 # on the original workspace that the command was run on.
-set $menu wofi --show run
+set $menu wofi --show
 
 
 ### Output configuration
@@ -113,7 +113,7 @@ focus_follows_mouse no
     bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
     bindsym XF86MonBrightnessUp   exec brightnessctl set +5%
 
-
+    focus_on_window_activation focus
 
     # Load scratchpad programs
     

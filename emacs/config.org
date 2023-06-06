@@ -483,7 +483,20 @@
   (shell-command (concat "lf -remote \"send select '" (buffer-file-name) "'\""))
   (start-process "showinlf" nil "/home/iain/.config/sway/scripts/togglefiles.sh" ""))
 
+  (defun me/dired-open-file ()
+  "In dired, open the file named on this line."
+  (interactive)
+  (let* ((file (dired-get-filename nil t)))
+    (message "Opening %s..." file)
+    (call-process "xdg-open" nil 0 nil file)
+    (message "Opening %s done" file)))
 
+(add-hook 'dired-mode-hook
+          (lambda () (local-set-key (kbd "C-<return>") #'me/dired-open-file)))
+
+
+
+  
   ;(defun me/gdl ()
   ;  (interactive)
   ;  (dired "~/downloads")) 

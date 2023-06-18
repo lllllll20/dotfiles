@@ -481,7 +481,7 @@
     "Shows the current file in the lf file browser"
     (interactive)
     (shell-command (concat "lf -remote \"send select '" (buffer-file-name) "'\""))
-    (start-process "showinlf" nil "/home/iain/.config/sway/scripts/togglefiles.sh" ""))
+    (start-process "showinlf" nil "~/.config/sway/scripts/togglefiles.sh" ""))
 
     (defun me/dired-open-file ()
     "In dired, open the file named on this line."
@@ -502,7 +502,7 @@
           "list everything recursively"
           (interactive)
           (let* ((cands (split-string
-                         (shell-command-to-string "/home/iain/scripts/system/findallfiles.sh") "\n" t)))
+                         (shell-command-to-string "~/scripts/system/findallfiles.sh") "\n" t)))
             (let* ((file (completing-read "File: " cands)))
 	      (let ((filetype (mailcap-file-name-to-mime-type file)))
 		(if (or (string-equal filetype "application/vnd.lotus-organizer") (string-equal filetype "nil"))

@@ -35,7 +35,7 @@ cmd open ${{
             #setsid -f foot -a neovim nvim --listen /tmp/nvim.pipe "${myfiles[@]}" >/dev/null 2>&1
         #fi
     # swaymsg workspace 2
-      setsid -f emacsclient -c -a emacs "${myfiles[@]}" >/dev/null 2>&1
+      setsid -f emacsclient -r -a emacs "${myfiles[@]}" >/dev/null 2>&1
     fi
 }}
 
@@ -110,7 +110,7 @@ cmd mkfile ${{
   #else
     #setsid -f foot -a neovim nvim --listen /tmp/nvim.pipe "${PWD}"/"${REPLY}" >/dev/null 2>&1
   #fi
-  setsid -f emacsclient -c -a emacs "${PWD}"/"${REPLY}" >/dev/null 2>&1
+  setsid -f emacsclient -r -a emacs "${PWD}"/"${REPLY}" >/dev/null 2>&1
   unset IFS
 }}
 

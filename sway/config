@@ -135,6 +135,10 @@ focus_follows_mouse no
     for_window [app_id="firefox"] focus
     bindsym $mod+b exec ~/.config/sway/scripts/hideandfocus.sh firefox
     bindsym $mod+shift+b exec ~/.config/sway/scripts/hidescratchpad.sh "firefox --private-window"
+
+    bindsym $mod+o exec emacsclient -r -a emacs
+    assign [app_id="emacs"]: workspace number 2
+    for_window [app_id="emacs"] focus
     
     assign [app_id="neovim"]: workspace number 2
     for_window [app_id="neovim"] focus
@@ -186,8 +190,6 @@ focus_follows_mouse no
     assign [app_id="org.gnome.World.Secrets"]: workspace number 7
     for_window [app_id="org.gnome.World.Secrets"] focus
     bindsym $mod+p exec ~/.config/sway/scripts/hideandfocus.sh secrets
-    
-    bindsym $mod+o exec emacsclient -c -a emacs
     
     assign [app_id="ghb"]: workspace number 8
     for_window [app_id="ghb"] focus

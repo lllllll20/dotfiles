@@ -335,6 +335,9 @@ focus_follows_mouse no
     # Make the current focus fullscreen
     bindsym $mod+period fullscreen
 
+    bindsym $mod+Shift+period default_border pixel 2
+    bindsym $mod+Shift+comma default_border pixel 0
+
     # Toggle the current focus between tiling and floating mode
     bindsym $mod+Shift+f floating toggle
 
@@ -421,7 +424,7 @@ mode "poweropts" {
     gaps inner 0
     #gaps outer 5
     gaps outer 0
-    default_border pixel 2
+    default_border pixel 0
     #font pango:monospace 0
     titlebar_border_thickness 0
     titlebar_padding 0

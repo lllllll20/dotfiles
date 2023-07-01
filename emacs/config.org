@@ -31,10 +31,9 @@
   (require 'use-package)
   (setq use-package-always-ensure t)
 
-  ;; what is this?? - required to auto install packages
   (unless (package-installed-p 'use-package)
     (package-install 'use-package))
-  
+
 #+end_src
 
 * User interface

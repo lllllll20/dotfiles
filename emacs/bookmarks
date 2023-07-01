@@ -1,0 +1,58 @@
+;;;; Emacs Bookmark Format Version 1;;;; -*- coding: utf-8-emacs; mode: lisp-data -*-
+;;; This format is meant to be slightly human-readable;
+;;; nevertheless, you probably don't want to edit it.
+;;; -*- End Of Bookmark File Format Version Stamp -*-
+(("manual"
+ (front-context-string . "\n1.1 Lisp Lists\n")
+ (rear-context-string . "List Processing\n")
+ (position . 32749)
+ (filename . "/usr/share/info/eintr")
+ (info-node . "Lisp Lists")
+ (handler . Info-bookmark-jump))
+("init.el"
+ (filename . "~/computing/git/dotfiles/emacs/config.org")
+ (front-context-string . "#+title Emacs Co")
+ (rear-context-string)
+ (position . 1))
+("todo"
+ (filename . "~/notes/todo.org")
+ (front-context-string . "* Work\n\n\n\n\n* Per")
+ (rear-context-string)
+ (position . 1))
+("ideas"
+ (filename . "~/notes/ideas.org")
+ (front-context-string)
+ (rear-context-string . "\n\n\n\n* Gift ideas")
+ (position . 53))
+("journal"
+ (filename . "~/notes/journal.org")
+ (front-context-string . "\n\n* 2023\n\n** 202")
+ (rear-context-string)
+ (position . 1))
+("org-capture-last-stored"
+ (filename . "~/notes/journal.org")
+ (front-context-string . "**** [2023-06-11")
+ (rear-context-string . "3-06-11 Sunday\n\n")
+ (position . 2472))
+("Emacs notes"
+ (filename . "~/notes/Computing/Programs/emacs.org")
+ (front-context-string)
+ (rear-context-string . "rch menu\nu - up\n")
+ (position . 481))
+("sway config"
+ (filename . "~/computing/git/dotfiles/sway/config")
+ (front-context-string . "# Default config")
+ (rear-context-string)
+ (position . 1))
+("rad notes"
+ (filename . "~/notes/Radiology notes/Fourth Year/")
+ (front-context-string . "Biopsies.md\n  -r")
+ (rear-context-string . "04 Oct 15 16:45 ")
+ (position . 236))
+("quick notes"
+ (filename . "~/notes/quick_notes.org")
+ (front-context-string)
+ (rear-context-string . "o/executable?\n\n\n")
+ (position . 4434)
+ (annotation . ""))
+)

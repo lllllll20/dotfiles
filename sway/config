@@ -134,9 +134,11 @@ focus_follows_mouse no
     assign [app_id="firefox"]: workspace number 1
     for_window [app_id="firefox"] focus
     bindsym $mod+b exec ~/.config/sway/scripts/hideandfocus.sh firefox
+    bindsym XF86Launch5 exec ~/.config/sway/scripts/hideandfocus.sh firefox
     bindsym $mod+shift+b exec ~/.config/sway/scripts/hidescratchpad.sh "firefox --private-window"
 
     bindsym $mod+o exec emacsclient -r -a emacs
+    bindsym XF86Launch6 exec emacsclient -r -a emacs
     assign [app_id="emacs"]: workspace number 2
     for_window [app_id="emacs"] focus
     

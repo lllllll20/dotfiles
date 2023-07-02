@@ -92,7 +92,8 @@
       ;; org-capture notes
 
     (setq org-default-notes-file "~/notes/quick_notes.org")
-
+    (setq org-support-shift-select t)
+  
     (setq org-capture-templates
           '(("n" "Quick Note" entry
              (file org-default-notes-file)
@@ -103,7 +104,7 @@
             ("j" "Journal entry" entry
              (file+datetree "~/notes/journal.org")
              "**** %U %^{Title}\n %?" :empty-lines 1)))
-  
+
   (org-babel-do-load-languages
     'org-babel-load-languages
     '((emacs-lisp . t)
@@ -115,7 +116,7 @@
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
   (add-to-list 'org-structure-template-alist '("py" . "src python"))
 
-  
+
 #+end_src
 
 ** Org-babel-tangle
@@ -169,7 +170,8 @@
   (use-package nerd-icons-dired
   :hook
   (dired-mode . nerd-icons-dired-mode))
-
+  ;; If not working run M-x nerd-icons-install-fonts
+  
 #+end_src
 
 ** Which key
@@ -193,6 +195,14 @@
     :init (doom-modeline-mode 1)
     :custom ((doom-modeline-height 15)))
 
+#+end_src
+
+** Winner mode
+
+#+begin_src emacs-lisp
+
+  (winner-mode 1)
+  
 #+end_src
 
 * Vertico
@@ -302,60 +312,28 @@
 
 #+end_src
 
-* Projectile
-
-#+begin_src emacs-lisp
-
-  (use-package projectile
-    :diminish projectile-mode
-    :config (projectile-mode)
-    :bind-keymap
-    ("C-c p" . projectile-command-map)
-    :init
-    ;; NOTE: Set this to the folder where you keep your Git repos!
-    (when (file-directory-p "~/computing")
-      (setq projectile-project-search-path '("~/computing")))
-    (setq projectile-switch-project-action #'projectile-dired))
- 
-#+end_src
-
-* Magit
-
-#+begin_src emacs-lisp
-
-  (use-package magit
-    :custom
-    (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
-
-#+end_src
-
 * LSP
 
 ** Config
 
 #+begin_src emacs-lisp
 
-   (defun me/lsp-mode-setup ()
-     (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-     (lsp-headerline-breadcrumb-mode))
-
-    (use-package lsp-mode
-    :commands (lsp lsp-deferred)
-    :hook
-    (sh-mode . lsp)
-    (lsp-mode . me/lsp-mode-setup)
+  (use-package lsp-mode
     :init
-    (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
-    :config
-    (lsp-enable-which-key-integration t))
-    
+    ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+    (setq lsp-keymap-prefix "C-c l")
+    :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+           (python-mode . lsp)
+           (sh-mode . lsp)
+           (lua-mode . lsp)
+           ;; if you want which-key integration
+           (lsp-mode . lsp-enable-which-key-integration))
+    :commands lsp)
 
-   (use-package lsp-ui
+  (use-package lsp-ui
     :hook (lsp-mode . lsp-ui-mode)
     :custom
     (lsp-ui-doc-position 'bottom))
-
- ;; (use-package lsp-ivy)
 
 #+end_src
 
@@ -366,7 +344,7 @@
   (use-package python-mode
     :ensure nil
     :mode "\\.py\\'"
-    :hook (python-mode . lsp-deferred))
+    :hook (python-mode . lsp))
 
   (use-package lsp-pyright
   :ensure t
@@ -376,15 +354,18 @@
   
 #+end_src
 
-[[https://emacs-lsp.github.io/lsp-pyright/][Pyright lsp website]]
+** Lua
 
-** Shell
 #+begin_src emacs-lisp
-  (use-package flycheck
-    :config
-    (add-hook 'sh-mode-hook 'flycheck-mode))
 
+  (use-package lua-mode
+    :ensure nil
+    :mode "\\.lua\\'"
+    :hook (lua-mode . lsp))
+ 
 #+end_src
+
+[[https://emacs-lsp.github.io/lsp-pyright/][Pyright lsp website]]
 
 ** Corfu
 
@@ -446,18 +427,12 @@
 
 #+end_src
 
-** Yasnippet
+* VC
 
 #+begin_src emacs-lisp
 
-  (use-package yasnippet
-    :ensure t
-    :init
-    (setq yas-nippet-dir "~/.config/emacs/snippets")
-    (yas-global-mode))
-  (use-package yasnippet-snippets
-    :ensure t :after yasnippet)
-  
+  (setq vc-follow-symlinks t)
+
 #+end_src
 
 * Custom functions
@@ -519,74 +494,14 @@
 * Key bindings
 
 ** Dired
+
+*** Get the shortcuts
+
 #+begin_src emacs-lisp
 
-      ;(global-set-key (kbd "C-M-j") 'counsel-switch-buffer)
-      ;(define-key dired-mode-map (kbd "C-c gdl") 'me/gdl) 
-      ;(global-set-key (kbd "C-c gdl") 'me/gdl) 
+  (require 'shortcuts)
 
-      (global-set-key (kbd "C-c gh") (lambda () (interactive) (dired "~/"))) 
-      (global-set-key (kbd "C-c gtr") (lambda () (interactive) (dired "~/.local/share/Trash/files"))) 
-      (global-set-key (kbd "C-c gdl") (lambda () (interactive) (dired "~/downloads")))
-      (global-set-key (kbd "C-c gco") (lambda () (interactive) (dired "~/computing")))
-      (global-set-key (kbd "C-c ggh") (lambda () (interactive) (dired "~/computing/git/")))
-      (global-set-key (kbd "C-c ggd") (lambda () (interactive) (dired "~/computing/git/dotfiles/")))
-      (global-set-key (kbd "C-c gmd") (lambda () (interactive) (dired "~/my_docs")))
-      (global-set-key (kbd "C-c gfn") (lambda () (interactive) (dired "~/my_docs/financial/")))
-      (global-set-key (kbd "C-c gta") (lambda () (interactive) (dired "~/my_docs/financial/Tax")))
-      (global-set-key (kbd "C-c gps") (lambda () (interactive) (dired "~/my_docs/financial/Payslips")))
-      (global-set-key (kbd "C-c gwd") (lambda () (interactive) (dired "~/work_docs")))                                
-      (global-set-key (kbd "C-c gvi") (lambda () (interactive) (dired "~/media/videos")))                             
-      (global-set-key (kbd "C-c gtt") (lambda () (interactive) (dired "~/media/videos/tutorials")))                   
-      (global-set-key (kbd "C-c gph") (lambda () (interactive) (dired "~/media/photos")))                             
-      (global-set-key (kbd "C-c gwp") (lambda () (interactive) (dired "~/media/pictures/wallpapers")))                
-      (global-set-key (kbd "C-c g.c") (lambda () (interactive) (dired "~/.config")))                                  
-      (global-set-key (kbd "C-c gmu") (lambda () (interactive) (dired "~/media/music")))                              
-      (global-set-key (kbd "C-c gpi") (lambda () (interactive) (dired "~/media/pictures")))                           
-      (global-set-key (kbd "C-c gtv") (lambda () (interactive) (dired "~/media/TV")))                                 
-      (global-set-key (kbd "C-c gfi") (lambda () (interactive) (dired "~/media/Films")))                              
-      (global-set-key (kbd "C-c gws") (lambda () (interactive) (dired "~/media/websites")))                           
-      (global-set-key (kbd "C-c gsc") (lambda () (interactive) (dired "~/scripts")))                                  
-      (global-set-key (kbd "C-c ggs") (lambda () (interactive) (dired "~/computing/git/scripts/")))                   
-      (global-set-key (kbd "C-c g.t") (lambda () (interactive) (dired "~/.test")))                                    
-      (global-set-key (kbd "C-c gme") (lambda () (interactive) (dired "~/media")))                                    
-      (global-set-key (kbd "C-c grm") (lambda () (interactive) (dired "/run/media/")))                                
-      (global-set-key (kbd "C-c gpm") (lambda () (interactive) (dired "~/phone_media")))                              
-      (global-set-key (kbd "C-c goc") (lambda () (interactive) (dired "~/work_docs/Oncall")))                         
-      (global-set-key (kbd "C-c gst") (lambda () (interactive) (dired "~/work_docs/ST5")))                            
-      (global-set-key (kbd "C-c gtb") (lambda () (interactive) (dired "~/work_docs/Reading/Textbooks")))              
-      (global-set-key (kbd "C-c g2b") (lambda () (interactive) (dired "~/work_docs/Reading/Textbooks/Exam/2b")))      
-      (global-set-key (kbd "C-c gwg") (lambda () (interactive) (dired "~/work_docs/Reading/Guidelines/Ghali_UHW")))   
-      (global-set-key (kbd "C-c gss") (lambda () (interactive) (dired "~/media/pictures/screenshots")))               
-      (global-set-key (kbd "C-c gsi") (lambda () (interactive) (dired "~/media/pictures/saved_images")))              
-      (global-set-key (kbd "C-c gbf") (lambda () (interactive) (dired "~/media/Books/fiction")))                      
-      (global-set-key (kbd "C-c gbn") (lambda () (interactive) (dired "~/media/Books/non_fiction")))                  
-      (global-set-key (kbd "C-c gbo") (lambda () (interactive) (dired "~/media/Books/")))                             
-      (global-set-key (kbd "C-c gvn") (lambda () (interactive) (dired "~/media/videos/new")))                         
-      (global-set-key (kbd "C-c gvl") (lambda () (interactive) (dired "~/media/videos/library")))                     
-      (global-set-key (kbd "C-c gvi") (lambda () (interactive) (dired "~/media/videos")))                             
-      (global-set-key (kbd "C-c gws") (lambda () (interactive) (dired "~/media/websites/")))                          
-      (global-set-key (kbd "C-c gtp") (lambda () (interactive) (dired "~/computing/templates")))                      
-      (global-set-key (kbd "C-c g.l") (lambda () (interactive) (dired "~/.local")))                                   
-      (global-set-key (kbd "C-c gen") (lambda () (interactive) (dired "~/.test/envs")))                               
-      (global-set-key (kbd "C-c gts") (lambda () (interactive) (dired "~/.test/scripts/")))                           
-      (global-set-key (kbd "C-c glt") (lambda () (interactive) (dired "~/computing/laptop")))                         
-      (global-set-key (kbd "C-c gdt") (lambda () (interactive) (dired "~/computing/desktop")))                        
-      (global-set-key (kbd "C-c gy1") (lambda () (interactive) (dired "~/work_docs/ST1")))                            
-      (global-set-key (kbd "C-c gy2") (lambda () (interactive) (dired "~/work_docs/ST2")))                            
-      (global-set-key (kbd "C-c gy3") (lambda () (interactive) (dired "~/work_docs/ST3")))                            
-      (global-set-key (kbd "C-c gy4") (lambda () (interactive) (dired "~/work_docs/ST4")))                            
-      (global-set-key (kbd "C-c gcp") (lambda () (interactive) (dired "~/.test/cprog")))                              
-      (global-set-key (kbd "C-c gsf") (lambda () (interactive) (dired "~/.shellfunctions")))                          
-      (global-set-key (kbd "C-c gnn") (lambda () (interactive) (dired "~/notes")))
-      (global-set-key (kbd "C-c gwr") (lambda () (interactive) (dired "~/work_docs/ST4/Rota")))
-      (global-set-key (kbd "C-c gja") (lambda () (interactive) (dired "~/work_docs/Reading/Journal articles/")))
-      (global-set-key (kbd "C-c gba") (lambda () (interactive) (dired "~/.local/share/lf")))
-      (global-set-key (kbd "C-c gnv") (lambda () (interactive) (dired "~/.config/nvim")))
-      (global-set-key (kbd "C-c gpp") (lambda () (interactive) (dired "~/.local/share/nvim/site/pack/packer/start/")))
-      (global-set-key (kbd "C-c gse") (lambda () (interactive) (dired "/etc/))")))
-
-#+end_src
+  #+end_src
 
 ** Functions
 

@@ -153,46 +153,47 @@ focus_follows_mouse no
     bindsym $mod+Shift+t exec ~/.config/sway/scripts/hidescratchpad.sh "foot"
     bindsym XF86Calculator exec ~/.config/sway/scripts/hidescratchpad.sh "qalculate-gtk"
 
-    assign [app_id="libreoffice"]: workspace number 3
-    for_window [app_id="libreoffice"] focus
 
-    assign [app_id="org.pwmt.zathura"]: workspace number 3
-    for_window [app_id="org.pwmt.zathura"] focus
-
-    assign [app_id="recoll"]: workspace number 3
-    for_window [app_id="recoll"] focus, fullscreen enable
-
-    assign [app_id="mpv"]: workspace number 4
-    for_window [app_id="mpv"] focus
-
-    assign [app_id="coding"]: workspace number 4
-    for_window [app_id="coding"] focus
-
-    assign [app_id="imv"]: workspace number 4
-    for_window [app_id="imv"] focus
-
-    assign [app_id="zoom"]: workspace number 4
-    for_window [app_id="zoom"] focus
-
-    assign [app_id="evolution"]: workspace number 5
+    assign [app_id="evolution"]: workspace number 3
     for_window [app_id="evolution"] focus
     bindsym $mod+e exec ~/.config/sway/scripts/hideandfocus.sh evolution
+    bindsym XF86Launch7 exec ~/.config/sway/scripts/hideandfocus.sh evolution
     
-    assign [app_id="email"]: workspace number 5
+    assign [app_id="email"]: workspace number 3
     for_window [app_id="email"] focus
     bindsym $mod+Mod1+e exec ~/.config/sway/scripts/hideandfocus.sh "foot -a email neomutt"
 
-    assign [app_id="org.gnome.Nautilus"]: workspace number 6
+    assign [app_id="org.gnome.Nautilus"]: workspace number 4
     for_window [app_id="org.gnome.Nautilus"] focus
     bindsym $mod+f exec ~/.config/sway/scripts/hideandfocus.sh nautilus
+    bindsym XF86Launch8 exec ~/.config/sway/scripts/hideandfocus.sh nautilus
     bindsym $mod+r exec localc ~/work_docs/ST5/Rota/"Rota May - July.xlsx"
     bindsym $mod+Mod1+r exec localc ~/work_docs/ST5/Rota/"Registrar ultrasound rota updated.xlsx"
     bindsym $mod+w exec nautilus ~/work_docs/ST5/
 
-    assign [app_id="org.gnome.World.Secrets"]: workspace number 7
+    assign [app_id="org.gnome.World.Secrets"]: workspace number 5
     for_window [app_id="org.gnome.World.Secrets"] focus
     bindsym $mod+p exec ~/.config/sway/scripts/hideandfocus.sh secrets
-    
+    bindsym XF86Launch9 exec ~/.config/sway/scripts/hideandfocus.sh secrets
+
+    assign [app_id="libreoffice"]: workspace number 6
+    for_window [app_id="libreoffice"] focus
+
+    assign [app_id="org.pwmt.zathura"]: workspace number 6
+    for_window [app_id="org.pwmt.zathura"] focus
+
+    assign [app_id="recoll"]: workspace number 6
+    for_window [app_id="recoll"] focus, fullscreen enable
+ 
+    assign [app_id="mpv"]: workspace number 7
+    for_window [app_id="mpv"] focus
+
+    assign [app_id="imv"]: workspace number 7
+    for_window [app_id="imv"] focus
+
+    assign [app_id="zoom"]: workspace number 7
+    for_window [app_id="zoom"] focus
+        
     assign [app_id="ghb"]: workspace number 8
     for_window [app_id="ghb"] focus
 

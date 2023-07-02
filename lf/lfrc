@@ -397,7 +397,8 @@ map oc openwith localc
 map oi openwith loimpress
 map of openwith firefox
 map ov openwith vlc
-map om openwith celluloid
+map on openwith "setsid -f foot -a neovim nvim"
+
 
 # Movement
 source ~/.local/share/lf/shortcuts

@@ -191,6 +191,10 @@ focus_follows_mouse no
     assign [app_id="imv"]: workspace number 7
     for_window [app_id="imv"] focus
 
+    assign [app_id="gthumb"]: workspace number 7
+    for_window [app_id="gthumb"] focus
+    bindsym $mod+g exec ~/.config/sway/scripts/hideandfocus.sh gthumb
+
     assign [app_id="zoom"]: workspace number 7
     for_window [app_id="zoom"] focus
         

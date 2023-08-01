@@ -1,6 +1,5 @@
 #+title Emacs Configuration
-#+PROPERTY: header-args:emacs-lisp
-
+#+PROPERTY: header-args:emacs-lisp :tangle ~/.config/emacs/init.el
 
 *  Server
 
@@ -533,6 +532,21 @@
 
 
 * Key bindings
+
+** Functions
+
+ #+begin_src emacs-lisp
+   
+   (global-set-key (kbd "C-c m") 'imenu)
+   (global-set-key (kbd "C-x C-b") 'ibuffer)
+   (global-set-key (kbd "<C-M-left>") 'previous-buffer)
+   (global-set-key (kbd "<C-M-right>") 'next-buffer)
+   (global-set-key (kbd "C-c n") #'me/vertico-notes)
+   (global-set-key (kbd "C-c olf") #'me/show-in-lf)
+   (global-set-key (kbd "C-c oa") #'me/open-anything)
+
+
+#+end_src
 
 ** Dired
 

@@ -137,7 +137,7 @@ focus_follows_mouse no
     bindsym XF86Launch5 exec ~/.config/sway/scripts/hideandfocus.sh firefox
     bindsym $mod+shift+b exec ~/.config/sway/scripts/hidescratchpad.sh "firefox --private-window"
 
-    bindsym $mod+o exec emacsclient -r -a emacs
+    bindsym $mod+o exec ~/.config/sway/scripts/hideandfocus.sh emacs
     bindsym XF86Launch6 exec emacsclient -r -a emacs
     assign [app_id="emacs"]: workspace number 2
     for_window [app_id="emacs"] focus
@@ -228,9 +228,9 @@ focus_follows_mouse no
 
     bindsym XF86Search exec ~/.config/sway/scripts/hidescratchpad.sh "foot -a fc searchandopen.sh"
 
-    bindsym $mod+Control+n exec emacsclient -c -e \"(me/batch-open-rad-notes)\" -a emacs
+    bindsym $mod+Control+n exec emacsclient -r -e \"(me/batch-open-rad-notes)\" -a emacs
     
-    bindsym $mod+n exec emacsclient -c -e \"(me/vertico-notes)\" -a emacs
+    bindsym $mod+n exec emacsclient -r -e \"(me/vertico-notes)\" -a emacs
     
     bindsym $mod+v exec ~/.config/sway/scripts/hidescratchpad.sh "scratchbuffer.sh"
 
@@ -241,7 +241,7 @@ focus_follows_mouse no
     bindsym $mod+Mod1+i exec ~/.config/sway/scripts/hidescratchpad.sh "foot -a fc insertfile.sh"
     
 
-    bindsym $mod+c exec emacsclient -c -e "(org-capture)" -a emacs
+    bindsym $mod+c exec emacsclient -r -e "(org-capture)" -a emacs
 
 ### Run scripts
 

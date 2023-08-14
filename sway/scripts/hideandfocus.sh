@@ -10,6 +10,10 @@ if [[ "$1" == "secrets" ]]; then
 
 elif [[ "$1" == "footws2" ]]; then
     wlrctl window focus "footws2" || swaymsg exec "foot -a footws2"
+    
+elif [[ "$1" == "emacs" ]]; then
+    wlrctl window focus "emacs" || swaymsg exec "emacsclient -r -a emacs"
+
 else
     wlrctl window focus "$1" || swaymsg exec "$1"
 fi

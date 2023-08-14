@@ -5,7 +5,7 @@
 *  Server
 
 #+begin_src emacs-lisp
-  
+
   ;;start the server
   (server-start)
 
@@ -29,7 +29,7 @@
     (package-refresh-contents))
 
 
-  (require 'use-package)
+ ;; (require 'use-package)
   (setq use-package-always-ensure t)
 
   (unless (package-installed-p 'use-package)
@@ -41,7 +41,7 @@
 
 #+begin_src emacs-lisp
 
-    ;; Visuals 
+    ;; Visuals
   (setq inhibit-startup-message t) ;Disable the splash screen (to enable it again, replace the t with 0)
   (scroll-bar-mode -1) ; Disable visible scroll bar
   (tool-bar-mode -1) ; Disable toolbar
@@ -50,7 +50,7 @@
   (menu-bar-mode -1)
 
   (column-number-mode)
-  (global-display-line-numbers-mode t)
+  (global-display-line-numbers-mode -1)
 
   ;; Disable line numbers for some modes
   (dolist (mode '(org-mode-hook
@@ -94,7 +94,7 @@
 
     (setq org-default-notes-file "~/notes/quick_notes.org")
     (setq org-support-shift-select t)
-  
+
     (setq org-capture-templates
           '(("n" "Quick Note" entry
              (file org-default-notes-file)
@@ -120,30 +120,14 @@
 
 #+end_src
 
-** Org-babel-tangle
-
-#+begin_src emacs-lisp
-
-  ;; Automatically tangle our Emacs.org config file when we save it
-  (defun me/org-babel-tangle-config ()
-    (when (string-equal (buffer-file-name)
-                        (expand-file-name "~/computing/git/dotfiles/emacs/config.org"))
-      ;; Dynamic scoping to the rescue
-      (let ((org-confirm-babel-evaluate nil))
-        (org-babel-tangle))))
-
-  (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'me/org-babel-tangle-config)))
-
-#+end_src
-
 * Misc
 
 ** Doom themes
 
 #+begin_src emacs-lisp
-  
+
   (use-package doom-themes
-    :init (load-theme 'doom-gruvbox t))
+    :init (load-theme 'modus-vivendi-tinted t))
 
 #+end_src
 
@@ -153,7 +137,7 @@
 
   (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
-  
+
 #+end_src
 
 ** All the icons
@@ -161,7 +145,7 @@
 #+begin_src emacs-lisp
 
 ;;  (use-package all-the-icons)
-  
+
 #+end_src
 
 ** Nerd Fonts
@@ -172,7 +156,7 @@
   :hook
   (dired-mode . nerd-icons-dired-mode))
   ;; If not working run M-x nerd-icons-install-fonts
-  
+
 #+end_src
 
 ** Which key
@@ -184,7 +168,7 @@
   :diminish which-key-mode
   :config
   (setq which-key-idle-delay 1))
- 
+
 #+end_src
 
 ** Doom modeline
@@ -203,7 +187,7 @@
 #+begin_src emacs-lisp
 
   (winner-mode 1)
-  
+
 #+end_src
 
 ** Electric pairs
@@ -211,7 +195,7 @@
 #+begin_src emacs-lisp
 
   (electric-pair-mode 1)
-  
+
 #+end_src
 
 * Vertico
@@ -242,7 +226,7 @@
   (use-package consult
   :demand t
   :bind ("C-s" . consult-line))
-  
+
 #+end_src
 
 * Orderless
@@ -254,7 +238,7 @@
   :custom
   (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles basic partial-completion)))))
-  
+
 #+end_src
 
 * Embark
@@ -287,7 +271,7 @@
     :ensure t ; only need to install it, embark loads it after consult if found
     :hook
     (embark-collect-mode . consult-preview-at-point-mode))
-  
+
 #+end_src
 
 * Dired
@@ -301,7 +285,7 @@
     (:map dired-mode-map ("." . dired-hide-dotfiles-mode)))
 
   (add-hook 'dired-mode-hook 'dired-hide-details-mode)
-
+  (setq dired-listing-switches "-al --group-directories-first")
 
   ;; Dired - Store backups
   (setq
@@ -319,6 +303,16 @@
   ;; Copy between open dired-buffers
   (setq dired-dwim-target t)
 
+#+end_src
+
+** Dired subtree
+
+#+begin_src emacs-lisp
+(use-package dired-subtree :ensure t
+  :after dired
+  :config
+  (bind-key "<tab>" #'dired-subtree-toggle dired-mode-map)
+  (bind-key "<backtab>" #'dired-subtree-cycle dired-mode-map))
 #+end_src
 
 * LSP
@@ -359,8 +353,8 @@
   :ensure t
   :hook (python-ts-mode . (lambda ()
                           (require 'lsp-pyright)
-                          (lsp))))  
-  
+                          (lsp))))
+
 #+end_src
 
 ** Lua
@@ -371,7 +365,7 @@
     :ensure nil
     :mode "\\.lua\\'"
     :hook (lua-mode . lsp))
- 
+
 #+end_src
 
 [[https://emacs-lsp.github.io/lsp-pyright/][Pyright lsp website]]
@@ -519,16 +513,24 @@
           (let* ((cands (split-string
                          (shell-command-to-string "~/scripts/system/findallfiles.sh") "\n" t)))
             (let* ((file (completing-read "File: " cands)))
-	      (let ((filetype (mailcap-file-name-to-mime-type file)))
-		(if (or (string-equal filetype "application/vnd.lotus-organizer") (string-equal filetype "nil"))
-		    (find-file file)
-		    (browse-url-xdg-open file))))))
-  
+              (let ((filetype (mailcap-file-name-to-mime-type file)))
+                (if (or (string-equal filetype "application/vnd.lotus-organizer") (string-equal filetype "nil"))
+                    (find-file file)
+                    (browse-url-xdg-open file))))))
+
 
 
     ;(defun me/gdl ()
     ;  (interactive)
-    ;  (dired "~/downloads")) 
+    ;  (dired "~/downloads"))
+#+end_src
+
+* Customize options
+
+Store customize options in a separate file:
+#+begin_src emacs-lisp
+    (setq custom-file "~/.config/emacs/customize-options.el")
+    (load custom-file)
 #+end_src
 
 
@@ -541,24 +543,56 @@
 #+begin_src emacs-lisp
 
     (load-file "~/.config/emacs/shortcuts.el")
-  
-  #+end_src
 
-** Functions
+  #+end_src
+  
+** Misc
 
  #+begin_src emacs-lisp
-   
-   (global-set-key (kbd "C-c m") 'imenu)
-   (global-set-key (kbd "C-x C-b") 'ibuffer)
-   (global-set-key (kbd "<C-M-left>") 'previous-buffer)
-   (global-set-key (kbd "<C-M-right>") 'next-buffer)
-   (global-set-key (kbd "C-c n") #'me/vertico-notes)
-   (global-set-key (kbd "C-c olf") #'me/show-in-lf)
-   (global-set-key (kbd "C-c oa") #'me/open-anything)
+
+          (global-set-key (kbd "C-c m") 'imenu)
+          (global-set-key (kbd "C-x C-b") 'ibuffer)
+          (global-set-key (kbd "<C-M-left>") 'previous-buffer)
+          (global-set-key (kbd "<C-M-right>") 'next-buffer)
+          (global-set-key (kbd "M-n") 'forward-paragraph)
+          (global-set-key (kbd "M-p") 'backward-paragraph)
+          (global-set-key (kbd "<C-tab>") 'other-window)
+          (global-set-key (kbd "<f5>") 'recentf) 
+          (global-set-key (kbd "<f6>") 'bookmark-jump)
+
+         (defun me/save-and-quit ()
+           (interactive)
+           (save-buffer)
+           (kill-this-buffer))
+
+         (global-set-key (kbd "C-q") 'me/save-and-quit)
+
+           ;; Escape always quits
+           (global-set-key [escape] 'keyboard-escape-quit)
+
+      (defun me/toggle-windows ()
+        (interactive)
+        (if (> (count-windows) 1)
+          (delete-other-windows)
+        (progn (split-window-right)
+               (other-window 1))))
+
+      (global-set-key (kbd "C-c x") 'me/toggle-windows)
+      (add-hook 'ibuffer-mode-hook
+             '(lambda ()
+                (keymap-set ibuffer-mode-map "M-o" 'me/toggle-windows)))
+      (global-set-key (kbd "M-o") 'me/toggle-windows) 
 
 
 #+end_src
 
+** Functions
+#+begin_src emacs-lisp
+  (global-set-key (kbd "C-c n") #'me/vertico-notes)
+  (global-set-key (kbd "C-c olf") #'me/show-in-lf)
+  (global-set-key (kbd "C-c oa") #'me/open-anything)
+
+#+end_src
 * Mysterious
 
 #+begin_src emacs-lisp

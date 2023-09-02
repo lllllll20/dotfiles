@@ -110,7 +110,7 @@ cmd mkfile ${{
   #else
     #setsid -f foot -a neovim nvim --listen /tmp/nvim.pipe "${PWD}"/"${REPLY}" >/dev/null 2>&1
   #fi
-  setsid -f emacsclient -r -a emacs "${PWD}"/"${REPLY}" >/dev/null 2>&1
+  emacsclient -r -a emacs "${PWD}"/"${REPLY}" >/dev/null 2>&1
   unset IFS
 }}
 
@@ -223,7 +223,7 @@ cmd docconvert ${{
 }}
 
 cmd unmount ${{
-  udiskie-umount "$f"
+  udiskie-umount --detach "$f"
 }}
 
 # Archive bindings

@@ -198,6 +198,16 @@
 
 #+end_src
 
+** Recentf mode
+
+#+begin_src emacs-lisp
+
+  (recentf-mode 1)
+  (setq recentf-max-menu-items 25)
+  (setq recentf-max-saved-items 25)
+
+#+end_src
+
 * Vertico
 
 #+begin_src emacs-lisp
@@ -518,12 +528,16 @@
                     (find-file file)
                     (browse-url-xdg-open file))))))
 
+(defun me/switch-to-scratch-and-back ()
+    "Toggle between *scratch* buffer and the current buffer.
+     If the *scratch* buffer does not exist, create it."
+    (interactive)
+    (let ((scratch-buffer-name (get-buffer-create "*scratch*")))
+        (if (equal (current-buffer) scratch-buffer-name)
+            (switch-to-buffer (other-buffer))
+            (switch-to-buffer scratch-buffer-name))))
 
-
-    ;(defun me/gdl ()
-    ;  (interactive)
-    ;  (dired "~/downloads"))
-#+end_src
+    #+end_src
 
 * Customize options
 
@@ -550,38 +564,39 @@ Store customize options in a separate file:
 
  #+begin_src emacs-lisp
 
-          (global-set-key (kbd "C-c m") 'imenu)
-          (global-set-key (kbd "C-x C-b") 'ibuffer)
-          (global-set-key (kbd "<C-M-left>") 'previous-buffer)
-          (global-set-key (kbd "<C-M-right>") 'next-buffer)
-          (global-set-key (kbd "M-n") 'forward-paragraph)
-          (global-set-key (kbd "M-p") 'backward-paragraph)
-          (global-set-key (kbd "<C-tab>") 'other-window)
-          (global-set-key (kbd "<f5>") 'recentf) 
-          (global-set-key (kbd "<f6>") 'bookmark-jump)
+                (global-set-key (kbd "C-c m") 'imenu)
+                (global-set-key (kbd "C-x C-b") 'ibuffer)
+                (global-set-key (kbd "<C-M-left>") 'previous-buffer)
+                (global-set-key (kbd "<C-M-right>") 'next-buffer)
+                (global-set-key (kbd "M-n") 'forward-paragraph)
+                (global-set-key (kbd "M-p") 'backward-paragraph)
+                (global-set-key (kbd "<C-tab>") 'other-window)
+                (global-set-key (kbd "<f5>") 'recentf) 
+                (global-set-key (kbd "<f6>") 'bookmark-jump)
 
-         (defun me/save-and-quit ()
-           (interactive)
-           (save-buffer)
-           (kill-this-buffer))
 
-         (global-set-key (kbd "C-q") 'me/save-and-quit)
+               (defun me/save-and-quit ()
+                 (interactive)
+                 (save-buffer)
+                 (kill-this-buffer))
 
-           ;; Escape always quits
-           (global-set-key [escape] 'keyboard-escape-quit)
+               (global-set-key (kbd "C-q") 'me/save-and-quit)
 
-      (defun me/toggle-windows ()
-        (interactive)
-        (if (> (count-windows) 1)
-          (delete-other-windows)
-        (progn (split-window-right)
-               (other-window 1))))
+                 ;; Escape always quits
+                 (global-set-key [escape] 'keyboard-escape-quit)
 
-      (global-set-key (kbd "C-c x") 'me/toggle-windows)
-      (add-hook 'ibuffer-mode-hook
-             '(lambda ()
-                (keymap-set ibuffer-mode-map "M-o" 'me/toggle-windows)))
-      (global-set-key (kbd "M-o") 'me/toggle-windows) 
+            (defun me/toggle-windows ()
+              (interactive)
+              (if (> (count-windows) 1)
+                (delete-other-windows)
+              (progn (split-window-right)
+                     (other-window 1))))
+
+            (global-set-key (kbd "C-c x") 'me/toggle-windows)
+            (add-hook 'ibuffer-mode-hook
+                   '(lambda ()
+                      (keymap-set ibuffer-mode-map "M-o" 'me/toggle-windows)))
+            (global-set-key (kbd "M-o") 'me/toggle-windows) 
 
 
 #+end_src
@@ -591,8 +606,9 @@ Store customize options in a separate file:
   (global-set-key (kbd "C-c n") #'me/vertico-notes)
   (global-set-key (kbd "C-c olf") #'me/show-in-lf)
   (global-set-key (kbd "C-c oa") #'me/open-anything)
-
+  (global-set-key (kbd "C-c b") #'me/switch-to-scratch-and-back)
 #+end_src
+
 * Mysterious
 
 #+begin_src emacs-lisp

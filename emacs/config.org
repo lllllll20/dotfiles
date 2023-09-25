@@ -480,64 +480,6 @@
 
 #+end_src
 
-* Custom functions
-
-#+begin_src emacs-lisp
-
-    (defun me/vertico-notes ()
-          "list all note files"
-          (interactive)
-          (let* ((cands (split-string
-                         (shell-command-to-string "find ~/notes -type f") "\n" t)))
-            (find-file (completing-read "File: " cands))))
-
-    (defun me/batch-open-rad-notes ()
-    (mapc #'find-file-noselect
-          (directory-files-recursively "~/notes/Radiology notes/" "")))
-
-
-    (defun me/show-in-lf ()
-    "Shows the current file in the lf file browser"
-    (interactive)
-    (shell-command (concat "lf -remote \"send select '" (buffer-file-name) "'\""))
-    (start-process "showinlf" nil "~/.config/sway/scripts/togglefiles.sh" ""))
-
-    (defun me/dired-open-file ()
-    "In dired, open the file named on this line."
-    (interactive)
-    (let* ((file (dired-get-filename nil t)))
-      (message "Opening %s..." file)
-       (let ((filetype (mailcap-file-name-to-mime-type file)))
-                (if (or (string-equal filetype "application/vnd.lotus-organizer") (string-equal filetype "nil"))
-                    (find-file file)
-                    (browse-url-xdg-open file)))
-      (message "Opening %s done" file)))
-
-  (add-hook 'dired-mode-hook
-            (lambda () (local-set-key (kbd "C-<return>") #'me/dired-open-file)))
-
-
-(defun me/open-anything ()
-          "list everything recursively"
-          (interactive)
-          (let* ((cands (split-string
-                         (shell-command-to-string "~/scripts/system/findallfiles.sh") "\n" t)))
-            (let* ((file (completing-read "File: " cands)))
-              (let ((filetype (mailcap-file-name-to-mime-type file)))
-                (if (or (string-equal filetype "application/vnd.lotus-organizer") (string-equal filetype "nil"))
-                    (find-file file)
-                    (browse-url-xdg-open file))))))
-
-(defun me/switch-to-scratch-and-back ()
-    "Toggle between *scratch* buffer and the current buffer.
-     If the *scratch* buffer does not exist, create it."
-    (interactive)
-    (let ((scratch-buffer-name (get-buffer-create "*scratch*")))
-        (if (equal (current-buffer) scratch-buffer-name)
-            (switch-to-buffer (other-buffer))
-            (switch-to-buffer scratch-buffer-name))))
-
-    #+end_src
 
 * Customize options
 
@@ -547,6 +489,89 @@ Store customize options in a separate file:
     (load custom-file)
 #+end_src
 
+
+
+
+* Custom functions
+
+#+begin_src emacs-lisp
+
+          (defun me/vertico-notes ()
+                "list all note files"
+                (interactive)
+                (let* ((cands (split-string
+                               (shell-command-to-string "find ~/notes -type f") "\n" t)))
+                  (find-file (completing-read "File: " cands))))
+
+          (defun me/batch-open-rad-notes ()
+          (mapc #'find-file-noselect
+                (directory-files-recursively "~/notes/Radiology notes/" "")))
+
+
+          (defun me/show-in-lf ()
+          "Shows the current file in the lf file browser"
+          (interactive)
+          (shell-command (concat "lf -remote \"send select '" (buffer-file-name) "'\""))
+          (start-process "showinlf" nil "~/.config/sway/scripts/togglefiles.sh" ""))
+
+          (defun me/dired-open-file ()
+          "In dired, open the file named on this line."
+          (interactive)
+          (let* ((file (dired-get-filename nil t)))
+            (message "Opening %s..." file)
+             (let ((filetype (mailcap-file-name-to-mime-type file)))
+                      (if (or (string-equal filetype "application/vnd.lotus-organizer") (string-equal filetype "nil"))
+                          (find-file file)
+                          (browse-url-xdg-open file)))
+            (message "Opening %s done" file)))
+
+        (add-hook 'dired-mode-hook
+                  (lambda () (local-set-key (kbd "C-<return>") #'me/dired-open-file)))
+
+
+      (defun me/open-anything ()
+                "list everything recursively"
+                (interactive)
+                (let* ((cands (split-string
+                               (shell-command-to-string "~/scripts/system/findallfiles.sh") "\n" t)))
+                  (let* ((file (completing-read "File: " cands)))
+                    (let ((filetype (mailcap-file-name-to-mime-type file)))
+                      (if (or (string-equal filetype "application/vnd.lotus-organizer") (string-equal filetype "nil"))
+                          (find-file file)
+                          (browse-url-xdg-open file))))))
+
+    (defun me/kill-dired-buffers ()
+         (interactive)
+         (mapc (lambda (buffer) 
+               (when (eq 'dired-mode (buffer-local-value 'major-mode buffer)) 
+                 (kill-buffer buffer))) 
+             (buffer-list)))
+
+    (defun me/switch-to-scratch-and-back ()
+          "Toggle between *scratch* buffer and the current buffer.
+           If the *scratch* buffer does not exist, create it."
+          (interactive)
+          (let ((scratch-buffer-name (get-buffer-create "*scratch*")))
+              (if (equal (current-buffer) scratch-buffer-name)
+                  (switch-to-buffer (other-buffer))
+                  (switch-to-buffer scratch-buffer-name))))
+
+
+  (defun me/switch-to-quicknotes-and-back ()
+          "Toggle between *scratch* buffer and the current buffer.
+           If the *scratch* buffer does not exist, create it."
+          (interactive)
+          (if (equal (buffer-name) "quick_notes.org")
+                  (switch-to-buffer (other-buffer))
+                  (find-file "~/notes/quick_notes.org")))
+
+  (defun me/ff-link-org ()
+      (interactive)
+      (insert (shell-command-to-string "lz4jsoncat $HOME/.mozilla/firefox/7ryvpua6.default-release/sessionstore-backups/recovery.jsonlz4 | jq -r '.windows[0].tabs | sort_by(.lastAccessed)[-1] | .entries[.index-1] | \"[[\" + (.url) + \"][\" + (.title) + \"]]\"' | tr -d '\n'"))
+      )
+
+
+    #+end_src
 
 * Key bindings
 
@@ -607,6 +632,11 @@ Store customize options in a separate file:
   (global-set-key (kbd "C-c olf") #'me/show-in-lf)
   (global-set-key (kbd "C-c oa") #'me/open-anything)
   (global-set-key (kbd "C-c b") #'me/switch-to-scratch-and-back)
+  (global-set-key (kbd "<f7>") #'me/switch-to-scratch-and-back)
+  (global-set-key (kbd "C-c qn") #'me/switch-to-quicknotes-and-back)
+  (global-set-key (kbd "<f8>") #'me/switch-to-quicknotes-and-back)
+  (global-set-key (kbd "C-c dd") #'me/kill-dired-buffers)
+  (global-set-key (kbd "C-c il") #'me/ff-link-org)
 #+end_src
 
 * Mysterious

@@ -4,7 +4,7 @@
 
 if [[ ${HOSTNAME} = "laptop" ]]; then
 
-	brightnessctl -d intel_backlight set 700 
-    swaymsg input 'type:keyboard' xkb_layout us
+	brightnessctl -d intel_backlight set 70000 
+    #swaymsg input 'type:keyboard' xkb_layout us
 
 fi

@@ -1,10 +1,10 @@
 #+title Emacs Configuration
-#+PROPERTY: header-args:emacs-lisp
+#+PROPERTY: header-args:emacs-lisp :tangle yes
 
 
 *  Server
 
-#+begin_src emacs-lisp
+#+Begin_src emacs-lisp
 
   ;;start the server
   (server-start)
@@ -126,7 +126,9 @@
 
 #+begin_src emacs-lisp
 
-  (use-package doom-themes
+  (use-package doom-themes)
+
+  (use-package modus-themes
     :init (load-theme 'modus-vivendi-tinted t))
 
 #+end_src

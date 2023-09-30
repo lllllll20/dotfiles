@@ -574,6 +574,14 @@ Store customize options in a separate file:
           (insert (shell-command-to-string "lz4jsoncat $HOME/.mozilla/firefox/7ryvpua6.default-release/sessionstore-backups/recovery.jsonlz4 | jq -r '.windows[0].tabs | sort_by(.lastAccessed)[-1] | .entries[.index-1] | \"[[\" + (.url) + \"][\" + (.title) + \"]]\"' | tr -d '\n'"))
       ))
 
+  (defun me/copy-line ()
+  (interactive)
+  (save-excursion
+  (beginning-of-line)
+  (let ((beg (point)))
+    (end-of-line)
+    (copy-region-as-kill beg (point)))))
+
 
     #+end_src
 
@@ -641,6 +649,9 @@ Store customize options in a separate file:
   (global-set-key (kbd "<f8>") #'me/switch-to-quicknotes-and-back)
   (global-set-key (kbd "C-c dd") #'me/kill-dired-buffers)
   (global-set-key (kbd "C-c il") #'me/ff-link-org)
+  (global-set-key (kbd "C-c cl") #'me/copy-line)
+  (global-set-key (kbd "C-c cr") #'copy-region-as-kill)
+  
 #+end_src
 
 * Mysterious

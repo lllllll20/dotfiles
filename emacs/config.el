@@ -259,8 +259,8 @@
               ([tab]        . corfu-next)
               ("S-TAB"      . corfu-previous)
               ([backtab]    . corfu-previous)
-              ("S-<return>" . corfu-insert)
-              ("RET"        . nil))
+              ("<escape>" . corfu-quit)
+              ("RET"        . corfu-insert))
 
   :init
   (global-corfu-mode)
@@ -391,8 +391,18 @@
 
 (defun me/ff-link-org ()
     (interactive)
-    (insert (shell-command-to-string "lz4jsoncat $HOME/.mozilla/firefox/7ryvpua6.default-release/sessionstore-backups/recovery.jsonlz4 | jq -r '.windows[0].tabs | sort_by(.lastAccessed)[-1] | .entries[.index-1] | \"[[\" + (.url) + \"][\" + (.title) + \"]]\"' | tr -d '\n'"))
-    )
+    (if (string-match system-name "laptop")
+        (insert (shell-command-to-string "lz4jsoncat $HOME/.mozilla/firefox/jx17iz6w.default-release/sessionstore-backups/recovery.jsonlz4 | jq -r '.windows[0].tabs | sort_by(.lastAccessed)[-1] | .entries[.index-1] | \"[[\" + (.url) + \"][\" + (.title) + \"]]\"' | tr -d '\n'"))
+        (insert (shell-command-to-string "lz4jsoncat $HOME/.mozilla/firefox/7ryvpua6.default-release/sessionstore-backups/recovery.jsonlz4 | jq -r '.windows[0].tabs | sort_by(.lastAccessed)[-1] | .entries[.index-1] | \"[[\" + (.url) + \"][\" + (.title) + \"]]\"' | tr -d '\n'"))
+    ))
+
+(defun me/copy-line ()
+(interactive)
+(save-excursion
+(beginning-of-line)
+(let ((beg (point)))
+  (end-of-line)
+  (copy-region-as-kill beg (point)))))
 
 (load-file "~/.config/emacs/shortcuts.el")
 
@@ -439,6 +449,8 @@
 (global-set-key (kbd "<f8>") #'me/switch-to-quicknotes-and-back)
 (global-set-key (kbd "C-c dd") #'me/kill-dired-buffers)
 (global-set-key (kbd "C-c il") #'me/ff-link-org)
+(global-set-key (kbd "C-c cl") #'me/copy-line)
+(global-set-key (kbd "C-c cr") #'copy-region-as-kill)
 
 (put 'erase-buffer 'disabled nil) ; what does this do?
 (put 'dired-find-alternate-file 'disabled nil)

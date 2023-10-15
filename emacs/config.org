@@ -405,8 +405,8 @@
                 ([tab]        . corfu-next)
                 ("S-TAB"      . corfu-previous)
                 ([backtab]    . corfu-previous)
-                ("S-<return>" . corfu-insert)
-                ("RET"        . nil))
+                ("<escape>" . corfu-quit)
+                ("RET"        . corfu-insert))
 
     :init
     (global-corfu-mode)

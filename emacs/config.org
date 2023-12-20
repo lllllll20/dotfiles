@@ -290,30 +290,32 @@
 
 #+begin_src emacs-lisp
 
-  (use-package dired-hide-dotfiles
-    :hook
-    (dired-mode . dired-hide-dotfiles-mode)
-    :bind
-    (:map dired-mode-map ("." . dired-hide-dotfiles-mode)))
+              (use-package dired-hide-dotfiles
+                :hook
+                (dired-mode . dired-hide-dotfiles-mode)
+                :bind
+                (:map dired-mode-map
+;;                      ("h" . dired-up-directory )
+                      ("." . dired-hide-dotfiles-mode )))
 
-  (add-hook 'dired-mode-hook 'dired-hide-details-mode)
-  (setq dired-listing-switches "-al --group-directories-first")
+              (add-hook 'dired-mode-hook 'dired-hide-details-mode)
+              (setq dired-listing-switches "-al --group-directories-first")
 
-  ;; Dired - Store backups
-  (setq
-     backup-by-copying t      ; don't clobber symlinks
-     backup-directory-alist
-      '(("." . "~/.backups/"))    ; don't litter my fs tree
-     delete-old-versions t
-     kept-new-versions 6
-     kept-old-versions 2
-     version-control t)       ; use versioned backups
+              ;; Dired - Store backups
+              (setq
+                 backup-by-copying t      ; don't clobber symlinks
+                 backup-directory-alist
+                  '(("." . "~/.backups/"))    ; don't litter my fs tree
+                 delete-old-versions t
+                 kept-new-versions 6
+                 kept-old-versions 2
+                 version-control t)       ; use versioned backups
 
-  ;; Avoid lock files
-  (setq create-lockfiles nil)
+              ;; Avoid lock files
+              (setq create-lockfiles nil)
 
-  ;; Copy between open dired-buffers
-  (setq dired-dwim-target t)
+              ;; Copy between open dired-buffers
+              (setq dired-dwim-target t)
 
 #+end_src
 
@@ -386,7 +388,7 @@
 
 #+begin_src emacs-lisp
   (use-package corfu
-    :custom
+    ;;:custom
     ;; (corfu-separator ?_) ;; Set to orderless separator, if not using space
     :bind
     ;; Configure SPC for separator insertion
@@ -576,40 +578,45 @@ Store customize options in a separate file:
 
  #+begin_src emacs-lisp
 
-                (global-set-key (kbd "C-c m") 'imenu)
-                (global-set-key (kbd "C-x C-b") 'ibuffer)
-                (global-set-key (kbd "<C-M-left>") 'previous-buffer)
-                (global-set-key (kbd "<C-M-right>") 'next-buffer)
-                (global-set-key (kbd "M-n") 'forward-paragraph)
-                (global-set-key (kbd "M-p") 'backward-paragraph)
-                (global-set-key (kbd "<C-tab>") 'other-window)
-                (global-set-key (kbd "<f5>") 'recentf) 
-                (global-set-key (kbd "<f6>") 'bookmark-jump)
+      (global-set-key (kbd "C-c m") 'imenu)
+      (global-set-key (kbd "C-x C-b") 'ibuffer)
+      (global-set-key (kbd "<C-M-left>") 'previous-buffer)
+      (global-set-key (kbd "<C-M-right>") 'next-buffer)
+      (global-set-key (kbd "M-n") 'forward-paragraph)
+      (global-set-key (kbd "M-p") 'backward-paragraph)
+      (global-set-key (kbd "<C-tab>") 'other-window)
+      (global-set-key (kbd "<f5>") 'recentf) 
+      (global-set-key (kbd "<f6>") 'bookmark-jump)
+      (global-set-key (kbd "C-=") 'text-scale-increase)
+      (global-set-key (kbd "C--") 'text-scale-decrease)
+      (keymap-set           ctl-x-map "k" 'kill-current-buffer) ; Replace C-x k (kill buffer) with kill-current-buffer
+      (keymap-set           ctl-x-map "f" 'find-file) ; Replace C-x f (set-fill-column) with find-file (C-x C-f usually)
+      (keymap-set         ctl-x-r-map "d" 'bookmark-delete) ; Repace C-x r d (delete-rectangle) with delete bookmark
 
+      (defun me/save-and-quit ()
+        (interactive)
+        (save-buffer)
+        (kill-this-buffer))
 
-               (defun me/save-and-quit ()
-                 (interactive)
-                 (save-buffer)
-                 (kill-this-buffer))
+      (global-set-key (kbd "C-q") 'me/save-and-quit)
 
-               (global-set-key (kbd "C-q") 'me/save-and-quit)
+      ;; Escape always quits
+      (global-set-key [escape] 'keyboard-escape-quit)
 
-                 ;; Escape always quits
-                 (global-set-key [escape] 'keyboard-escape-quit)
+      (defun me/toggle-windows ()
+        (interactive)
+        (if (> (count-windows) 1)
+            (delete-other-windows)
+          (progn (split-window-right)
+                 (other-window 1))))
 
-            (defun me/toggle-windows ()
-              (interactive)
-              (if (> (count-windows) 1)
-                (delete-other-windows)
-              (progn (split-window-right)
-                     (other-window 1))))
+      (global-set-key (kbd "C-z") 'me/toggle-windows)
+      (add-hook 'ibuffer-mode-hook
+                '(lambda ()
+                   (keymap-set ibuffer-mode-map "M-o" 'me/toggle-windows)))
+      (global-set-key (kbd "M-o") 'me/toggle-windows) 
 
-            (global-set-key (kbd "C-c x") 'me/toggle-windows)
-            (add-hook 'ibuffer-mode-hook
-                   '(lambda ()
-                      (keymap-set ibuffer-mode-map "M-o" 'me/toggle-windows)))
-            (global-set-key (kbd "M-o") 'me/toggle-windows) 
-
+   (load-file "~/.config/emacs/my-custom-keys.el")
 
 #+end_src
 

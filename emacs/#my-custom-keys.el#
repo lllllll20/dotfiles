@@ -56,6 +56,13 @@
 
 (keymap-set my-overwrite-keys-minor-mode-map "M-SPC" 'my-modal-keys-minor-mode)
 
+(let ((default-color (face-background 'mode-line)))
+  (add-hook 'post-command-hook
+            (lambda ()
+              (set-face-background 'mode-line
+                                   (cond ((not my-modal-keys-minor-mode) "red")
+                                         (t default-color))))))
+
 
 
 ;; need to work out how modal keys takes precedence in emulation mode map

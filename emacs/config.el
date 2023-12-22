@@ -93,7 +93,9 @@
 (use-package doom-themes)
 
 (use-package modus-themes
-  :init (load-theme 'modus-vivendi-tinted t))
+  :init
+  (setq modus-themes-org-blocks 'gray-background)
+  (load-theme 'modus-vivendi-tinted t))
 
 (use-package rainbow-delimiters
 :hook (prog-mode . rainbow-delimiters-mode))
@@ -269,6 +271,16 @@
   (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-purify))
 
 (setq vc-follow-symlinks t)
+
+(use-package pdf-tools
+:defer t
+:commands (pdf-loader-install)
+:mode "\\.pdf\\'"
+:bind (:map pdf-view-mode-map
+("j" . pdf-view-next-line-or-next-page)
+("k" . pdf-view-previous-line-or-next-page))
+:init (pdf-loader-install)
+:config (add-to-list 'revert-without-query ".pdf"))
 
 (setq treesit-language-source-alist
     '((bash "https://github.com/tree-sitter/tree-sitter-bash")

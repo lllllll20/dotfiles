@@ -126,12 +126,11 @@
 
 #+begin_src emacs-lisp
 
-   (use-package doom-themes)
+  (use-package doom-themes)
 
-   (use-package modus-themes
-     :init
-     (setq modus-themes-org-blocks 'gray-background)
-     (load-theme 'modus-vivendi-tinted t))
+  (use-package modus-themes
+    :config (setq modus-themes-org-blocks 'gray-background)
+    :init (load-theme 'modus-vivendi-tinted t))
 
 #+end_src
 
@@ -140,7 +139,7 @@
 #+begin_src emacs-lisp
 
   (use-package rainbow-delimiters
-  :hook (prog-mode . rainbow-delimiters-mode))
+    :hook (prog-mode . rainbow-delimiters-mode))
 
 #+end_src
 

@@ -368,7 +368,7 @@
         (interactive)
         (let ((scratch-buffer-name (get-buffer-create "*scratch*")))
             (if (equal (current-buffer) scratch-buffer-name)
-                (switch-to-buffer (other-buffer))
+                nil
                 (switch-to-buffer scratch-buffer-name))))
 
 

@@ -28,11 +28,12 @@
     (define-key map (kbd "<f1>-f") 'describe-function)
     (define-key map (kbd "<f1>-v") 'describe-variable)
     (define-key map (kbd "<f1>-m") 'describe-mode)
+    (define-key map (kbd "M-SPC") 'rectangle-mark-mode)
     (define-key map (kbd "<escape>") 'my-test-keys-insert-mode-escape)
-    map)
-  "my-insertmode-keys-minor-mode keymap.")
+    map) 
+  "my-insertmode-keys-minor-mode keymap.") 
 
-
+ 
 
 ;; create and enable the minor mode
 (define-minor-mode my-insertmode-keys-minor-mode

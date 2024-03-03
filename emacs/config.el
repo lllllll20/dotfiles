@@ -429,13 +429,33 @@
        (progn (split-window-right)
               (other-window 1))))
 
-   (global-set-key (kbd "C-z") 'me/toggle-windows)
    (add-hook 'ibuffer-mode-hook
              '(lambda ()
                 (keymap-set ibuffer-mode-map "M-o" 'me/toggle-windows)))
    (global-set-key (kbd "M-o") 'me/toggle-windows) 
 
 (load-file "~/.config/emacs/my-custom-keys.el")
+
+(defhydra window-hydra
+  (:color amarinth)
+  "Adjust windows"
+  ("h" windmove-left "Move left")
+  ("j" windmove-down "Move down")
+  ("k" windmove-up "Move up")
+  ("l" windmove-right "Move right")
+  ("d" delete-window "Close window" :color blue)
+  ("v" (lambda ()
+	 (interactive)
+	 (split-window-right)
+	 (windmove-right)) "Split window vertically" :color blue)
+  ("h" (lambda ()
+	 (interactive)
+	 (split-window-below)
+	 (windmove-down)) "Split window horizontally" :color blue))
+
+
+
+(global-set-key (kbd "C-z") 'window-hydra/body)
 
 (global-set-key (kbd "C-c n") #'me/vertico-notes)
 (global-set-key (kbd "C-c olf") #'me/show-in-lf)

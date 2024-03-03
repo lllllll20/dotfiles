@@ -74,7 +74,40 @@
 (keymap-set my-test-keys-minor-mode-map "j" 'next-line)
 (keymap-set my-test-keys-minor-mode-map "k" 'previous-line)
 (keymap-set my-test-keys-minor-mode-map "i" 'my-test-keys-insert-mode-activate)
+(keymap-set my-test-keys-minor-mode-map "y" 'yank)
+(keymap-set my-test-keys-minor-mode-map "u" 'undo)
+(keymap-set my-test-keys-minor-mode-map "a" 'move-beginning-of-line)
+(keymap-set my-test-keys-minor-mode-map "e" 'move-end-of-line)
+(keymap-set my-test-keys-minor-mode-map "r" 'eval-last-sexp)
+(keymap-set my-test-keys-minor-mode-map "w" 'window-hydra/body)
 (define-key my-test-keys-minor-mode-map (kbd "<C-return>") 'er/expand-region)
+
+(defhydra cut-text-hydra
+  (:color blue)
+  "select region of text to copy"
+  ("w" kill-word "Cut to end of word")      
+  ("e" kill-line "Cut to end of line")      
+  ("l" kill-whole-line "Cut whole line"))
+
+(keymap-set my-test-keys-minor-mode-map "x" 'cut-text-hydra/body)
+
+(defhydra set-mark-hydra
+  (:color blue)
+  "select region of text to copy"
+  ("r" rectangle-mark-mode "Mark rectangle")      
+  ("b" set-mark-command "Cut to end of line")) 
+
+(keymap-set my-test-keys-minor-mode-map "m" 'set-mark-hydra/body)
+(keymap-set my-test-keys-minor-mode-map "c" 'kill-ring-save)
+
+(defhydra select-buffer-or-file-hydra
+  (:color blue)
+  "select region of text to copy"
+  ("r" recentf "Recent file")      
+  ("s" switch-to-buffer "Recent file")      
+  ("b" bookmark-jump "Select bookmarked file")) 
+
+(keymap-set my-test-keys-minor-mode-map "b" 'select-buffer-or-file-hydra/body)
 
 (defvar my-test-keys-command-mode--deactivate-func nil)
 (defvar my-insert-state-p t)
@@ -114,3 +147,4 @@
   (if my-insert-state-p
       (my-test-keys-command-mode-activate)
     (my-test-keys-insert-mode-activate)))
+

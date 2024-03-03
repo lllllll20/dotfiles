@@ -453,6 +453,13 @@
 
 #+end_src
 
+* Hydra
+
+#+begin_src
+
+(use-package hydra)
+
+#+end_src
 
 * Treesitter
 #+begin_src emacs-lisp
@@ -637,15 +644,55 @@ Store customize options in a separate file:
           (progn (split-window-right)
                  (other-window 1))))
 
-      (global-set-key (kbd "C-z") 'me/toggle-windows)
       (add-hook 'ibuffer-mode-hook
                 '(lambda ()
                    (keymap-set ibuffer-mode-map "M-o" 'me/toggle-windows)))
       (global-set-key (kbd "M-o") 'me/toggle-windows) 
 
    (load-file "~/.config/emacs/my-custom-keys.el")
+   
+#+end_src
+
+
+** Split window hydra
+
+ #+begin_src emacs-lisp
+
+  (defhydra split-window-hydra
+  (:color blue)
+  "Split windows"
+   ("v" (lambda ()
+	 (interactive)
+	 (split-window-right)
+	 (windmove-right)) "Split window vertically")
+  ("h" (lambda ()
+	 (interactive)
+	 (split-window-below)
+	 (windmove-down)) "Split window horizontally"))
+ 
 
 #+end_src
+
+
+* Window hydra
+
+ #+begin_src emacs-lisp
+
+  (defhydra window-hydra
+  (:color blue)
+  "Adjust windows"
+  ("h" windmove-left "Move left")
+  ("j" windmove-down "Move down")
+  ("k" windmove-up "Move up")
+  ("l" windmove-right "Move right")
+  ("d" delete-window "Close window")
+  ("s" split-window-hydra/body "Split window"))
+  
+(global-set-key (kbd "C-z") 'window-hydra/body)
+ 
+
+#+end_src
+
 
 ** Functions
 #+begin_src emacs-lisp

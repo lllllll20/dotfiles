@@ -78,7 +78,8 @@
 (keymap-set my-test-keys-minor-mode-map "u" 'undo)
 (keymap-set my-test-keys-minor-mode-map "a" 'move-beginning-of-line)
 (keymap-set my-test-keys-minor-mode-map "e" 'move-end-of-line)
-(keymap-set my-test-keys-minor-mode-map "r" 'eval-last-sexp)
+(keymap-set my-test-keys-minor-mode-map "r" 'undo-redo)
+(keymap-set my-test-keys-minor-mode-map "x" 'eval-last-sexp)
 (keymap-set my-test-keys-minor-mode-map "w" 'window-hydra/body)
 (define-key my-test-keys-minor-mode-map (kbd "<C-return>") 'er/expand-region)
 
@@ -89,7 +90,7 @@
   ("e" kill-line "Cut to end of line")      
   ("l" kill-whole-line "Cut whole line"))
 
-(keymap-set my-test-keys-minor-mode-map "x" 'cut-text-hydra/body)
+(keymap-set my-test-keys-minor-mode-map "d" 'cut-text-hydra/body)
 
 (defhydra set-mark-hydra
   (:color blue)

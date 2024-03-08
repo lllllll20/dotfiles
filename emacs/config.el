@@ -436,25 +436,28 @@
 
 (load-file "~/.config/emacs/my-custom-keys.el")
 
+(defhydra split-window-hydra
+(:color blue)
+"Split windows"
+ ("v" (lambda ()
+       (interactive)
+       (split-window-right)
+       (windmove-right)) "Split window vertically")
+("h" (lambda ()
+       (interactive)
+       (split-window-below)
+       (windmove-down)) "Split window horizontally"))
+
 (defhydra window-hydra
-  (:color amarinth)
+  (:color blue)
   "Adjust windows"
   ("h" windmove-left "Move left")
   ("j" windmove-down "Move down")
   ("k" windmove-up "Move up")
   ("l" windmove-right "Move right")
-  ("d" delete-window "Close window" :color blue)
-  ("v" (lambda ()
-	 (interactive)
-	 (split-window-right)
-	 (windmove-right)) "Split window vertically" :color blue)
-  ("h" (lambda ()
-	 (interactive)
-	 (split-window-below)
-	 (windmove-down)) "Split window horizontally" :color blue))
-
-
-
+  ("d" delete-window "Close window")
+  ("s" split-window-hydra/body "Split window"))
+  
 (global-set-key (kbd "C-z") 'window-hydra/body)
 
 (global-set-key (kbd "C-c n") #'me/vertico-notes)

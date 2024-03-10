@@ -120,13 +120,13 @@ focus_follows_mouse no
     exec foot -a files lf
     exec foot -a music ncmpcpp
     exec foot -a floatterm
-    for_window [app_id="files"] move scratchpad, resize set width 1300 height 700
+    for_window [app_id="files"] move scratchpad, resize set width 1300 height 700, move position center
     bindsym $mod+Space exec ~/.config/sway/scripts/togglefiles.sh
 
-    for_window [app_id="music"] move scratchpad, resize set width 1300 height 700
+    for_window [app_id="music"] move scratchpad, resize set width 1300 height 700, move position center
     bindsym $mod+m exec ~/.config/sway/scripts/togglemusic.sh
 
-    for_window [app_id="floatterm"] move scratchpad, resize set width 1300 height 700
+    for_window [app_id="floatterm"] move scratchpad, resize set width 1300 height 700, move position center
     bindsym $mod+Return exec ~/.config/sway/scripts/togglefloatterm.sh
     
     # Assign workspace and launch programs
@@ -488,6 +488,7 @@ exec mpDris2
 exec nm-applet --indicator
 exec blueman-applet
 exec_always ~/.config/sway/scripts/autostart.sh
+exec ~/.config/sway/scripts/resizescratchpad.sh
 exec emacs --daemon
 
 

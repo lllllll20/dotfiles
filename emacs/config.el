@@ -212,21 +212,24 @@
   (bind-key "<backtab>" #'dired-subtree-cycle dired-mode-map))
 
 (use-package lsp-mode
-  :init
-  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-  (setq lsp-keymap-prefix "C-c l")
-  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-         (python-ts-mode . lsp)
-         (bash-ts-mode . lsp)
-         (lua-mode . lsp)
-         ;; if you want which-key integration
-         (lsp-mode . lsp-enable-which-key-integration))
-  :commands lsp)
+   :custom
+ (lsp-completion-provider :none)
+ :init
+ (defun my/lsp-mode-setup-completion ()
+   (setf (alist-get 'styles (alist-get 'lsp-capf completion-category-defaults))
+         '(orderless))) ;; Configure orderless
+   :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+          (python-ts-mode . lsp)
+          (bash-ts-mode . lsp)
+          (lua-mode . lsp)
+          ;; if you want which-key integration
+(lsp-completion-mode . my/lsp-mode-setup-completion))
+   :commands lsp)
 
-(use-package lsp-ui
-  :hook (lsp-mode . lsp-ui-mode)
-  :custom
-  (lsp-ui-doc-position 'bottom))
+ (use-package lsp-ui
+   :hook (lsp-mode . lsp-ui-mode)
+   :custom
+   (lsp-ui-doc-position 'bottom))
 
 (use-package python-mode
   :ensure nil
@@ -239,36 +242,102 @@
                         (require 'lsp-pyright)
                         (lsp))))
 
+(use-package python-black
+    :ensure t
+:demand t
+:after python
+:hook ((python-ts-mode . python-black-on-save-mode)))
+
 (use-package lua-mode
   :ensure nil
   :mode "\\.lua\\'"
   :hook (lua-mode . lsp))
 
 (use-package corfu
-  ;;:custom
-  ;; (corfu-separator ?_) ;; Set to orderless separator, if not using space
-  :bind
-  ;; Configure SPC for separator insertion
-  (:map corfu-map ("SPC" . corfu-insert-separator))
-  :init
-  (global-corfu-mode))
- ;; Cycle with TAB, confirm with SPC
+   :after orderless
+   ;; Optional customizations
+   :custom
+   (corfu-cycle t)                ;; Enable cycling for `corfu-next/previous'
+   (corfu-auto t)                 ;; Enable auto completion
+   (corfu-separator ?\s)          ;; Orderless field separator
+   (corfu-quit-at-boundary t)   ;; Never quit at completion boundary
+   (corfu-quit-no-match t)      ;; Never quit, even if there is no match
+   (corfu-preview-current nil)    ;; Disable current candidate preview
+   ;; (corfu-preselect-first nil)    ;; Disable candidate preselection
+   ;; (corfu-on-exact-match nil)     ;; Configure handling of exact matches
+   ;; (corfu-echo-documentation nil) ;; Disable documentation in the echo area
+   (corfu-scroll-margin 5)        ;; Use scroll margin
+   ;; Enable Corfu only for certain modes.
+   :hook ((prog-mode . corfu-mode)
+          (shell-mode . corfu-mode)
+          (eshell-mode . corfu-mode))
+   ;; Recommended: Enable Corfu globally.
+   ;; This is recommended since Dabbrev can be used globally (M-/).
+   ;; See also `corfu-excluded-modes'.
+   :init
+   (global-corfu-mode) ; This does not play well in eshell if you run a repl
+   (setq corfu-auto t))
 
+;; Add extensions
 (use-package cape
-  :defer 10
-  :bind ("C-c f" . cape-file)
+  ;; Bind dedicated completion commands
+  ;; Alternative prefix keys: C-c p, M-p, M-+, ...
+  :bind (("C-c p p" . completion-at-point) ;; capf
+         ("C-c p t" . complete-tag)        ;; etags
+         ("C-c p d" . cape-dabbrev)        ;; or dabbrev-completion
+         ("C-c p h" . cape-history)
+         ("C-c p f" . cape-file)
+         ("C-c p k" . cape-keyword)
+         ("C-c p s" . cape-elisp-symbol)
+         ("C-c p e" . cape-elisp-block)
+         ("C-c p a" . cape-abbrev)
+         ("C-c p l" . cape-line)
+         ("C-c p w" . cape-dict)
+         ("C-c p :" . cape-emoji)
+         ("C-c p \\" . cape-tex)
+         ("C-c p _" . cape-tex)
+         ("C-c p ^" . cape-tex)
+         ("C-c p &" . cape-sgml)
+         ("C-c p r" . cape-rfc1345))
   :init
-  ;; Add `completion-at-point-functions', used by `completion-at-point'.
-  (defalias 'dabbrev-after-2 (cape-capf-prefix-length #'cape-dabbrev 2))
-  (add-to-list 'completion-at-point-functions 'dabbrev-after-2 t)
-  (cl-pushnew #'cape-file completion-at-point-functions)
-  :config
-  ;; Silence then pcomplete capf, no errors or messages!
-  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-silent)
+  ;; Add to the global default value of `completion-at-point-functions' which is
+  ;; used by `completion-at-point'.  The order of the functions matters, the
+  ;; first function returning a result wins.  Note that the list of buffer-local
+  ;; completion functions takes precedence over the global list.
+  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  (add-to-list 'completion-at-point-functions #'cape-file)
+  (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+  ;;(add-to-list 'completion-at-point-functions #'cape-history)
+  ;;(add-to-list 'completion-at-point-functions #'cape-keyword)
+  ;;(add-to-list 'completion-at-point-functions #'cape-tex)
+  ;;(add-to-list 'completion-at-point-functions #'cape-sgml)
+  ;;(add-to-list 'completion-at-point-functions #'cape-rfc1345)
+  ;;(add-to-list 'completion-at-point-functions #'cape-abbrev)
+  ;;(add-to-list 'completion-at-point-functions #'cape-dict)
+  ;;(add-to-list 'completion-at-point-functions #'cape-elisp-symbol)
+  ;;(add-to-list 'completion-at-point-functions #'cape-line)
+)
 
-  ;; Ensure that pcomplete does not write to the buffer
-  ;; and behaves as a pure `completion-at-point-function'.
-  (advice-add 'pcomplete-completions-at-point :around #'cape-wrap-purify))
+;; Use Dabbrev with Corfu!
+(use-package dabbrev
+  ;; Swap M-/ and C-M-/
+  :bind (("M-/" . dabbrev-completion)
+         ("C-M-/" . dabbrev-expand))
+  :config
+  (add-to-list 'dabbrev-ignored-buffer-regexps "\\` ")
+  ;; Since 29.1, use `dabbrev-ignored-buffer-regexps' on older.
+  (add-to-list 'dabbrev-ignored-buffer-modes 'doc-view-mode)
+  (add-to-list 'dabbrev-ignored-buffer-modes 'pdf-view-mode))
+
+(use-package eglot
+  :ensure t
+  :defer t
+  :hook ((python-mode . eglot-ensure)
+         (lua-mode . eglot-ensure))
+  :config
+  (add-to-list 'eglot-server-programs
+               `(python-mode
+                 . ,(eglot-alternatives '("pyright-langserver" "--stdio")))))
 
 (setq vc-follow-symlinks t)
 

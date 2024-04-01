@@ -103,9 +103,9 @@
 
 (defhydra select-buffer-or-file-hydra
   (:color blue)
-  "select region of text to copy"
+  "Open Buffer"
   ("r" recentf "Recent file")      
-  ("s" switch-to-buffer "Recent file")      
+  ("s" switch-to-buffer "Switch to buffer")      
   ("b" bookmark-jump "Select bookmarked file")) 
 
 (keymap-set my-test-keys-minor-mode-map "b" 'select-buffer-or-file-hydra/body)

@@ -149,3 +149,4 @@
       (my-test-keys-command-mode-activate)
     (my-test-keys-insert-mode-activate)))
 
+(add-hook 'minibuffer-setup-hook 'my-test-keys-insert-mode-init)

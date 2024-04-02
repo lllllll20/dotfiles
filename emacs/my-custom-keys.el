@@ -83,20 +83,27 @@
 (keymap-set my-test-keys-minor-mode-map "w" 'window-hydra/body)
 (define-key my-test-keys-minor-mode-map (kbd "<C-return>") 'er/expand-region)
 
+(defun me/cut-thing ()
+  "Cut active region or offer choice"
+  (interactive)
+  (if (region-active-p)
+      (kill-region (point) (mark))
+    (cut-text-hydra/body)))
+
 (defhydra cut-text-hydra
   (:color blue)
   "select region of text to copy"
   ("w" kill-word "Cut to end of word")      
   ("e" kill-line "Cut to end of line")      
-  ("l" kill-whole-line "Cut whole line"))
+  ("d" kill-whole-line "Cut whole line"))
 
-(keymap-set my-test-keys-minor-mode-map "d" 'cut-text-hydra/body)
+(keymap-set my-test-keys-minor-mode-map "d" 'me/cut-thing)
 
 (defhydra set-mark-hydra
   (:color blue)
   "select region of text to copy"
   ("r" rectangle-mark-mode "Mark rectangle")      
-  ("b" set-mark-command "Cut to end of line")) 
+  ("b" set-mark-command "Mark by line")) 
 
 (keymap-set my-test-keys-minor-mode-map "m" 'set-mark-hydra/body)
 (keymap-set my-test-keys-minor-mode-map "c" 'kill-ring-save)
@@ -105,7 +112,8 @@
   (:color blue)
   "Open Buffer"
   ("r" recentf "Recent file")      
-  ("s" switch-to-buffer "Switch to buffer")      
+  ("f" switch-to-buffer "Switch to buffer")      
+  ("s" scratch-buffer "Switch to buffer")      
   ("b" bookmark-jump "Select bookmarked file")) 
 
 (keymap-set my-test-keys-minor-mode-map "b" 'select-buffer-or-file-hydra/body)
@@ -149,4 +157,24 @@
       (my-test-keys-command-mode-activate)
     (my-test-keys-insert-mode-activate)))
 
-(add-hook 'minibuffer-setup-hook 'my-test-keys-insert-mode-init)
+(add-hook 'minibuffer-setup-hook 'my-minibuffer-entry-insert-setup)
+
+(defvar my-command-history-p nil)
+
+(defun my-minibuffer-entry-insert-setup ()
+  (if my-insert-state-p nil
+      (progn
+	(setq my-command-history-p t)
+	(my-test-keys-insert-mode-activate)
+    )))
+
+(defun my-minibuffer-exit-setup ()
+  
+  (if my-command-history-p
+      (progn
+	(setq my-command-history-p nil)
+	(my-test-keys-command-mode-activate)
+	)))
+
+(add-hook 'minibuffer-exit-hook 'my-minibuffer-exit-setup)
+

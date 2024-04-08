@@ -81,6 +81,7 @@
 (keymap-set my-test-keys-minor-mode-map "r" 'undo-redo)
 (keymap-set my-test-keys-minor-mode-map "x" 'eval-last-sexp)
 (keymap-set my-test-keys-minor-mode-map "w" 'window-hydra/body)
+(keymap-set my-test-keys-minor-mode-map "o" 'org-mode-hydra/body)
 (define-key my-test-keys-minor-mode-map (kbd "<C-return>") 'er/expand-region)
 
 (defun me/cut-thing ()
@@ -112,7 +113,7 @@
   (:color blue)
   "Open Buffer"
   ("r" recentf "Recent file")      
-  ("f" switch-to-buffer "Switch to buffer")      
+  ("l" switch-to-buffer "Switch to buffer")      
   ("s" scratch-buffer "Switch to buffer")      
   ("b" bookmark-jump "Select bookmarked file")) 
 

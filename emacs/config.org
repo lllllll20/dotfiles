@@ -591,6 +591,16 @@
 #+end_src
 
 
+* Window management
+
+#+begin_src emacs-lisp
+
+;; forces emacs to make vertical splits 
+  (setq split-height-threshold nil)
+    (setq split-width-threshold 0)
+  
+#+end_src
+
 * Customize options
 
 Store customize options in a separate file:
@@ -730,7 +740,7 @@ Store customize options in a separate file:
         (kill-this-buffer))
 
       (global-set-key (kbd "C-q") 'me/save-and-quit)
-
+   
       ;; Escape always quits
       (global-set-key [escape] 'keyboard-escape-quit)
 
@@ -747,31 +757,11 @@ Store customize options in a separate file:
       (global-set-key (kbd "M-o") 'me/toggle-windows) 
 
    (load-file "~/.config/emacs/my-custom-keys.el")
-   
-#+end_src
-
-
-** Split window hydra
-
- #+begin_src emacs-lisp
-
-  (defhydra split-window-hydra
-  (:color blue)
-  "Split windows"
-   ("v" (lambda ()
-	 (interactive)
-	 (split-window-right)
-	 (windmove-right)) "Split window vertically")
-  ("h" (lambda ()
-	 (interactive)
-	 (split-window-below)
-	 (windmove-down)) "Split window horizontally"))
- 
 
 #+end_src
 
 
-* Window hydra
+** Window hydra
 
  #+begin_src emacs-lisp
 
@@ -783,12 +773,27 @@ Store customize options in a separate file:
   ("k" windmove-up "Move up")
   ("l" windmove-right "Move right")
   ("d" delete-window "Close window")
-  ("s" split-window-hydra/body "Split window"))
-  
-(global-set-key (kbd "C-z") 'window-hydra/body)
- 
+  ("o" delete-other-windows "Delete other windows")
+  ("s" split-window-right "Make vertical split"))
 
 #+end_src
+
+** Org mode hydra 
+
+ #+begin_src emacs-lisp
+
+   (defhydra org-mode-hydra
+   (:color amaranth)
+   "Select action"
+   ("TAB" org-cycle "Org Cycle")
+   ("j" org-next-visible-heading "Move down")
+   ("k" org-previous-visible-heading "Move up")
+   ("l" windmove-right "Move right")
+   ("d" delete-window "Close window")
+   ("s" (lambda () (interactive) (hydra-keyboard-quit) (org-insert-structure-template "src emacs-lisp")) "Structure template" :exit t)
+   ("q" hydra-keyboard-quit "quit" :exit t))
+   
+#+End_src
 
 
 ** Functions

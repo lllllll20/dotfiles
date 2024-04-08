@@ -377,6 +377,10 @@
   (css-mode . css-ts-mode)
   (python-mode . python-ts-mode)))
 
+;; forces emacs to make vertical splits 
+  (setq split-height-threshold nil)
+    (setq split-width-threshold 0)
+
 (setq custom-file "~/.config/emacs/customize-options.el")
 (load custom-file)
 
@@ -505,29 +509,27 @@
 
 (load-file "~/.config/emacs/my-custom-keys.el")
 
-(defhydra split-window-hydra
-(:color blue)
-"Split windows"
- ("v" (lambda ()
-       (interactive)
-       (split-window-right)
-       (windmove-right)) "Split window vertically")
-("h" (lambda ()
-       (interactive)
-       (split-window-below)
-       (windmove-down)) "Split window horizontally"))
-
 (defhydra window-hydra
-  (:color blue)
-  "Adjust windows"
-  ("h" windmove-left "Move left")
-  ("j" windmove-down "Move down")
-  ("k" windmove-up "Move up")
-  ("l" windmove-right "Move right")
-  ("d" delete-window "Close window")
-  ("s" split-window-hydra/body "Split window"))
-  
-(global-set-key (kbd "C-z") 'window-hydra/body)
+(:color blue)
+"Adjust windows"
+("h" windmove-left "Move left")
+("j" windmove-down "Move down")
+("k" windmove-up "Move up")
+("l" windmove-right "Move right")
+("d" delete-window "Close window")
+("o" delete-other-windows "Delete other windows")
+("s" split-window-right "Make vertical split"))
+
+(defhydra org-mode-hydra
+(:color amaranth)
+"Select action"
+("TAB" org-cycle "Org Cycle")
+("j" org-next-visible-heading "Move down")
+("k" org-previous-visible-heading "Move up")
+("l" windmove-right "Move right")
+("d" delete-window "Close window")
+("s" (lambda () (interactive) (hydra-keyboard-quit) (split-window-repeat-hydra/body)) "Split window" :exit t)
+("q" hydra-keyboard-quit "quit" :exit t))
 
 (global-set-key (kbd "C-c n") #'me/vertico-notes)
 (global-set-key (kbd "C-c olf") #'me/show-in-lf)

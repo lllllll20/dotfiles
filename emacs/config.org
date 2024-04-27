@@ -530,15 +530,15 @@
 
 #+begin_src emacs-lisp
 
-(use-package pdf-tools
-:defer t
-:commands (pdf-loader-install)
-:mode "\\.pdf\\'"
-:bind (:map pdf-view-mode-map
-("j" . pdf-view-next-line-or-next-page)
-("k" . pdf-view-previous-line-or-next-page))
-:init (pdf-loader-install)
-:config (add-to-list 'revert-without-query ".pdf"))
+  (use-package pdf-tools
+  :defer t
+  :commands (pdf-loader-install)
+  :mode "\\.pdf\\'"
+  :bind (:map pdf-view-mode-map
+  ("j" . pdf-view-next-line-or-next-page)
+  ("k" . pdf-view-previous-line-or-previous-page))
+  :init (pdf-loader-install)
+  :config (add-to-list 'revert-without-query ".pdf"))
 
 #+end_src
 

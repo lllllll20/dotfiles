@@ -347,7 +347,7 @@
 :mode "\\.pdf\\'"
 :bind (:map pdf-view-mode-map
 ("j" . pdf-view-next-line-or-next-page)
-("k" . pdf-view-previous-line-or-next-page))
+("k" . pdf-view-previous-line-or-previous-page))
 :init (pdf-loader-install)
 :config (add-to-list 'revert-without-query ".pdf"))
 
@@ -528,7 +528,7 @@
 ("k" org-previous-visible-heading "Move up")
 ("l" windmove-right "Move right")
 ("d" delete-window "Close window")
-("s" (lambda () (interactive) (hydra-keyboard-quit) (split-window-repeat-hydra/body)) "Split window" :exit t)
+("s" (lambda () (interactive) (hydra-keyboard-quit) (org-insert-structure-template "src emacs-lisp")) "Structure template" :exit t)
 ("q" hydra-keyboard-quit "quit" :exit t))
 
 (global-set-key (kbd "C-c n") #'me/vertico-notes)

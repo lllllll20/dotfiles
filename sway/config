@@ -112,6 +112,7 @@ focus_follows_mouse no
     bindsym XF86AudioMicMute      exec pactl set-source-mute @DEFAULT_SOURCE@ toggle
     bindsym XF86MonBrightnessDown exec brightnessctl set 5%-
     bindsym XF86MonBrightnessUp   exec brightnessctl set +5%
+    bindsym $mod+shift+a   exec pactl set-sink-volume @DEFAULT_SINK@ 70%
 
     focus_on_window_activation focus
 
@@ -163,7 +164,13 @@ focus_follows_mouse no
     for_window [app_id="email"] focus
     bindsym $mod+Mod1+e exec ~/.config/sway/scripts/hideandfocus.sh "foot -a email neomutt"
 
-    assign [app_id="org.gnome.Nautilus"]: workspace number 4
+    assign [app_id="libreoffice"]: workspace number 4
+    for_window [app_id="libreoffice"] focus
+
+    assign [app_id="org.pwmt.zathura"]: workspace number 4
+    for_window [app_id="org.pwmt.zathura"] focus
+
+    assign [app_id="org.gnome.Nautilus"]: workspace number 5
     for_window [app_id="org.gnome.Nautilus"] focus
     bindsym $mod+f exec ~/.config/sway/scripts/hideandfocus.sh nautilus
     bindsym XF86Launch8 exec ~/.config/sway/scripts/hideandfocus.sh nautilus
@@ -171,17 +178,11 @@ focus_follows_mouse no
     bindsym $mod+Mod1+r exec localc ~/work_docs/ST5/Rota/"Registrar ultrasound rota updated.xlsx"
     bindsym $mod+w exec nautilus ~/work_docs/ST5/
 
-    assign [app_id="org.gnome.World.Secrets"]: workspace number 5
+    assign [app_id="org.gnome.World.Secrets"]: workspace number 6
     for_window [app_id="org.gnome.World.Secrets"] focus
     bindsym $mod+p exec ~/.config/sway/scripts/hideandfocus.sh secrets
     bindsym XF86Launch9 exec ~/.config/sway/scripts/hideandfocus.sh secrets
-
-    assign [app_id="libreoffice"]: workspace number 6
-    for_window [app_id="libreoffice"] focus
-
-    assign [app_id="org.pwmt.zathura"]: workspace number 6
-    for_window [app_id="org.pwmt.zathura"] focus
-
+  
     assign [app_id="recoll"]: workspace number 6
     for_window [app_id="recoll"] focus, fullscreen enable
  

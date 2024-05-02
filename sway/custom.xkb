@@ -1,0 +1,14 @@
+xkb_keymap {
+    xkb_keycodes { include "evdev+aliases(qwerty)" };
+    xkb_types { include "complete" };
+    xkb_compat { include "complete" };
+    xkb_symbols {
+        include "pc"
+        include "gb"
+        include "inet(evdev)"
+        replace key <RALT> { [ Super_R ] };
+	key <CAPS> { [ Escape ] };
+	replace key <MENU> { [ Alt_L, Meta_L ] };  
+    };
+    
+};

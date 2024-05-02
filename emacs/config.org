@@ -730,6 +730,8 @@ Store customize options in a separate file:
       (global-set-key (kbd "<f6>") 'bookmark-jump)
       (global-set-key (kbd "C-=") 'text-scale-increase)
       (global-set-key (kbd "C--") 'text-scale-decrease)
+      (global-set-key (kbd "M-<drag-mouse-9>") 'next-buffer)
+      (global-set-key (kbd "M-<drag-mouse-8>") 'previous-buffer)
       (keymap-set           ctl-x-map "k" 'kill-current-buffer) ; Replace C-x k (kill buffer) with kill-current-buffer
       (keymap-set           ctl-x-map "f" 'find-file) ; Replace C-x f (set-fill-column) with find-file (C-x C-f usually)
       (keymap-set         ctl-x-r-map "d" 'bookmark-delete) ; Repace C-x r d (delete-rectangle) with delete bookmark

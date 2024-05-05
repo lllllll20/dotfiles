@@ -211,6 +211,66 @@
   (bind-key "<tab>" #'dired-subtree-toggle dired-mode-map)
   (bind-key "<backtab>" #'dired-subtree-cycle dired-mode-map))
 
+(defun xah-open-in-external-app (&optional Fname)
+  "Open the current file or dired marked files in external app.
+When called in emacs lisp, if Fname is given, open that.
+
+URL `http://xahlee.info/emacs/emacs/emacs_dired_open_file_in_ext_apps.html'
+Version: 2019-11-04 2023-04-05 2023-06-26"
+  (interactive)
+  (let (xfileList xdoIt)
+    (setq xfileList
+          (if Fname
+              (list Fname)
+            (if (eq major-mode 'dired-mode)
+                (dired-get-marked-files)
+              (list buffer-file-name))))
+    (setq xdoIt (if (<= (length xfileList) 10) t (y-or-n-p "Open more than 10 files? ")))
+    (when xdoIt
+      (cond
+       ((eq system-type 'windows-nt)
+        (let ((xoutBuf (get-buffer-create "*xah open in external app*"))
+              (xcmdlist (list "PowerShell" "-Command" "Invoke-Item" "-LiteralPath")))
+          (mapc
+           (lambda (x)
+             (message "%s" x)
+             (apply 'start-process (append (list "xah open in external app" xoutBuf) xcmdlist (list (format "'%s'" (if (string-match "'" x) (replace-match "`'" t t x) x))) nil)))
+           xfileList)
+          ;; (switch-to-buffer-other-window xoutBuf)
+          )
+        ;; old code. calling shell. also have a bug if filename contain apostrophe
+        ;; (mapc (lambda (xfpath) (shell-command (concat "PowerShell -Command \"Invoke-Item -LiteralPath\" " "'" (shell-quote-argument (expand-file-name xfpath)) "'"))) xfileList)
+        )
+       ((eq system-type 'darwin)
+        (mapc (lambda (xfpath) (shell-command (concat "open " (shell-quote-argument xfpath)))) xfileList))
+       ((eq system-type 'gnu/linux)
+        (mapc (lambda (xfpath)
+                (call-process shell-file-name nil 0 nil
+                              shell-command-switch
+                              (format "%s %s"
+                                      "xdg-open"
+                                      (shell-quote-argument xfpath))))
+              xfileList))
+       ((eq system-type 'berkeley-unix)
+        (mapc (lambda (xfpath) (let ((process-connection-type nil)) (start-process "" nil "xdg-open" xfpath))) xfileList))))))
+
+
+(defun my-l ()
+  "..."
+  (interactive)
+  (let ((fname  (dired-get-filename)))
+    (if (file-directory-p fname)
+        (dired-find-alternate-file)
+      (xah-open-in-external-app fname))))
+
+
+
+(eval-after-load "dired" '(progn
+                            (define-key dired-mode-map (kbd "l") 'my-l)
+                            (define-key dired-mode-map (kbd "j") 'dired-next-line)
+                            (define-key dired-mode-map (kbd "k") 'dired-previous-line)
+                            (define-key dired-mode-map (kbd "h") (lambda () (interactive) (find-alternate-file "..")))))
+
 (use-package lsp-mode
    :custom
  (lsp-completion-provider :none)
@@ -377,7 +437,7 @@
   (css-mode . css-ts-mode)
   (python-mode . python-ts-mode)))
 
-;; forces emacs to make vertical splits 
+;; forces emacs to make vertical splits
   (setq split-height-threshold nil)
     (setq split-width-threshold 0)
 
@@ -430,9 +490,9 @@
 
   (defun me/kill-dired-buffers ()
        (interactive)
-       (mapc (lambda (buffer) 
-             (when (eq 'dired-mode (buffer-local-value 'major-mode buffer)) 
-               (kill-buffer buffer))) 
+       (mapc (lambda (buffer)
+             (when (eq 'dired-mode (buffer-local-value 'major-mode buffer))
+               (kill-buffer buffer)))
            (buffer-list)))
 
   (defun me/switch-to-scratch-and-back ()
@@ -477,10 +537,12 @@
    (global-set-key (kbd "M-n") 'forward-paragraph)
    (global-set-key (kbd "M-p") 'backward-paragraph)
    (global-set-key (kbd "<C-tab>") 'other-window)
-   (global-set-key (kbd "<f5>") 'recentf) 
+   (global-set-key (kbd "<f5>") 'recentf)
    (global-set-key (kbd "<f6>") 'bookmark-jump)
    (global-set-key (kbd "C-=") 'text-scale-increase)
    (global-set-key (kbd "C--") 'text-scale-decrease)
+   (global-set-key (kbd "M-<drag-mouse-9>") 'next-buffer)
+   (global-set-key (kbd "M-<drag-mouse-8>") 'previous-buffer)
    (keymap-set           ctl-x-map "k" 'kill-current-buffer) ; Replace C-x k (kill buffer) with kill-current-buffer
    (keymap-set           ctl-x-map "f" 'find-file) ; Replace C-x f (set-fill-column) with find-file (C-x C-f usually)
    (keymap-set         ctl-x-r-map "d" 'bookmark-delete) ; Repace C-x r d (delete-rectangle) with delete bookmark
@@ -505,7 +567,7 @@
    (add-hook 'ibuffer-mode-hook
              '(lambda ()
                 (keymap-set ibuffer-mode-map "M-o" 'me/toggle-windows)))
-   (global-set-key (kbd "M-o") 'me/toggle-windows) 
+   (global-set-key (kbd "M-o") 'me/toggle-windows)
 
 (load-file "~/.config/emacs/my-custom-keys.el")
 

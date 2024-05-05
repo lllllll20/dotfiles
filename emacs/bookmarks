@@ -49,10 +49,10 @@
  (position . 1))
 ("org-capture-last-stored"
  (filename . "~/notes/quick_notes.org")
- (front-context-string . "* does this do\n\n")
- (rear-context-string . " 0333 200 5100\n\n")
- (position . 3432)
- (last-modified 25873 38749 649047 259000))
+ (front-context-string)
+ (rear-context-string . "ent_scenarios/\n\n")
+ (position . 427)
+ (last-modified 26157 24267 493209 394000))
 ("Emacs notes"
  (filename . "~/notes/Computing/Programs/emacs.org")
  (front-context-string)

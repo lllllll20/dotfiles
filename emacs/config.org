@@ -290,6 +290,8 @@
 
 * Dired
 
+**  General preferences
+
 #+begin_src emacs-lisp
 
               (use-package dired-hide-dotfiles
@@ -318,18 +320,86 @@
 
               ;; Copy between open dired-buffers
               (setq dired-dwim-target t)
+              (add-hook 'dired-mode-hook 'my-test-keys-insert-mode-activate)
 
 #+end_src
 
 ** Dired subtree
 
 #+begin_src emacs-lisp
-(use-package dired-subtree :ensure t
-  :after dired
-  :config
-  (bind-key "<tab>" #'dired-subtree-toggle dired-mode-map)
-  (bind-key "<backtab>" #'dired-subtree-cycle dired-mode-map))
+  (use-package dired-subtree :ensure t
+    :after dired
+    :config
+    (bind-key "<tab>" #'dired-subtree-toggle dired-mode-map)
+    (bind-key "<backtab>" #'dired-subtree-cycle dired-mode-map))
 #+end_src
+
+** Using XDG-Open
+
+#+begin_src emacs-lisp
+(defun xah-open-in-external-app (&optional Fname)
+  "Open the current file or dired marked files in external app.
+When called in emacs lisp, if Fname is given, open that.
+
+URL `http://xahlee.info/emacs/emacs/emacs_dired_open_file_in_ext_apps.html'
+Version: 2019-11-04 2023-04-05 2023-06-26"
+  (interactive)
+  (let (xfileList xdoIt)
+    (setq xfileList
+          (if Fname
+              (list Fname)
+            (if (eq major-mode 'dired-mode)
+                (dired-get-marked-files)
+              (list buffer-file-name))))
+    (setq xdoIt (if (<= (length xfileList) 10) t (y-or-n-p "Open more than 10 files? ")))
+    (when xdoIt
+      (cond
+       ((eq system-type 'windows-nt)
+        (let ((xoutBuf (get-buffer-create "*xah open in external app*"))
+              (xcmdlist (list "PowerShell" "-Command" "Invoke-Item" "-LiteralPath")))
+          (mapc
+           (lambda (x)
+             (message "%s" x)
+             (apply 'start-process (append (list "xah open in external app" xoutBuf) xcmdlist (list (format "'%s'" (if (string-match "'" x) (replace-match "`'" t t x) x))) nil)))
+           xfileList)
+          ;; (switch-to-buffer-other-window xoutBuf)
+          )
+        ;; old code. calling shell. also have a bug if filename contain apostrophe
+        ;; (mapc (lambda (xfpath) (shell-command (concat "PowerShell -Command \"Invoke-Item -LiteralPath\" " "'" (shell-quote-argument (expand-file-name xfpath)) "'"))) xfileList)
+        )
+       ((eq system-type 'darwin)
+        (mapc (lambda (xfpath) (shell-command (concat "open " (shell-quote-argument xfpath)))) xfileList))
+       ((eq system-type 'gnu/linux)
+        (mapc (lambda (xfpath)
+                (call-process shell-file-name nil 0 nil
+                              shell-command-switch
+                              (format "%s %s"
+                                      "xdg-open"
+                                      (shell-quote-argument xfpath))))
+              xfileList))
+       ((eq system-type 'berkeley-unix)
+        (mapc (lambda (xfpath) (let ((process-connection-type nil)) (start-process "" nil "xdg-open" xfpath))) xfileList))))))
+
+
+(defun my-l ()
+  "..."
+  (interactive)
+  (let ((fname  (dired-get-filename)))
+    (if (file-directory-p fname)
+        (dired-find-alternate-file)
+      (xah-open-in-external-app fname))))
+
+
+
+(eval-after-load "dired" '(progn
+                            (define-key dired-mode-map (kbd "<return>") 'my-l)
+                            (define-key dired-mode-map (kbd "l") 'my-l)
+                            (define-key dired-mode-map (kbd "j") 'dired-next-line)
+                            (define-key dired-mode-map (kbd "k") 'dired-previous-line)
+                            (define-key dired-mode-map (kbd "h") (lambda () (interactive) (find-alternate-file "..")))))
+
+#+end_src
+
 
 * LSP
 
@@ -385,7 +455,7 @@
   :demand t
   :after python
   :hook ((python-ts-mode . python-black-on-save-mode)))
-  
+
 #+end_src
 
 
@@ -406,7 +476,7 @@
 * Corfu
 
 #+begin_src emacs-lisp
-  
+
  (use-package corfu
     :after orderless
     ;; Optional customizations
@@ -431,7 +501,7 @@
     :init
     (global-corfu-mode) ; This does not play well in eshell if you run a repl
     (setq corfu-auto t))
-  
+
 #+end_src
 
 * Cape
@@ -479,7 +549,7 @@
   ;;(add-to-list 'completion-at-point-functions #'cape-line)
 )
 
-  
+
 #+end_src
 
 * Dabbrev
@@ -515,7 +585,7 @@
                `(python-mode
                  . ,(eglot-alternatives '("pyright-langserver" "--stdio")))))
 
-  
+
 #+end_src
 
 * VC
@@ -595,10 +665,10 @@
 
 #+begin_src emacs-lisp
 
-;; forces emacs to make vertical splits 
+;; forces emacs to make vertical splits
   (setq split-height-threshold nil)
     (setq split-width-threshold 0)
-  
+
 #+end_src
 
 * Customize options
@@ -662,9 +732,9 @@ Store customize options in a separate file:
 
     (defun me/kill-dired-buffers ()
          (interactive)
-         (mapc (lambda (buffer) 
-               (when (eq 'dired-mode (buffer-local-value 'major-mode buffer)) 
-                 (kill-buffer buffer))) 
+         (mapc (lambda (buffer)
+               (when (eq 'dired-mode (buffer-local-value 'major-mode buffer))
+                 (kill-buffer buffer)))
              (buffer-list)))
 
     (defun me/switch-to-scratch-and-back ()
@@ -714,7 +784,7 @@ Store customize options in a separate file:
     (load-file "~/.config/emacs/shortcuts.el")
 
   #+end_src
-  
+
 ** Misc
 
  #+begin_src emacs-lisp
@@ -726,7 +796,7 @@ Store customize options in a separate file:
       (global-set-key (kbd "M-n") 'forward-paragraph)
       (global-set-key (kbd "M-p") 'backward-paragraph)
       (global-set-key (kbd "<C-tab>") 'other-window)
-      (global-set-key (kbd "<f5>") 'recentf) 
+      (global-set-key (kbd "<f5>") 'recentf)
       (global-set-key (kbd "<f6>") 'bookmark-jump)
       (global-set-key (kbd "C-=") 'text-scale-increase)
       (global-set-key (kbd "C--") 'text-scale-decrease)
@@ -742,7 +812,7 @@ Store customize options in a separate file:
         (kill-this-buffer))
 
       (global-set-key (kbd "C-q") 'me/save-and-quit)
-   
+
       ;; Escape always quits
       (global-set-key [escape] 'keyboard-escape-quit)
 
@@ -756,7 +826,7 @@ Store customize options in a separate file:
       (add-hook 'ibuffer-mode-hook
                 '(lambda ()
                    (keymap-set ibuffer-mode-map "M-o" 'me/toggle-windows)))
-      (global-set-key (kbd "M-o") 'me/toggle-windows) 
+      (global-set-key (kbd "M-o") 'me/toggle-windows)
 
    (load-file "~/.config/emacs/my-custom-keys.el")
 
@@ -780,7 +850,7 @@ Store customize options in a separate file:
 
 #+end_src
 
-** Org mode hydra 
+** Org mode hydra
 
  #+begin_src emacs-lisp
 
@@ -794,7 +864,7 @@ Store customize options in a separate file:
    ("d" delete-window "Close window")
    ("s" (lambda () (interactive) (hydra-keyboard-quit) (org-insert-structure-template "src emacs-lisp")) "Structure template" :exit t)
    ("q" hydra-keyboard-quit "quit" :exit t))
-   
+
 #+End_src
 
 
@@ -811,7 +881,7 @@ Store customize options in a separate file:
   (global-set-key (kbd "C-c il") #'me/ff-link-org)
   (global-set-key (kbd "C-c cl") #'me/copy-line)
   (global-set-key (kbd "C-c cr") #'copy-region-as-kill)
-  
+
 #+end_src
 
 * Mysterious

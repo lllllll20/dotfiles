@@ -113,9 +113,11 @@
 (defhydra select-buffer-or-file-hydra
   (:color blue)
   "Open Buffer"
+  ("d" dired "Open dired")      
   ("r" recentf "Recent file")      
   ("l" switch-to-buffer "List buffers")      
   ("s" scratch-buffer "Show scratch buffer")      
+  ("k" kill-current-buffer "Kill current buffer")      
   ("p" previous-buffer "Previous buffer")      
   ("b" bookmark-jump "Select bookmarked file")) 
 

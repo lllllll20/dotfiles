@@ -204,6 +204,7 @@
 
               ;; Copy between open dired-buffers
               (setq dired-dwim-target t)
+              (add-hook 'dired-mode-hook 'my-test-keys-insert-mode-activate)
 
 (use-package dired-subtree :ensure t
   :after dired
@@ -266,6 +267,7 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
 
 
 (eval-after-load "dired" '(progn
+                            (define-key dired-mode-map (kbd "<return>") 'my-l)
                             (define-key dired-mode-map (kbd "l") 'my-l)
                             (define-key dired-mode-map (kbd "j") 'dired-next-line)
                             (define-key dired-mode-map (kbd "k") 'dired-previous-line)

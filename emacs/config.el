@@ -73,7 +73,7 @@
            (file org-default-notes-file)
            "* %?\n %i" :empty-lines 1)
           ("r" "Recipe" entry
-           (file+headline "~/notes/ideas.org" "Recipes to try")
+           (file+headline "~/notes/ideas.org" "Recipe ideas")
            "** %?\n")
           ("j" "Journal entry" entry
            (file+datetree "~/notes/journal.org")

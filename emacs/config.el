@@ -90,6 +90,8 @@
 (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
 (add-to-list 'org-structure-template-alist '("py" . "src python"))
 
+(setq org-return-follows-link t)
+
 (use-package doom-themes)
 
 (use-package modus-themes

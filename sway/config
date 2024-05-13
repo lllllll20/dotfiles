@@ -273,15 +273,15 @@ focus_follows_mouse no
 # Moving around:
 #
     # Move your focus around
-    bindsym $mod+$left focus left
-    bindsym $mod+$down focus down
-    bindsym $mod+$up focus up
-    bindsym $mod+$right focus right
+    bindsym $mod+Mod1+$left focus left
+    bindsym $mod+Mod1+$down focus down
+    bindsym $mod+Mod1+$up focus up
+    bindsym $mod+Mod1+$right focus right
     # Or use $mod+[up|down|left|right]
-    bindsym $mod+Left focus left
-    bindsym $mod+Down focus down
-    bindsym $mod+Up focus up
-    bindsym $mod+Right focus right
+    bindsym $mod+Mod1+Left focus left
+    bindsym $mod+Mod1+Down focus down
+    bindsym $mod+Mod1+Up focus up
+    bindsym $mod+Mod1+Right focus right
 
     # Move the focused window with the same, but add Shift
     bindsym $mod+Shift+$left move left
@@ -294,10 +294,10 @@ focus_follows_mouse no
     bindsym $mod+Shift+Up move up
     bindsym $mod+Shift+Right move right
 
-    bindsym $mod+Mod1+right exec ~/.config/sway/scripts/switchworkspace.sh next
-    bindsym $mod+Mod1+$right exec ~/.config/sway/scripts/switchworkspace.sh next
-    bindsym $mod+Mod1+left exec ~/.config/sway/scripts/switchworkspace.sh prev
-    bindsym $mod+Mod1+$left exec ~/.config/sway/scripts/switchworkspace.sh prev
+    bindsym $mod+right exec ~/.config/sway/scripts/switchworkspace.sh next
+    bindsym $mod+$right exec ~/.config/sway/scripts/switchworkspace.sh next
+    bindsym $mod+left exec ~/.config/sway/scripts/switchworkspace.sh prev
+    bindsym $mod+$left exec ~/.config/sway/scripts/switchworkspace.sh prev
 #
 # Workspaces:
 #

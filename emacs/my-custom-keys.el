@@ -105,21 +105,48 @@
   (:color blue)
   "select region of text to copy"
   ("r" rectangle-mark-mode "Mark rectangle")      
+  ("m" set-mark-command "Mark by line")
   ("b" set-mark-command "Mark by line")) 
 
 (keymap-set my-test-keys-minor-mode-map "m" 'set-mark-hydra/body)
 (keymap-set my-test-keys-minor-mode-map "c" 'kill-ring-save)
+
+
+(defun my-next-buffer ()
+         "Move to next buffer.
+      Press l will do it again, press h will move to previous buffer. Press other key to exit."
+        (interactive)
+        (next-buffer)
+        (let ((map (make-sparse-keymap)))
+           (define-key map (kbd "l") 'next-buffer)
+           (define-key map (kbd "h") 'previous-buffer)
+           (set-transient-map map t)))
+
+      (defun my-previous-buffer ()
+        "move cursor to previous buffer.
+   Press h will do it again, press l will move to next buffer. Press other key to exit."
+        (interactive)
+        (previous-buffer)
+        (let ((map (make-sparse-keymap)))
+           (define-key map (kbd "l") 'next-buffer)
+           (define-key map (kbd "h") 'previous-buffer)
+           (set-transient-map map t)))
+
 
 (defhydra select-buffer-or-file-hydra
   (:color blue)
   "Open Buffer"
   ("d" dired "Open dired")      
   ("r" recentf "Recent file")      
-  ("l" switch-to-buffer "List buffers")      
+  ("b" switch-to-buffer "List buffers")      
   ("s" scratch-buffer "Show scratch buffer")      
   ("k" kill-current-buffer "Kill current buffer")      
-  ("p" previous-buffer "Previous buffer")      
-  ("b" bookmark-jump "Select bookmarked file")) 
+  ("h" my-previous-buffer "Previous buffer")      
+  ("l" my-next-buffer "Next buffer")      
+  ("t" (find-file "~/notes/todo.org") "Todo")      
+  ("q" (find-file "~/notes/quick_notes.org") "Quick notes")      
+  ("n" me/vertico-notes "Select notes")      
+  ("f" bookmark-jump "Select bookmarked file")) 
 
 (keymap-set my-test-keys-minor-mode-map "b" 'select-buffer-or-file-hydra/body)
 

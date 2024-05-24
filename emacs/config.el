@@ -586,16 +586,36 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
 ("o" delete-other-windows "Delete other windows")
 ("s" split-window-right "Make vertical split"))
 
+(defun my-forward-heading ()
+      "move cursor to next heading.
+   Press j will do it again, press k will move to previous heading. Press other key to exit."
+     (interactive)
+     (outline-next-heading)
+     (let ((map (make-sparse-keymap)))
+        (define-key map (kbd "TAB") 'org-cycle)
+        (define-key map (kbd "j") 'outline-next-heading)
+        (define-key map (kbd "k") 'outline-previous-heading)
+        (set-transient-map map t)))
+
+   (defun my-previous-heading ()
+     "move cursor to previous heading.
+Press k will do it again, press j will move to next heading. Press other key to exit."
+     (interactive)
+     (outline-previous-heading)
+     (let ((map (make-sparse-keymap)))
+        (define-key map (kbd "TAB") 'org-cycle)
+        (define-key map (kbd "j") 'outline-next-heading)
+        (define-key map (kbd "k") 'outline-previous-heading)
+        (set-transient-map map t)))
+
 (defhydra org-mode-hydra
-(:color amaranth)
-"Select action"
-("TAB" org-cycle "Org Cycle")
-("j" org-next-visible-heading "Move down")
-("k" org-previous-visible-heading "Move up")
-("l" windmove-right "Move right")
-("d" delete-window "Close window")
-("s" (lambda () (interactive) (hydra-keyboard-quit) (org-insert-structure-template "src emacs-lisp")) "Structure template" :exit t)
-("q" hydra-keyboard-quit "quit" :exit t))
+      (:color blue)
+      "Select action"
+      ("TAB" org-cycle "Org Cycle")
+      ("j" my-forward-heading "Move down")
+      ("k" my-previous-heading "Move up")
+      ("s" (lambda () (interactive) (hydra-keyboard-quit) (org-insert-structure-template "src emacs-lisp")) "Structure template" :exit t)
+      ("q" hydra-keyboard-quit "quit" :exit t))
 
 (global-set-key (kbd "C-c n") #'me/vertico-notes)
 (global-set-key (kbd "C-c olf") #'me/show-in-lf)

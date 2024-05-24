@@ -2,7 +2,13 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("my-custom-keys.el"
+(("org-refile-last-stored"
+ (filename . "~/notes/ideas.org")
+ (front-context-string . "** Glazed bacon\n")
+ (rear-context-string . "outube link]]\n\n\n")
+ (position . 1308)
+ (last-modified 26169 2007 510850 908000))
+("my-custom-keys.el"
  (filename . "~/computing/git/dotfiles/emacs/my-custom-keys.el")
  (front-context-string . ";Define a genera")
  (rear-context-string)
@@ -49,10 +55,10 @@
  (position . 1))
 ("org-capture-last-stored"
  (filename . "~/notes/quick_notes.org")
- (front-context-string)
- (rear-context-string . "ent_scenarios/\n\n")
- (position . 427)
- (last-modified 26157 24267 493209 394000))
+ (front-context-string . "* Remember to ad")
+ (rear-context-string . "cratchpad show\n\n")
+ (position . 316)
+ (last-modified 26191 45101 808639 930000))
 ("Emacs notes"
  (filename . "~/notes/Computing/Programs/emacs.org")
  (front-context-string)

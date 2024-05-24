@@ -1,5 +1,6 @@
 #+title Emacs Configuration
 #+PROPERTY: header-args:emacs-lisp :tangle yes
+#+STARTUP: overview
 
 
 *  Server
@@ -127,12 +128,12 @@
 
 #+begin_src emacs-lisp
 
-   (use-package doom-themes)
+  (use-package doom-themes)
 
-   (use-package modus-themes
-     :init
-     (setq modus-themes-org-blocks 'gray-background)
-     (load-theme 'modus-vivendi-tinted t))
+  (use-package modus-themes
+    :init
+    (setq modus-themes-org-blocks 'gray-background))
+  (load-file "~/.config/emacs/themefile.el")
 
 #+end_src
 
@@ -771,6 +772,18 @@ Store customize options in a separate file:
     (end-of-line)
     (copy-region-as-kill beg (point)))))
 
+ (defun me/select-theme ()
+     "Change theme interactively."
+     (interactive)
+     (let* ((cands (custom-available-themes))
+            (theme (completing-read "Theme: " cands)))
+
+       (with-temp-buffer
+         (insert (format "(load-theme '%s t)\n" theme))
+         (write-region (point-min) (point-max) "~/.config/emacs/themefile.el"))
+
+       ;; Load and enable the selected theme
+       (load-theme (intern theme) t)))
 
     #+end_src
 
@@ -880,9 +893,11 @@ Store customize options in a separate file:
          (:color blue)
          "Select action"
          ("TAB" org-cycle "Org Cycle")
+         ("c" org-capture "Capture")
          ("j" my-forward-heading "Move down")
          ("k" my-previous-heading "Move up")
          ("s" (lambda () (interactive) (hydra-keyboard-quit) (org-insert-structure-template "src emacs-lisp")) "Structure template" :exit t)
+         ("t" me/insert-date-stamp "Timestamp")
          ("q" hydra-keyboard-quit "quit" :exit t))
 
 #+End_src

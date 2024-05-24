@@ -96,8 +96,8 @@
 
 (use-package modus-themes
   :init
-  (setq modus-themes-org-blocks 'gray-background)
-  (load-theme 'modus-vivendi-tinted t))
+  (setq modus-themes-org-blocks 'gray-background))
+(load-file "~/.config/emacs/themefile.el")
 
 (use-package rainbow-delimiters
 :hook (prog-mode . rainbow-delimiters-mode))
@@ -449,88 +449,101 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
 (load custom-file)
 
 (defun me/vertico-notes ()
-              "list all note files"
-              (interactive)
-              (let* ((cands (split-string
-                             (shell-command-to-string "find ~/notes -type f") "\n" t)))
-                (find-file (completing-read "File: " cands))))
+               "list all note files"
+               (interactive)
+               (let* ((cands (split-string
+                              (shell-command-to-string "find ~/notes -type f") "\n" t)))
+                 (find-file (completing-read "File: " cands))))
 
-        (defun me/batch-open-rad-notes ()
-        (mapc #'find-file-noselect
-              (directory-files-recursively "~/notes/Radiology notes/" "")))
+         (defun me/batch-open-rad-notes ()
+         (mapc #'find-file-noselect
+               (directory-files-recursively "~/notes/Radiology notes/" "")))
 
 
-        (defun me/show-in-lf ()
-        "Shows the current file in the lf file browser"
+         (defun me/show-in-lf ()
+         "Shows the current file in the lf file browser"
+         (interactive)
+         (shell-command (concat "lf -remote \"send select '" (buffer-file-name) "'\""))
+         (start-process "showinlf" nil "~/.config/sway/scripts/togglefiles.sh" ""))
+
+         (defun me/dired-open-file ()
+         "In dired, open the file named on this line."
+         (interactive)
+         (let* ((file (dired-get-filename nil t)))
+           (message "Opening %s..." file)
+            (let ((filetype (mailcap-file-name-to-mime-type file)))
+                     (if (or (string-equal filetype "application/vnd.lotus-organizer") (string-equal filetype "nil"))
+                         (find-file file)
+                         (browse-url-xdg-open file)))
+           (message "Opening %s done" file)))
+
+       (add-hook 'dired-mode-hook
+                 (lambda () (local-set-key (kbd "C-<return>") #'me/dired-open-file)))
+
+
+     (defun me/open-anything ()
+               "list everything recursively"
+               (interactive)
+               (let* ((cands (split-string
+                              (shell-command-to-string "~/scripts/system/findallfiles.sh") "\n" t)))
+                 (let* ((file (completing-read "File: " cands)))
+                   (let ((filetype (mailcap-file-name-to-mime-type file)))
+                     (if (or (string-equal filetype "application/vnd.lotus-organizer") (string-equal filetype "nil"))
+                         (find-file file)
+                         (browse-url-xdg-open file))))))
+
+   (defun me/kill-dired-buffers ()
         (interactive)
-        (shell-command (concat "lf -remote \"send select '" (buffer-file-name) "'\""))
-        (start-process "showinlf" nil "~/.config/sway/scripts/togglefiles.sh" ""))
+        (mapc (lambda (buffer)
+              (when (eq 'dired-mode (buffer-local-value 'major-mode buffer))
+                (kill-buffer buffer)))
+            (buffer-list)))
 
-        (defun me/dired-open-file ()
-        "In dired, open the file named on this line."
-        (interactive)
-        (let* ((file (dired-get-filename nil t)))
-          (message "Opening %s..." file)
-           (let ((filetype (mailcap-file-name-to-mime-type file)))
-                    (if (or (string-equal filetype "application/vnd.lotus-organizer") (string-equal filetype "nil"))
-                        (find-file file)
-                        (browse-url-xdg-open file)))
-          (message "Opening %s done" file)))
-
-      (add-hook 'dired-mode-hook
-                (lambda () (local-set-key (kbd "C-<return>") #'me/dired-open-file)))
+   (defun me/switch-to-scratch-and-back ()
+         "Toggle between *scratch* buffer and the current buffer.
+          If the *scratch* buffer does not exist, create it."
+         (interactive)
+         (let ((scratch-buffer-name (get-buffer-create "*scratch*")))
+             (if (equal (current-buffer) scratch-buffer-name)
+                 nil
+                 (switch-to-buffer scratch-buffer-name))))
 
 
-    (defun me/open-anything ()
-              "list everything recursively"
-              (interactive)
-              (let* ((cands (split-string
-                             (shell-command-to-string "~/scripts/system/findallfiles.sh") "\n" t)))
-                (let* ((file (completing-read "File: " cands)))
-                  (let ((filetype (mailcap-file-name-to-mime-type file)))
-                    (if (or (string-equal filetype "application/vnd.lotus-organizer") (string-equal filetype "nil"))
-                        (find-file file)
-                        (browse-url-xdg-open file))))))
+ (defun me/switch-to-quicknotes-and-back ()
+         "Toggle between *scratch* buffer and the current buffer.
+          If the *scratch* buffer does not exist, create it."
+         (interactive)
+         (if (equal (buffer-name) "quick_notes.org")
+                 (switch-to-buffer (other-buffer))
+                 (find-file "~/notes/quick_notes.org")))
 
-  (defun me/kill-dired-buffers ()
-       (interactive)
-       (mapc (lambda (buffer)
-             (when (eq 'dired-mode (buffer-local-value 'major-mode buffer))
-               (kill-buffer buffer)))
-           (buffer-list)))
+ (defun me/ff-link-org ()
+     (interactive)
+     (if (string-match system-name "laptop")
+         (insert (shell-command-to-string "lz4jsoncat $HOME/.mozilla/firefox/jx17iz6w.default-release/sessionstore-backups/recovery.jsonlz4 | jq -r '.windows[0].tabs | sort_by(.lastAccessed)[-1] | .entries[.index-1] | \"[[\" + (.url) + \"][\" + (.title) + \"]]\"' | tr -d '\n'"))
+         (insert (shell-command-to-string "lz4jsoncat $HOME/.mozilla/firefox/7ryvpua6.default-release/sessionstore-backups/recovery.jsonlz4 | jq -r '.windows[0].tabs | sort_by(.lastAccessed)[-1] | .entries[.index-1] | \"[[\" + (.url) + \"][\" + (.title) + \"]]\"' | tr -d '\n'"))
+     ))
 
-  (defun me/switch-to-scratch-and-back ()
-        "Toggle between *scratch* buffer and the current buffer.
-         If the *scratch* buffer does not exist, create it."
-        (interactive)
-        (let ((scratch-buffer-name (get-buffer-create "*scratch*")))
-            (if (equal (current-buffer) scratch-buffer-name)
-                nil
-                (switch-to-buffer scratch-buffer-name))))
+ (defun me/copy-line ()
+ (interactive)
+ (save-excursion
+ (beginning-of-line)
+ (let ((beg (point)))
+   (end-of-line)
+   (copy-region-as-kill beg (point)))))
 
-
-(defun me/switch-to-quicknotes-and-back ()
-        "Toggle between *scratch* buffer and the current buffer.
-         If the *scratch* buffer does not exist, create it."
-        (interactive)
-        (if (equal (buffer-name) "quick_notes.org")
-                (switch-to-buffer (other-buffer))
-                (find-file "~/notes/quick_notes.org")))
-
-(defun me/ff-link-org ()
+(defun me/select-theme ()
+    "Change theme interactively."
     (interactive)
-    (if (string-match system-name "laptop")
-        (insert (shell-command-to-string "lz4jsoncat $HOME/.mozilla/firefox/jx17iz6w.default-release/sessionstore-backups/recovery.jsonlz4 | jq -r '.windows[0].tabs | sort_by(.lastAccessed)[-1] | .entries[.index-1] | \"[[\" + (.url) + \"][\" + (.title) + \"]]\"' | tr -d '\n'"))
-        (insert (shell-command-to-string "lz4jsoncat $HOME/.mozilla/firefox/7ryvpua6.default-release/sessionstore-backups/recovery.jsonlz4 | jq -r '.windows[0].tabs | sort_by(.lastAccessed)[-1] | .entries[.index-1] | \"[[\" + (.url) + \"][\" + (.title) + \"]]\"' | tr -d '\n'"))
-    ))
+    (let* ((cands (custom-available-themes))
+           (theme (completing-read "Theme: " cands)))
 
-(defun me/copy-line ()
-(interactive)
-(save-excursion
-(beginning-of-line)
-(let ((beg (point)))
-  (end-of-line)
-  (copy-region-as-kill beg (point)))))
+      (with-temp-buffer
+        (insert (format "(load-theme '%s t)\n" theme))
+        (write-region (point-min) (point-max) "~/.config/emacs/themefile.el"))
+
+      ;; Load and enable the selected theme
+      (load-theme (intern theme) t)))
 
 (load-file "~/.config/emacs/shortcuts.el")
 
@@ -612,9 +625,11 @@ Press k will do it again, press j will move to next heading. Press other key to 
       (:color blue)
       "Select action"
       ("TAB" org-cycle "Org Cycle")
+      ("c" org-capture "Capture")
       ("j" my-forward-heading "Move down")
       ("k" my-previous-heading "Move up")
       ("s" (lambda () (interactive) (hydra-keyboard-quit) (org-insert-structure-template "src emacs-lisp")) "Structure template" :exit t)
+      ("t" me/insert-date-stamp "Timestamp")
       ("q" hydra-keyboard-quit "quit" :exit t))
 
 (global-set-key (kbd "C-c n") #'me/vertico-notes)

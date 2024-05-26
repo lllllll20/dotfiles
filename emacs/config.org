@@ -603,14 +603,14 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
 #+begin_src emacs-lisp
 
   (use-package pdf-tools
-  :defer t
-  :commands (pdf-loader-install)
-  :mode "\\.pdf\\'"
-  :bind (:map pdf-view-mode-map
-  ("j" . pdf-view-next-line-or-next-page)
-  ("k" . pdf-view-previous-line-or-previous-page))
-  :init (pdf-loader-install)
-  :config (add-to-list 'revert-without-query ".pdf"))
+    :defer t
+    :commands (pdf-loader-install)
+    :mode "\\.pdf\\'"
+    :bind (:map pdf-view-mode-map
+                ("j" . pdf-view-next-line-or-next-page)
+                ("k" . pdf-view-previous-line-or-previous-page))
+    :init (pdf-loader-install)
+    :config (add-to-list 'revert-without-query ".pdf"))
 
 #+end_src
 
@@ -894,8 +894,10 @@ Store customize options in a separate file:
          "Select action"
          ("TAB" org-cycle "Org Cycle")
          ("c" org-capture "Capture")
+         ("f" me/ff-link-org "Insert firefox link")
          ("j" my-forward-heading "Move down")
          ("k" my-previous-heading "Move up")
+         ("l" org-insert-link "Insert link")
          ("s" (lambda () (interactive) (hydra-keyboard-quit) (org-insert-structure-template "src emacs-lisp")) "Structure template" :exit t)
          ("t" me/insert-date-stamp "Timestamp")
          ("q" hydra-keyboard-quit "quit" :exit t))

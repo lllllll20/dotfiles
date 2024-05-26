@@ -83,6 +83,7 @@
 (keymap-set my-test-keys-minor-mode-map "w" 'window-hydra/body)
 (keymap-set my-test-keys-minor-mode-map "x" 'eval-last-sexp)
 (keymap-set my-test-keys-minor-mode-map "y" 'yank)
+(keymap-set my-test-keys-minor-mode-map "," 'execute-extended-command)
 (define-key my-test-keys-minor-mode-map (kbd "<C-return>") 'er/expand-region)
 
 (defun me/cut-thing ()
@@ -106,9 +107,15 @@
   "select region of text to copy"
   ("r" rectangle-mark-mode "Mark rectangle")      
   ("m" set-mark-command "Mark by line")
-  ("b" set-mark-command "Mark by line")) 
+  ("b" set-mark-command "Mark by line"))
 
-(keymap-set my-test-keys-minor-mode-map "m" 'set-mark-hydra/body)
+(defun my-set-mark-wrapper ()
+  "Set the mark or toggle position if region active"
+  (interactive)
+  (if (region-active-p) (exchange-point-and-mark)
+    (set-mark-hydra/body)))
+
+(keymap-set my-test-keys-minor-mode-map "m" 'my-set-mark-wrapper)
 (keymap-set my-test-keys-minor-mode-map "c" 'kill-ring-save)
 
 
@@ -144,6 +151,7 @@
   ("h" my-previous-buffer "Previous buffer")      
   ("l" my-next-buffer "Next buffer")      
   ("t" (find-file "~/notes/todo.org") "Todo")      
+  ("i" (find-file "~/notes/ideas.org") "Ideas")      
   ("q" (find-file "~/notes/quick_notes.org") "Quick notes")      
   ("n" me/vertico-notes "Select notes")      
   ("f" bookmark-jump "Select bookmarked file")) 

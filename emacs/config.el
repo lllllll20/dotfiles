@@ -341,6 +341,7 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
    :init
    (global-corfu-mode) ; This does not play well in eshell if you run a repl
    (setq corfu-auto t))
+   (define-key corfu-map [escape] #'corfu-quit)
 
 ;; Add extensions
 (use-package cape
@@ -406,14 +407,14 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
 (setq vc-follow-symlinks t)
 
 (use-package pdf-tools
-:defer t
-:commands (pdf-loader-install)
-:mode "\\.pdf\\'"
-:bind (:map pdf-view-mode-map
-("j" . pdf-view-next-line-or-next-page)
-("k" . pdf-view-previous-line-or-previous-page))
-:init (pdf-loader-install)
-:config (add-to-list 'revert-without-query ".pdf"))
+  :defer t
+  :commands (pdf-loader-install)
+  :mode "\\.pdf\\'"
+  :bind (:map pdf-view-mode-map
+              ("j" . pdf-view-next-line-or-next-page)
+              ("k" . pdf-view-previous-line-or-previous-page))
+  :init (pdf-loader-install)
+  :config (add-to-list 'revert-without-query ".pdf"))
 
 (setq treesit-language-source-alist
     '((bash "https://github.com/tree-sitter/tree-sitter-bash")
@@ -626,8 +627,10 @@ Press k will do it again, press j will move to next heading. Press other key to 
       "Select action"
       ("TAB" org-cycle "Org Cycle")
       ("c" org-capture "Capture")
+      ("f" me/ff-link-org "Insert firefox link")
       ("j" my-forward-heading "Move down")
       ("k" my-previous-heading "Move up")
+      ("l" org-insert-link "Insert link")
       ("s" (lambda () (interactive) (hydra-keyboard-quit) (org-insert-structure-template "src emacs-lisp")) "Structure template" :exit t)
       ("t" me/insert-date-stamp "Timestamp")
       ("q" hydra-keyboard-quit "quit" :exit t))

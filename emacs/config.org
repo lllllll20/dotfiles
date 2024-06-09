@@ -905,6 +905,20 @@ Store customize options in a separate file:
 
 #+End_src
 
+** File hydra
+
+#+begin_src emacs-lisp
+
+     (defhydra file-hydra
+         (:color blue)
+         "Select action"
+         ("f" find-file "Find file")
+         ("p" ffap "Find file at point")
+         ("s" save-buffer "Save buffer")
+         ("q" hydra-keyboard-quit "quit" :exit t))
+
+#+end_src
+
 
 ** Functions
 #+begin_src emacs-lisp

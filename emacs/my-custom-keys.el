@@ -77,8 +77,10 @@
 (keymap-set my-test-keys-minor-mode-map "k" 'previous-line)
 (keymap-set my-test-keys-minor-mode-map "l" 'forward-char)
 (keymap-set my-test-keys-minor-mode-map "o" 'org-mode-hydra/body)
+(keymap-set my-test-keys-minor-mode-map "f" 'file-hydra/body)
 (keymap-set my-test-keys-minor-mode-map "r" 'undo-redo)
-(keymap-set my-test-keys-minor-mode-map "s" 'consult-line)
+(keymap-set my-test-keys-minor-mode-map "s" 'search-hydra/body)
+(keymap-set my-test-keys-minor-mode-map "/" 'consult-line)
 (keymap-set my-test-keys-minor-mode-map "u" 'undo)
 (keymap-set my-test-keys-minor-mode-map "w" 'window-hydra/body)
 (keymap-set my-test-keys-minor-mode-map "x" 'eval-last-sexp)
@@ -118,6 +120,11 @@
 (keymap-set my-test-keys-minor-mode-map "m" 'my-set-mark-wrapper)
 (keymap-set my-test-keys-minor-mode-map "c" 'kill-ring-save)
 
+(defhydra search-hydra
+  (:color blue)
+  "Select type of search"
+  ("s" consult-line "Consult-Line")      
+  ("r" query-replace "Query-Replace"))
 
 (defun my-next-buffer ()
          "Move to next buffer.

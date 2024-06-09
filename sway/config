@@ -235,7 +235,7 @@ focus_follows_mouse no
     
     bindsym $mod+n exec emacsclient -r -e \"(me/vertico-notes)\" -a emacs
     
-    bindsym $mod+v exec ~/.config/sway/scripts/hidescratchpad.sh "scratchbuffer.sh"
+    bindsym $mod+v exec ~/.config/sway/scripts/hidescratchpad.sh "zathura ~/downloads/layout.pdf"
 
     bindsym $mod+Control+p exec ~/.config/sway/scripts/hidescratchpad.sh "foot -a fc openphonenote.sh"
 
@@ -327,13 +327,27 @@ focus_follows_mouse no
     bindsym $mod+Shift+0 move container to workspace number 10
     # Note: workspaces can have any name you want, not just numbers.
     # We just use 1-10 as the default.
+    
+    # Move focused container to workspace, and switch to workspace
+    bindsym $mod+Mod1+1 move container to workspace number 1, exec ~/.config/sway/scripts/switchworkspace.sh "number 1" 
+    bindsym $mod+Mod1+2 move container to workspace number 2, exec ~/.config/sway/scripts/switchworkspace.sh "number 2" 
+    bindsym $mod+Mod1+3 move container to workspace number 3, exec ~/.config/sway/scripts/switchworkspace.sh "number 3" 
+    bindsym $mod+Mod1+4 move container to workspace number 4, exec ~/.config/sway/scripts/switchworkspace.sh "number 4" 
+    bindsym $mod+Mod1+5 move container to workspace number 5, exec ~/.config/sway/scripts/switchworkspace.sh "number 5" 
+    bindsym $mod+Mod1+6 move container to workspace number 6, exec ~/.config/sway/scripts/switchworkspace.sh "number 6" 
+    bindsym $mod+Mod1+7 move container to workspace number 7, exec ~/.config/sway/scripts/switchworkspace.sh "number 7" 
+    bindsym $mod+Mod1+8 move container to workspace number 8, exec ~/.config/sway/scripts/switchworkspace.sh "number 8" 
+    bindsym $mod+Mod1+9 move container to workspace number 9, exec ~/.config/sway/scripts/switchworkspace.sh "number 9" 
+    bindsym $mod+Mod1+0 move container to workspace number 10, exec ~/.config/sway/scripts/switchworkspace.sh "number 10"
+
+
 
     bindsym --whole-window $mod+button8 workspace prev
     bindsym --whole-window $mod+button9 workspace next
 ## button 4 and 5 are scroll wheel i think
 
 
-    bindsym $mod+z workspace back_and_forth
+    bindsym $mod+z layout toggle split stacking 
 #
 # Layout stuff:
 #
@@ -347,7 +361,7 @@ focus_follows_mouse no
     # bindsym $mod+g layout stacking
     # bindsym $mod+w layout tabbed
     # bindsym $mod+r layout toggle split
-    bindsym $mod+comma layout toggle split stacking
+    bindsym $mod+j workspace back_and_forth
 
     # Make the current focus fullscreen
     bindsym $mod+period fullscreen
@@ -433,6 +447,8 @@ mode "poweropts" {
     bindsym Escape mode "default"
 }
     bindsym $mod+Backspace mode "poweropts"
+    bindsym $mod+Control+Backspace exec ~/.config/sway/scripts/shutdown.sh
+
 
 #
 # Appearance

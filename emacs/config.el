@@ -93,7 +93,7 @@
 (setq org-return-follows-link t)
 
 (use-package doom-themes)
-
+(setq custom-safe-themes t)
 (use-package modus-themes
   :init
   (setq modus-themes-org-blocks 'gray-background))

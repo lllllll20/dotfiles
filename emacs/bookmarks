@@ -2,18 +2,54 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("org-refile-last-stored"
+(("mck"
+ (filename . "~/computing/git/dotfiles/emacs/my-custom-keys.el")
+ (front-context-string)
+ (rear-context-string . "er-exit-setup)\n\n")
+ (position . 9489)
+ (last-modified 26217 55788 732414 282000))
+("nn"
+ (filename . "~/notes/")
+ (front-context-string . "Radiology notes\n")
+ (rear-context-string . " May  8 19:50 	")
+ (position . 335)
+ (last-modified 26217 22231 166831 793000))
+("ps"
+ (filename . "~/my_docs/financial/Payslips/")
+ (front-context-string . "2023\n  drwxr-xr-")
+ (rear-context-string . " Jan  3 16:26 	")
+ (position . 442)
+ (last-modified 26217 22161 815615 365000))
+("h"
+ (filename . "~/")
+ (front-context-string . "scripts\n  drwxr-")
+ (rear-context-string . " Dec 10  2022 	")
+ (position . 446)
+ (last-modified 26217 22034 258940 410000))
+(".c"
+ (filename . "~/.config/")
+ (front-context-string . "gthumb\n  drwx---")
+ (rear-context-string . " May 23 21:43 	")
+ (position . 802)
+ (last-modified 26217 21993 175022 805000))
+("wd"
+ (filename . "~/work_docs/")
+ (front-context-string . "CF\n  drwxr-xr-x ")
+ (rear-context-string . " Jun  8 18:23 	")
+ (position . 170)
+ (last-modified 26217 21897 843717 648000))
+("md"
+ (filename . "~/my_docs/")
+ (front-context-string . "Misc\n  drwxr-xr-")
+ (rear-context-string . " Nov 25  2020 	")
+ (position . 504)
+ (last-modified 26217 21883 331638 133000))
+("org-refile-last-stored"
  (filename . "~/notes/ideas.org")
  (front-context-string . "** Glazed bacon\n")
  (rear-context-string . "outube link]]\n\n\n")
  (position . 1308)
  (last-modified 26169 2007 510850 908000))
-("my-custom-keys.el"
- (filename . "~/computing/git/dotfiles/emacs/my-custom-keys.el")
- (front-context-string . ";Define a genera")
- (rear-context-string)
- (position . 1)
- (last-modified 26124 16767 841100 372000))
 ("shortcuts"
  (filename . "~/.local/share/lf/shortcuts")
  (front-context-string . "map gvn cd ~/med")

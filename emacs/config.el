@@ -473,7 +473,7 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
          (let* ((file (dired-get-filename nil t)))
            (message "Opening %s..." file)
             (let ((filetype (mailcap-file-name-to-mime-type file)))
-                     (if (or (string-equal filetype "application/vnd.lotus-organizer") (string-equal filetype "nil"))
+                     (if (or (string-equal filetype "application/vnd.lotus-organizer") (string-equal filetype "nil") (string-equal filetype "text/plain"))
                          (find-file file)
                          (browse-url-xdg-open file)))
            (message "Opening %s done" file)))
@@ -634,6 +634,15 @@ Press k will do it again, press j will move to next heading. Press other key to 
       ("s" (lambda () (interactive) (hydra-keyboard-quit) (org-insert-structure-template "src emacs-lisp")) "Structure template" :exit t)
       ("t" me/insert-date-stamp "Timestamp")
       ("q" hydra-keyboard-quit "quit" :exit t))
+
+(defhydra file-hydra
+    (:color blue)
+    "Select action"
+    ("f" find-file "Find file")
+    ("n" write-file "Save as")
+    ("p" ffap "Find file at point")
+    ("s" save-buffer "Save buffer")
+    ("q" hydra-keyboard-quit "quit" :exit t))
 
 (global-set-key (kbd "C-c n") #'me/vertico-notes)
 (global-set-key (kbd "C-c olf") #'me/show-in-lf)

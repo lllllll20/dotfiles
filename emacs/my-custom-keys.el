@@ -66,7 +66,6 @@
 
   (define-key my-test-keys-minor-mode-map (kbd "<escape>")     'my-test-keys-command-mode-escape))
 
-
 ;;(add-to-list 'emulation-mode-map-alists '(my-modal-keys-minor-mode . ,my-modal-keys-minor-mode-map))
 
 (keymap-set my-test-keys-minor-mode-map "a" 'move-beginning-of-line)
@@ -78,15 +77,23 @@
 (keymap-set my-test-keys-minor-mode-map "l" 'forward-char)
 (keymap-set my-test-keys-minor-mode-map "o" 'org-mode-hydra/body)
 (keymap-set my-test-keys-minor-mode-map "f" 'file-hydra/body)
+(keymap-set my-test-keys-minor-mode-map "g" 'bookmark-jump)
 (keymap-set my-test-keys-minor-mode-map "r" 'undo-redo)
-(keymap-set my-test-keys-minor-mode-map "s" 'search-hydra/body)
+(keymap-set my-test-keys-minor-mode-map "s" 'consult-line)
 (keymap-set my-test-keys-minor-mode-map "/" 'consult-line)
 (keymap-set my-test-keys-minor-mode-map "u" 'undo)
 (keymap-set my-test-keys-minor-mode-map "w" 'window-hydra/body)
-(keymap-set my-test-keys-minor-mode-map "x" 'eval-last-sexp)
+(keymap-set my-test-keys-minor-mode-map "x" 'execute-extended-command)
 (keymap-set my-test-keys-minor-mode-map "y" 'yank)
-(keymap-set my-test-keys-minor-mode-map "," 'execute-extended-command)
+(keymap-set my-test-keys-minor-mode-map "SPC" 'me/insert-space)
+(keymap-set my-test-keys-minor-mode-map "," 'eval-last-sexp)
 (define-key my-test-keys-minor-mode-map (kbd "<C-return>") 'er/expand-region)
+                                                                                                                                                    
+(defun me/insert-space ()
+  "Just pass through a space"
+  (interactive)
+  (self-insert-command 1 ?\s))
+
 
 (defun me/cut-thing ()
   "Cut active region or offer choice"
@@ -95,20 +102,70 @@
       (kill-region (point) (mark))
     (cut-text-hydra/body)))
 
+(defun me/delete-current-text-block ()
+  "Delete the current text block plus blank lines, or selection, and copy to `kill-ring'.
+
+If cursor is between blank lines, delete following blank lines.
+
+URL `http://xahlee.info/emacs/emacs/emacs_delete_block.html'
+Created: 2017-07-09
+Version: 2023-10-09"
+  (interactive)
+  (let (xp1 xp2)
+    (if (region-active-p)
+        (setq xp1 (region-beginning) xp2 (region-end))
+      (progn
+        (if (re-search-backward "\n[ \t]*\n+" nil :move)
+            (setq xp1 (goto-char (match-end 0)))
+          (setq xp1 (point)))
+        (if (re-search-forward "\n[ \t]*\n+" nil :move)
+            (setq xp2 (match-end 0))
+          (setq xp2 (point-max)))))
+    (kill-region xp1 xp2)))
+
 (defhydra cut-text-hydra
   (:color blue)
   "select region of text to copy"
   ("w" kill-word "Cut to end of word")      
   ("e" kill-line "Cut to end of line")      
+  ("b" me/delete-current-text-block "Cut block")      
   ("d" kill-whole-line "Cut whole line"))
 
 (keymap-set my-test-keys-minor-mode-map "d" 'me/cut-thing)
+
+
+(defhydra search-hydra
+  (:color blue)
+  "Select type of search"
+  ("s" consult-line "Consult-Line")      
+  ("r" query-replace "Query-Replace"))
+
+(defun me/kill-all-dired-buffers ()
+  "Kill all Dired buffers."
+  (interactive)
+  (let ((count 0))
+    (dolist (buffer (buffer-list))
+      (when (eq (buffer-local-value 'major-mode buffer) 'dired-mode)
+        (kill-buffer buffer)
+        (setq count (1+ count))))
+    (message "Killed %d Dired buffer(s)" count)))
+
+(defhydra miscellaneous-hydra
+  (:color blue)
+  "select region of text to copy"
+  ("s" search-hydra/body "Search and replace operations")      
+  ("e" kill-line "Cut to end of line")      
+  ("b" me/delete-current-text-block "Cut block")      
+  ("d" me/kill-all-dired-buffers "Kill all dired buffers"))
+
+(keymap-set my-test-keys-minor-mode-map "m" 'miscellaneous-hydra/body)
+
 
 (defhydra set-mark-hydra
   (:color blue)
   "select region of text to copy"
   ("r" rectangle-mark-mode "Mark rectangle")      
-  ("m" set-mark-command "Mark by line")
+  ("v" set-mark-command "Mark by line")
   ("b" set-mark-command "Mark by line"))
 
 (defun my-set-mark-wrapper ()
@@ -117,14 +174,9 @@
   (if (region-active-p) (exchange-point-and-mark)
     (set-mark-hydra/body)))
 
-(keymap-set my-test-keys-minor-mode-map "m" 'my-set-mark-wrapper)
+(keymap-set my-test-keys-minor-mode-map "v" 'my-set-mark-wrapper)
 (keymap-set my-test-keys-minor-mode-map "c" 'kill-ring-save)
 
-(defhydra search-hydra
-  (:color blue)
-  "Select type of search"
-  ("s" consult-line "Consult-Line")      
-  ("r" query-replace "Query-Replace"))
 
 (defun my-next-buffer ()
          "Move to next buffer.
@@ -150,9 +202,9 @@
 (defhydra select-buffer-or-file-hydra
   (:color blue)
   "Open Buffer"
-  ("d" dired "Open dired")      
+  ("d" (progn (dired "~/") (my-test-keys-insert-mode-activate)) "Open dired")      
   ("r" recentf "Recent file")      
-  ("b" switch-to-buffer "List buffers")      
+  ("j" switch-to-buffer "List buffers")      
   ("s" scratch-buffer "Show scratch buffer")      
   ("k" kill-current-buffer "Kill current buffer")      
   ("h" my-previous-buffer "Previous buffer")      
@@ -161,12 +213,21 @@
   ("i" (find-file "~/notes/ideas.org") "Ideas")      
   ("q" (find-file "~/notes/quick_notes.org") "Quick notes")      
   ("n" me/vertico-notes "Select notes")      
-  ("f" bookmark-jump "Select bookmarked file")) 
+  ("b" bookmark-jump "Select bookmarked file")) 
 
 (keymap-set my-test-keys-minor-mode-map "b" 'select-buffer-or-file-hydra/body)
 
 (defvar my-test-keys-command-mode--deactivate-func nil)
 (defvar my-insert-state-p t)
+
+(defvar my-mode-line-indicator " COMMAND"
+  "Indicator for the current mode (insert or command) in the mode line.")
+
+(defun update-mode-line-indicator ()
+  "Update the mode line indicator based on the current state."
+  (setq my-mode-line-indicator
+        (if my-insert-state-p " INSERT" " COMMAND"))
+  (force-mode-line-update))
 
 
 (defun my-test-keys-command-mode-init ()
@@ -175,12 +236,42 @@
   (when my-test-keys-command-mode--deactivate-func
     (funcall my-test-keys-command-mode--deactivate-func))
   (setq my-test-keys-command-mode--deactivate-func
-	(set-transient-map my-test-keys-minor-mode-map (lambda () t))))
+	(set-transient-map my-test-keys-minor-mode-map (lambda () t)))
+  (update-mode-line-indicator))
 
 (defun my-test-keys-insert-mode-init ()
   (interactive)
   (setq my-insert-state-p t)
-  (funcall my-test-keys-command-mode--deactivate-func))
+  (when my-test-keys-command-mode--deactivate-func
+    (funcall my-test-keys-command-mode--deactivate-func))
+  (update-mode-line-indicator))
+
+;; Define custom faces for insert and command mode
+(defface my-insert-mode-face
+  '((t (:foreground "#ffffff" :background "#484d67" :box "#979797"))) ; Modus Vivendi Tinted insert mode color
+  "Face for insert mode in the mode line.")
+
+(defface my-command-mode-face
+  '((t (:foreground "#ffffff" :background "#a78cfa" :box "#979797"))) ; Modus Vivendi Tinted command mode color
+  "Face for command mode in the mode line.")
+
+;; Function to update modeline face based on current mode
+(defun update-mode-line-faces ()
+  "Update modeline face based on current mode."
+  (if my-insert-state-p
+      (set-face-attribute 'mode-line nil :background "#484d67" :foreground "#ffffff" :box "#979797") ; Insert mode
+    (set-face-attribute 'mode-line nil :background "#a78cfa" :foreground "#ffffff" :box "#979797"))) ; Command mode
+
+;; Hook to update modeline faces whenever mode changes
+(add-hook 'post-command-hook 'update-mode-line-faces)
+
+;; Append the indicator to the global mode string
+(add-to-list 'global-mode-string '(:eval my-mode-line-indicator) t)
+
+;; Initial update
+(update-mode-line-indicator)
+
+
 
 ;;; (funcall my-test-keys-command-mode--deactivate-func) This is all thats needed to deactivate command mode
 

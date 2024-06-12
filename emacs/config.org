@@ -713,7 +713,7 @@ Store customize options in a separate file:
           (let* ((file (dired-get-filename nil t)))
             (message "Opening %s..." file)
              (let ((filetype (mailcap-file-name-to-mime-type file)))
-                      (if (or (string-equal filetype "application/vnd.lotus-organizer") (string-equal filetype "nil"))
+                      (if (or (string-equal filetype "application/vnd.lotus-organizer") (string-equal filetype "nil") (string-equal filetype "text/plain"))
                           (find-file file)
                           (browse-url-xdg-open file)))
             (message "Opening %s done" file)))
@@ -913,6 +913,7 @@ Store customize options in a separate file:
          (:color blue)
          "Select action"
          ("f" find-file "Find file")
+         ("n" write-file "Save as")
          ("p" ffap "Find file at point")
          ("s" save-buffer "Save buffer")
          ("q" hydra-keyboard-quit "quit" :exit t))

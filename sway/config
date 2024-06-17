@@ -347,7 +347,6 @@ focus_follows_mouse no
 ## button 4 and 5 are scroll wheel i think
 
 
-    bindsym $mod+z layout toggle split stacking 
 #
 # Layout stuff:
 #
@@ -362,12 +361,10 @@ focus_follows_mouse no
     # bindsym $mod+w layout tabbed
     # bindsym $mod+r layout toggle split
     bindsym $mod+j workspace back_and_forth
+    bindsym $mod+z workspace back_and_forth 
 
     # Make the current focus fullscreen
     bindsym $mod+period fullscreen
-
-    bindsym $mod+Shift+period default_border pixel 2
-    bindsym $mod+Shift+comma default_border pixel 0
 
     # Toggle the current focus between tiling and floating mode
     bindsym $mod+Shift+f floating toggle
@@ -376,8 +373,10 @@ focus_follows_mouse no
     bindsym $mod+minus focus mode_toggle
 
     # Move focus to the parent container
-    bindsym $mod+a focus parent
-    bindsym $mod+Mod1+a focus child
+    bindsym $mod+Control+k focus parent
+    bindsym $mod+Control+j focus child
+    bindsym $mod+Control+s layout toggle split stacking 
+    bindsym $mod+Control+b border pixel 2 
 
     
 #

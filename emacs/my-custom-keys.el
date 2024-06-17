@@ -233,6 +233,7 @@ Version: 2023-10-09"
 (defun my-test-keys-command-mode-init ()
   (interactive)
   (setq my-insert-state-p nil)
+  (setq cursor-type 'box)  ;; Set cursor to bar in insert mode
   (when my-test-keys-command-mode--deactivate-func
     (funcall my-test-keys-command-mode--deactivate-func))
   (setq my-test-keys-command-mode--deactivate-func
@@ -242,6 +243,7 @@ Version: 2023-10-09"
 (defun my-test-keys-insert-mode-init ()
   (interactive)
   (setq my-insert-state-p t)
+  (setq cursor-type 'bar)  ;; Set cursor to bar in insert mode
   (when my-test-keys-command-mode--deactivate-func
     (funcall my-test-keys-command-mode--deactivate-func))
   (update-mode-line-indicator))

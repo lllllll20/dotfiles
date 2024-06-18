@@ -1,13 +1,14 @@
 ;Define a general key-map which can override major mode bindings
 
-
 (defun my-test-keys-insert-mode-escape ()
   (interactive)
   (if (region-active-p)
       (deactivate-mark)
     (if (active-minibuffer-window)
-	(abort-recursive-edit)
-      (my-test-keys-command-mode-activate))))
+        (abort-recursive-edit)
+      (if (derived-mode-p 'dired-mode)
+          (abort-recursive-edit)
+        (my-test-keys-command-mode-activate)))))
       
 
 (defvar my-insertmode-keys-minor-mode-map
@@ -103,7 +104,7 @@
     (cut-text-hydra/body)))
 
 (defun me/delete-current-text-block ()
-  "Delete the current text block plus blank lines, or selection, and copy to `kill-ring'.
+  "Cut the current text block plus blank lines, or selection, and copy to `kill-ring'.
 
 If cursor is between blank lines, delete following blank lines.
 
@@ -128,10 +129,98 @@ Version: 2023-10-09"
   "select region of text to copy"
   ("w" kill-word "Cut to end of word")      
   ("e" kill-line "Cut to end of line")      
-  ("b" me/delete-current-text-block "Cut block")      
+  ("p" me/delete-current-text-block "Cut block")      
   ("d" kill-whole-line "Cut whole line"))
 
 (keymap-set my-test-keys-minor-mode-map "d" 'me/cut-thing)
+
+(defun me/copy-current-text-block ()
+  "Copy the current text block without surrounding blank lines to `kill-ring`.
+If cursor is between blank lines, copy the following text block."
+  (interactive)
+  (let (xp1 xp2)
+    (save-excursion
+      (if (region-active-p)
+          (setq xp1 (region-beginning) xp2 (region-end))
+        (progn
+          (if (re-search-backward "\n[ \t]*\n" nil :move)
+              (setq xp1 (goto-char (match-end 0)))
+            (setq xp1 (point-min)))
+          (if (re-search-forward "\n[ \t]*\n" nil :move)
+              (setq xp2 (match-beginning 0))
+            (setq xp2 (point-max)))))
+      ;; Move the start and end points to skip over any leading/trailing whitespace
+      (goto-char xp1)
+      (skip-chars-forward " \t\n")
+      (setq xp1 (point))
+      (goto-char xp2)
+      (skip-chars-backward " \t\n")
+      (setq xp2 (point)))
+    (kill-ring-save xp1 xp2)
+    (message "Text block copied to kill-ring.")))
+
+(defun me/copy-thing ()
+  "Copy active region or offer choice"
+  (interactive)
+  (if (region-active-p)
+      (kill-ring-save (point) (mark))
+    (copy-text-hydra/body)))
+
+(defun me/copy-line ()
+  "Copy the current line, or lines if a region is active, to the `kill-ring'."
+  (interactive)
+  (let (start end)
+    (if (use-region-p)
+        (setq start (region-beginning) end (region-end))
+      (setq start (line-beginning-position)
+            end (line-beginning-position 2)))
+    (kill-ring-save start end)
+    (message "Line copied to kill-ring.")))
+
+
+(defun me/copy-word ()
+  "Copy the word at point, including hyphenated words, to the `kill-ring'."
+  (interactive)
+  (let (start end)
+    (save-excursion
+      ;; Move to the beginning of the word or hyphenated word
+      (skip-syntax-backward "w_")
+      (while (looking-back "-")
+        (skip-syntax-backward "w_"))
+      (setq start (point))
+      ;; Move to the end of the word or hyphenated word
+      (skip-syntax-forward "w_")
+      (while (looking-at "-")
+        (skip-forward "w_"))
+      (setq end (point)))
+    (kill-ring-save start end)
+    (message "Word copied to kill-ring.")))
+
+
+(defun me/copy-sentence ()
+  "Copy the sentence at point to the `kill-ring'."
+  (interactive)
+  (let (start end)
+    (save-excursion
+      ;; Move to the beginning of the sentence
+      (backward-sentence)
+      (setq start (point))
+      ;; Move to the end of the sentence
+      (forward-sentence)
+      (setq end (point)))
+    (kill-ring-save start end)
+    (message "Sentence copied to kill-ring.")))
+
+(defhydra copy-text-hydra
+  (:color blue)
+  "select region of text to copy"
+  ("w" me/copy-word "Cut to end of word")      
+  ("l" me/copy-line "Copy line")      
+  ("p" me/copy-current-text-block "Copy paragraph")      
+  ("s" me/copy-sentence "Copy paragraph")      
+  ("d" kill-whole-line "Cut whole line"))
+
+(keymap-set my-test-keys-minor-mode-map "c" 'me/copy-thing)
 
 
 (defhydra search-hydra
@@ -164,9 +253,10 @@ Version: 2023-10-09"
 (defhydra set-mark-hydra
   (:color blue)
   "select region of text to copy"
+  ("e" er/expand-region "Expand region")      
   ("r" rectangle-mark-mode "Mark rectangle")      
   ("v" set-mark-command "Mark by line")
-  ("b" set-mark-command "Mark by line"))
+  ("p" mark-paragraph "Mark paragraph"))
 
 (defun my-set-mark-wrapper ()
   "Set the mark or toggle position if region active"
@@ -175,7 +265,6 @@ Version: 2023-10-09"
     (set-mark-hydra/body)))
 
 (keymap-set my-test-keys-minor-mode-map "v" 'my-set-mark-wrapper)
-(keymap-set my-test-keys-minor-mode-map "c" 'kill-ring-save)
 
 
 (defun my-next-buffer ()
@@ -198,6 +287,23 @@ Version: 2023-10-09"
            (define-key map (kbd "h") 'previous-buffer)
            (set-transient-map map t)))
 
+(defun me/find-org-files-in-my-documents ()
+  "Use `find-dired` to identify .org files in ~/my_docs/ and display the results in a dired buffer."
+  (interactive)
+  (let ((directory "~/my_docs/")
+        (args "-type f -name \"*.org\""))
+    (find-dired directory args)))
+
+
+(defun me/find-org-files-in-work-documents ()
+  "Use `find-dired` to identify .org files in ~/work_docs/ and display the results in a dired buffer."
+  (interactive)
+  (let ((directory "~/work_docs/")
+        (args "-type f -name \"*.org\""))
+    (find-dired directory args)))
+
+
+
 
 (defhydra select-buffer-or-file-hydra
   (:color blue)
@@ -209,6 +315,8 @@ Version: 2023-10-09"
   ("k" kill-current-buffer "Kill current buffer")      
   ("h" my-previous-buffer "Previous buffer")      
   ("l" my-next-buffer "Next buffer")      
+  ("m" me/find-org-files-in-my-documents "My Org docs")      
+  ("w" me/find-org-files-in-work-documents "My Org docs")      
   ("t" (find-file "~/notes/todo.org") "Todo")      
   ("i" (find-file "~/notes/ideas.org") "Ideas")      
   ("q" (find-file "~/notes/quick_notes.org") "Quick notes")      
@@ -233,7 +341,6 @@ Version: 2023-10-09"
 (defun my-test-keys-command-mode-init ()
   (interactive)
   (setq my-insert-state-p nil)
-  (setq cursor-type 'box)  ;; Set cursor to bar in insert mode
   (when my-test-keys-command-mode--deactivate-func
     (funcall my-test-keys-command-mode--deactivate-func))
   (setq my-test-keys-command-mode--deactivate-func
@@ -243,7 +350,6 @@ Version: 2023-10-09"
 (defun my-test-keys-insert-mode-init ()
   (interactive)
   (setq my-insert-state-p t)
-  (setq cursor-type 'bar)  ;; Set cursor to bar in insert mode
   (when my-test-keys-command-mode--deactivate-func
     (funcall my-test-keys-command-mode--deactivate-func))
   (update-mode-line-indicator))
@@ -261,8 +367,12 @@ Version: 2023-10-09"
 (defun update-mode-line-faces ()
   "Update modeline face based on current mode."
   (if my-insert-state-p
-      (set-face-attribute 'mode-line nil :background "#484d67" :foreground "#ffffff" :box "#979797") ; Insert mode
-    (set-face-attribute 'mode-line nil :background "#a78cfa" :foreground "#ffffff" :box "#979797"))) ; Command mode
+      (progn
+	(set-face-attribute 'mode-line nil :background "#484d67" :foreground "#ffffff" :box "#979797")
+	(setq cursor-type 'bar))				; Insert mode
+    (progn
+      (set-face-attribute 'mode-line nil :background "#a78cfa" :foreground "#ffffff" :box "#979797")
+    (setq cursor-type 'box)))) ; Command mode
 
 ;; Hook to update modeline faces whenever mode changes
 (add-hook 'post-command-hook 'update-mode-line-faces)

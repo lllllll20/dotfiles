@@ -42,7 +42,7 @@
   :init-value t
   :lighter " my-keys")
 
-(my-insertmode-keys-minor-mode 1)
+  (my-insertmode-keys-minor-mode 1)
 
 ;; The following is necessary to insertmode major mode keybindings, which otherwise take precedence
 (add-to-list 'emulation-mode-map-alists `(my-insertmode-keys-minor-mode . ,my-insertmode-keys-minor-mode-map)) 
@@ -345,14 +345,18 @@ If cursor is between blank lines, copy the following text block."
     (funcall my-test-keys-command-mode--deactivate-func))
   (setq my-test-keys-command-mode--deactivate-func
 	(set-transient-map my-test-keys-minor-mode-map (lambda () t)))
-  (update-mode-line-indicator))
+  (update-mode-line-faces)
+  (update-mode-line-indicator)
+  (setq cursor-type 'box))
 
 (defun my-test-keys-insert-mode-init ()
   (interactive)
   (setq my-insert-state-p t)
   (when my-test-keys-command-mode--deactivate-func
     (funcall my-test-keys-command-mode--deactivate-func))
-  (update-mode-line-indicator))
+  (update-mode-line-faces)
+  (update-mode-line-indicator)
+  (setq cursor-type 'bar))
 
 ;; Define custom faces for insert and command mode
 (defface my-insert-mode-face
@@ -367,15 +371,11 @@ If cursor is between blank lines, copy the following text block."
 (defun update-mode-line-faces ()
   "Update modeline face based on current mode."
   (if my-insert-state-p
-      (progn
 	(set-face-attribute 'mode-line nil :background "#484d67" :foreground "#ffffff" :box "#979797")
-	(setq cursor-type 'bar))				; Insert mode
-    (progn
-      (set-face-attribute 'mode-line nil :background "#a78cfa" :foreground "#ffffff" :box "#979797")
-    (setq cursor-type 'box)))) ; Command mode
+      (set-face-attribute 'mode-line nil :background "#a78cfa" :foreground "#ffffff" :box "#979797")))
 
 ;; Hook to update modeline faces whenever mode changes
-(add-hook 'post-command-hook 'update-mode-line-faces)
+;;(add-hook 'post-command-hook 'update-mode-line-faces)
 
 ;; Append the indicator to the global mode string
 (add-to-list 'global-mode-string '(:eval my-mode-line-indicator) t)

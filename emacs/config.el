@@ -28,6 +28,7 @@
 (tooltip-mode -1)  ; Disable tooltips
 (set-fringe-mode 10)
 (menu-bar-mode -1)
+(setq-default cursor-type 'bar)
 
 (column-number-mode)
 (global-display-line-numbers-mode -1)

@@ -49,7 +49,7 @@
   (tooltip-mode -1)  ; Disable tooltips
   (set-fringe-mode 10)
   (menu-bar-mode -1)
-
+  
   (column-number-mode)
   (global-display-line-numbers-mode -1)
 
@@ -900,5 +900,4 @@ Store customize options in a separate file:
 
   (put 'erase-buffer 'disabled nil) ; what does this do?
   (put 'dired-find-alternate-file 'disabled nil)
-
 #+end_src

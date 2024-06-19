@@ -464,72 +464,73 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
 (load custom-file)
 
 (defun me/vertico-notes ()
-               "list all note files"
-               (interactive)
-               (let* ((cands (split-string
-                              (shell-command-to-string "find ~/notes -type f") "\n" t)))
-                 (find-file (completing-read "File: " cands))))
+  "list all note files"
+  (interactive)
+  (let* ((cands (split-string
+                 (shell-command-to-string "find ~/notes -type f") "\n" t)))
+    (find-file (completing-read "File: " cands))))
 
-         (defun me/batch-open-rad-notes ()
-         (mapc #'find-file-noselect
-               (directory-files-recursively "~/notes/Radiology notes/" "")))
+(defun me/batch-open-rad-notes ()
+  (mapc #'find-file-noselect
+        (directory-files-recursively "~/notes/Radiology notes/" "")))
+
+(defun me/show-in-lf ()
+  "Shows the current file in the lf file browser"
+  (interactive)
+  (let ((file (if (eq major-mode 'dired-mode)
+                  (expand-file-name (dired-get-file-for-visit) (file-name-directory (dired-current-directory)))
+                (buffer-file-name))))
+    (shell-command (concat "lf -remote \"send select '" file "'\"")))
+  (start-process "showinlf" nil "~/.config/sway/scripts/togglefiles.sh" ""))
+
+(defun me/dired-open-file ()
+  "In dired, open the file named on this line."
+  (interactive)
+  (let* ((file (dired-get-filename nil t)))
+    (message "Opening %s..." file)
+    (let ((filetype (mailcap-file-name-to-mime-type file)))
+      (if (or (string-equal filetype "application/vnd.lotus-organizer") (string-equal filetype "nil") (string-equal filetype "text/plain"))
+          (find-file file)
+        (browse-url-xdg-open file)))
+    (message "Opening %s done" file)))
+
+(add-hook 'dired-mode-hook
+          (lambda () (local-set-key (kbd "C-<return>") #'me/dired-open-file)))
 
 
-         (defun me/show-in-lf ()
-         "Shows the current file in the lf file browser"
-         (interactive)
-         (shell-command (concat "lf -remote \"send select '" (buffer-file-name) "'\""))
-         (start-process "showinlf" nil "~/.config/sway/scripts/togglefiles.sh" ""))
+(defun me/ff-link-org ()
+  (interactive)
+  (if (string-match system-name "laptop")
+      (insert (shell-command-to-string "lz4jsoncat $HOME/.mozilla/firefox/jx17iz6w.default-release/sessionstore-backups/recovery.jsonlz4 | jq -r '.windows[0].tabs | sort_by(.lastAccessed)[-1] | .entries[.index-1] | \"[[\" + (.url) + \"][\" + (.title) + \"]]\"' | tr -d '\n'"))
+    (insert (shell-command-to-string "lz4jsoncat $HOME/.mozilla/firefox/7ryvpua6.default-release/sessionstore-backups/recovery.jsonlz4 | jq -r '.windows[0].tabs | sort_by(.lastAccessed)[-1] | .entries[.index-1] | \"[[\" + (.url) + \"][\" + (.title) + \"]]\"' | tr -d '\n'"))
+    ))
 
-         (defun me/dired-open-file ()
-         "In dired, open the file named on this line."
-         (interactive)
-         (let* ((file (dired-get-filename nil t)))
-           (message "Opening %s..." file)
-            (let ((filetype (mailcap-file-name-to-mime-type file)))
-                     (if (or (string-equal filetype "application/vnd.lotus-organizer") (string-equal filetype "nil") (string-equal filetype "text/plain"))
-                         (find-file file)
-                         (browse-url-xdg-open file)))
-           (message "Opening %s done" file)))
-
-       (add-hook 'dired-mode-hook
-                 (lambda () (local-set-key (kbd "C-<return>") #'me/dired-open-file)))
-
-
- (defun me/ff-link-org ()
-     (interactive)
-     (if (string-match system-name "laptop")
-         (insert (shell-command-to-string "lz4jsoncat $HOME/.mozilla/firefox/jx17iz6w.default-release/sessionstore-backups/recovery.jsonlz4 | jq -r '.windows[0].tabs | sort_by(.lastAccessed)[-1] | .entries[.index-1] | \"[[\" + (.url) + \"][\" + (.title) + \"]]\"' | tr -d '\n'"))
-         (insert (shell-command-to-string "lz4jsoncat $HOME/.mozilla/firefox/7ryvpua6.default-release/sessionstore-backups/recovery.jsonlz4 | jq -r '.windows[0].tabs | sort_by(.lastAccessed)[-1] | .entries[.index-1] | \"[[\" + (.url) + \"][\" + (.title) + \"]]\"' | tr -d '\n'"))
-     ))
-
- (defun me/copy-line ()
- (interactive)
- (save-excursion
- (beginning-of-line)
- (let ((beg (point)))
-   (end-of-line)
-   (copy-region-as-kill beg (point)))))
+(defun me/copy-line ()
+  (interactive)
+  (save-excursion
+    (beginning-of-line)
+    (let ((beg (point)))
+      (end-of-line)
+      (copy-region-as-kill beg (point)))))
 
 (defun me/select-theme ()
-    "Change theme interactively."
-    (interactive)
-    (let* ((cands (custom-available-themes))
-           (theme (completing-read "Theme: " cands)))
+  "Change theme interactively."
+  (interactive)
+  (let* ((cands (custom-available-themes))
+         (theme (completing-read "Theme: " cands)))
 
-      (with-temp-buffer
-        (insert (format "(load-theme '%s t)\n" theme))
-        (write-region (point-min) (point-max) "~/.config/emacs/themefile.el"))
+    (with-temp-buffer
+      (insert (format "(load-theme '%s t)\n" theme))
+      (write-region (point-min) (point-max) "~/.config/emacs/themefile.el"))
 
-      ;; Load and enable the selected theme
-      (load-theme (intern theme) t)))
+    ;; Load and enable the selected theme
+    (load-theme (intern theme) t)))
 
 (load-file "~/.config/emacs/shortcuts.el")
 
-
-(eval-after-load "dired"
-  '(define-key dired-mode-map "w" 'get-full-path-of-file-at-point))
-
+(eval-after-load "dired" (progn
+  '(define-key dired-mode-map "p" 'get-full-path-of-file-at-point)
+  '(define-key dired-mode-map "z" 'me/show-in-lf)))
 
 (global-set-key (kbd "C-c m") 'imenu)
    (global-set-key (kbd "C-x C-b") 'ibuffer)

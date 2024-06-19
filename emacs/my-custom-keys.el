@@ -443,9 +443,14 @@ If cursor is between blank lines, copy the following text block."
 
 (defun my-cursor-hack-function ()		 
   "Function to run after buffer list update." 
-  (if my-insert-state-p			 
-      (my-test-keys-insert-mode-init)	 
-    (my-test-keys-command-mode-init)))	 
+  (if (eq major-mode 'dired-mode)
+      (progn
+	(my-test-keys-insert-mode-init)
+	(setq cursor-type 'box))
+;;	(setq my-insert-state-p nil))
+    (if my-insert-state-p			 
+	(my-test-keys-insert-mode-init)	 
+      (my-test-keys-command-mode-init))))
 
-
-(add-hook 'dired-mode-hook 'my-test-keys-insert-mode-activate)
+;;(add-hook 'dired-mode-hook 'my-test-keys-insert-mode-activate)
+;;(advice-add 'quit-window :after 'my-test-keys-command-mode-activate)

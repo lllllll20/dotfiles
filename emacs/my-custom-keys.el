@@ -211,11 +211,20 @@ If cursor is between blank lines, copy the following text block."
     (kill-ring-save start end)
     (message "Sentence copied to kill-ring.")))
 
+(defun me/copy-whole-buffer ()
+  "Copy the entire buffer to the clipboard."
+  (interactive)
+  (save-excursion
+  (mark-whole-buffer)
+  (kill-ring-save (point-min) (point-max))))
+
+
 (defhydra copy-text-hydra
   (:color blue)
   "select region of text to copy"
   ("w" me/copy-word "Cut to end of word")      
-  ("l" me/copy-line "Copy line")      
+  ("l" me/copy-line "Copy line")
+  ("a" me/copy-whole-buffer "Copy whole buffer")      
   ("p" me/copy-current-text-block "Copy paragraph")      
   ("s" me/copy-sentence "Copy paragraph")      
   ("d" kill-whole-line "Cut whole line"))
@@ -256,6 +265,7 @@ If cursor is between blank lines, copy the following text block."
   ("e" er/expand-region "Expand region")      
   ("r" rectangle-mark-mode "Mark rectangle")      
   ("v" set-mark-command "Mark by line")
+  ("a" mark-whole-buffer "Mark whole buffer")
   ("p" mark-paragraph "Mark paragraph"))
 
 (defun my-set-mark-wrapper ()
@@ -428,3 +438,14 @@ If cursor is between blank lines, copy the following text block."
 
 (add-hook 'minibuffer-exit-hook 'my-minibuffer-exit-setup)
 
+(add-hook 'buffer-list-update-hook 'my-cursor-hack-function)
+
+
+(defun my-cursor-hack-function ()		 
+  "Function to run after buffer list update." 
+  (if my-insert-state-p			 
+      (my-test-keys-insert-mode-init)	 
+    (my-test-keys-command-mode-init)))	 
+
+
+(add-hook 'dired-mode-hook 'my-test-keys-insert-mode-activate)

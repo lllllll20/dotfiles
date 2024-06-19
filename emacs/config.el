@@ -30,6 +30,8 @@
 (menu-bar-mode -1)
 (setq-default cursor-type 'bar)
 
+
+
 (column-number-mode)
 (global-display-line-numbers-mode -1)
 
@@ -276,6 +278,17 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
                             (define-key dired-mode-map (kbd "k") 'dired-previous-line)
                             (define-key dired-mode-map (kbd "h") (lambda () (interactive) (find-alternate-file "..")))))
 
+(defun get-full-path-of-file-at-point ()
+  "Get the full path of the file at point in a dired buffer and yank it to the kill ring."
+  (interactive)
+  (if (eq major-mode 'dired-mode)
+      (let* ((file (dired-get-file-for-visit))
+             (dir (file-name-directory (dired-current-directory)))
+             (full-path (expand-file-name file dir)))
+        (kill-new full-path)
+        (message "Full path yanked to kill ring: %s" full-path))
+    (message "Not in a dired buffer")))
+
 (use-package lsp-mode
    :custom
  (lsp-completion-provider :none)
@@ -512,6 +525,11 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
       (load-theme (intern theme) t)))
 
 (load-file "~/.config/emacs/shortcuts.el")
+
+
+(eval-after-load "dired"
+  '(define-key dired-mode-map "w" 'get-full-path-of-file-at-point))
+
 
 (global-set-key (kbd "C-c m") 'imenu)
    (global-set-key (kbd "C-x C-b") 'ibuffer)

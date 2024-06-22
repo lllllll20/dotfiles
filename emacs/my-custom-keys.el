@@ -453,4 +453,4 @@ If cursor is between blank lines, copy the following text block."
       (my-test-keys-command-mode-init))))
 
 ;;(add-hook 'dired-mode-hook 'my-test-keys-insert-mode-activate)
-;;(advice-add 'quit-window :after 'my-test-keys-command-mode-activate)
+(advice-add 'quit-window :after 'my-test-keys-command-mode-activate)

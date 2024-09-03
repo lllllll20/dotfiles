@@ -846,6 +846,15 @@ Store customize options in a separate file:
 
    (load-file "~/.config/emacs/my-custom-keys.el")
 
+
+(defun insert-newline-below ()
+  "Insert a newline below the current line and move the cursor to it."
+  (interactive)
+  (end-of-line)   ; Move to the end of the current line
+  (newline-and-indent)) ; Insert a newline and move the cursor to it
+
+(global-set-key (kbd "C-<return>") 'insert-newline-below)
+
 #+end_src
 
 

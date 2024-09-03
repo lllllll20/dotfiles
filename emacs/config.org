@@ -805,55 +805,67 @@ Store customize options in a separate file:
 
  #+begin_src emacs-lisp
 
-      (global-set-key (kbd "C-c m") 'imenu)
-      (global-set-key (kbd "C-x C-b") 'ibuffer)
-      (global-set-key (kbd "<C-M-left>") 'previous-buffer)
-      (global-set-key (kbd "<C-M-right>") 'next-buffer)
-      (global-set-key (kbd "M-n") 'forward-paragraph)
-      (global-set-key (kbd "M-p") 'backward-paragraph)
-      (global-set-key (kbd "<C-tab>") 'other-window)
-      (global-set-key (kbd "<f5>") 'recentf)
-      (global-set-key (kbd "<f6>") 'bookmark-jump)
-      (global-set-key (kbd "C-=") 'text-scale-increase)
-      (global-set-key (kbd "C--") 'text-scale-decrease)
-      (global-set-key (kbd "M-<drag-mouse-9>") 'next-buffer)
-      (global-set-key (kbd "M-<drag-mouse-8>") 'previous-buffer)
-      (keymap-set           ctl-x-map "k" 'kill-current-buffer) ; Replace C-x k (kill buffer) with kill-current-buffer
-      (keymap-set           ctl-x-map "f" 'find-file) ; Replace C-x f (set-fill-column) with find-file (C-x C-f usually)
-      (keymap-set         ctl-x-r-map "d" 'bookmark-delete) ; Repace C-x r d (delete-rectangle) with delete bookmark
+   (global-set-key (kbd "C-c m") 'imenu)
+   (global-set-key (kbd "C-x C-b") 'ibuffer)
+   (global-set-key (kbd "<C-M-left>") 'previous-buffer)
+   (global-set-key (kbd "<C-M-right>") 'next-buffer)
+   (global-set-key (kbd "M-n") 'forward-paragraph)
+   (global-set-key (kbd "M-p") 'backward-paragraph)
+   (global-set-key (kbd "<C-tab>") 'other-window)
+   (global-set-key (kbd "<f5>") 'recentf)
+   (global-set-key (kbd "<f6>") 'bookmark-jump)
+   (global-set-key (kbd "C-=") 'text-scale-increase)
+   (global-set-key (kbd "C--") 'text-scale-decrease)
+   (global-set-key (kbd "M-<drag-mouse-9>") 'next-buffer)
+   (global-set-key (kbd "M-<drag-mouse-8>") 'previous-buffer)
+   (keymap-set           ctl-x-map "k" 'kill-current-buffer) ; Replace C-x k (kill buffer) with kill-current-buffer
+   (keymap-set           ctl-x-map "f" 'find-file) ; Replace C-x f (set-fill-column) with find-file (C-x C-f usually)
+   (keymap-set         ctl-x-r-map "d" 'bookmark-delete) ; Repace C-x r d (delete-rectangle) with delete bookmark
 
-      (defun me/save-and-quit ()
-        (interactive)
-        (save-buffer)
-        (kill-this-buffer))
+   (defun me/save-and-quit ()
+     (interactive)
+     (save-buffer)
+     (kill-this-buffer))
 
-      (global-set-key (kbd "C-q") 'me/save-and-quit)
+   (global-set-key (kbd "C-q") 'me/save-and-quit)
 
-      ;; Escape always quits
-      (global-set-key [escape] 'keyboard-escape-quit)
+   ;; Escape always quits
+   (global-set-key [escape] 'keyboard-escape-quit)
 
-      (defun me/toggle-windows ()
-        (interactive)
-        (if (> (count-windows) 1)
-            (delete-other-windows)
-          (progn (split-window-right)
-                 (other-window 1))))
+   (defun me/toggle-windows ()
+     (interactive)
+     (if (> (count-windows) 1)
+         (delete-other-windows)
+       (progn (split-window-right)
+              (other-window 1))))
 
-      (add-hook 'ibuffer-mode-hook
-                '(lambda ()
-                   (keymap-set ibuffer-mode-map "M-o" 'me/toggle-windows)))
-      (global-set-key (kbd "M-o") 'me/toggle-windows)
+   (add-hook 'ibuffer-mode-hook
+             '(lambda ()
+                (keymap-set ibuffer-mode-map "M-o" 'me/toggle-windows)))
+   (global-set-key (kbd "M-o") 'me/toggle-windows)
 
    (load-file "~/.config/emacs/my-custom-keys.el")
 
 
-(defun insert-newline-below ()
-  "Insert a newline below the current line and move the cursor to it."
-  (interactive)
-  (end-of-line)   ; Move to the end of the current line
-  (newline-and-indent)) ; Insert a newline and move the cursor to it
+   (defun my/insert-newline-below ()
+     "Insert a newline below the current line and move the cursor to it."
+     (interactive)
+     (end-of-line)   ; Move to the end of the current line
+     (newline-and-indent)) ; Insert a newline and move the cursor to it
 
-(global-set-key (kbd "C-<return>") 'insert-newline-below)
+   (global-set-key (kbd "C-<return>") 'my/insert-newline-below)
+
+
+   (defun my/insert-newline-above-no-move ()
+     "Insert a newline above the current line without moving the cursor."
+     (interactive)
+     (save-excursion              ; Save the current cursor position
+       (beginning-of-line)        ; Move to the beginning of the current line
+       (newline)                  ; Insert a newline
+       (previous-line)            ; Move the cursor to the new line
+       (indent-according-to-mode))) ; Indent the new line according to the mode
+
+   (global-set-key (kbd "C-p") 'my/insert-newline-above-no-move)
 
 #+end_src
 

@@ -156,8 +156,8 @@ focus_follows_mouse no
     bindsym XF86Calculator exec ~/.config/sway/scripts/hidescratchpad.sh "qalculate-gtk"
 
 
-    assign [app_id="evolution"]: workspace number 3
-    for_window [app_id="evolution"] focus
+    assign [app_id="org.gnome.Evolution"]: workspace number 3
+    for_window [app_id="org.gnome.Evolution"] focus
     bindsym $mod+e exec ~/.config/sway/scripts/hideandfocus.sh evolution
     bindsym XF86Launch7 exec ~/.config/sway/scripts/hideandfocus.sh evolution
     

@@ -223,6 +223,7 @@ If cursor is between blank lines, copy the following text block."
   (:color blue)
   "select region of text to copy"
   ("w" me/copy-word "Cut to end of word")      
+  ("c" me/copy-line "Copy line")
   ("l" me/copy-line "Copy line")
   ("a" me/copy-whole-buffer "Copy whole buffer")      
   ("p" me/copy-current-text-block "Copy paragraph")      
@@ -250,7 +251,7 @@ If cursor is between blank lines, copy the following text block."
 
 (defhydra miscellaneous-hydra
   (:color blue)
-  "select region of text to copy"
+  "Miscellaneous functions"
   ("s" search-hydra/body "Search and replace operations")      
   ("e" kill-line "Cut to end of line")      
   ("b" me/delete-current-text-block "Cut block")      

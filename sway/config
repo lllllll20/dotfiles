@@ -202,7 +202,10 @@ focus_follows_mouse no
         
     assign [app_id="ghb"]: workspace number 8
     for_window [app_id="ghb"] focus
-
+    
+    assign [app_id="localsend"]: workspace number 8
+    for_window [app_id="localsend"] focus
+    
     assign [app_id="pavucontrol"]: workspace number 8
     for_window [app_id="pavucontrol"] focus
 

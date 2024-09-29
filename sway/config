@@ -156,6 +156,8 @@ focus_follows_mouse no
     bindsym XF86Calculator exec ~/.config/sway/scripts/hidescratchpad.sh "qalculate-gtk"
 
 
+
+
     assign [app_id="org.gnome.Evolution"]: workspace number 3
     for_window [app_id="org.gnome.Evolution"] focus
     bindsym $mod+e exec ~/.config/sway/scripts/hideandfocus.sh evolution
@@ -205,6 +207,8 @@ focus_follows_mouse no
     
     assign [app_id="localsend"]: workspace number 8
     for_window [app_id="localsend"] focus
+    bindsym $mod+Mod1+s exec ~/.config/sway/scripts/hidescratchpad.sh "localsend"
+
     
     assign [app_id="pavucontrol"]: workspace number 8
     for_window [app_id="pavucontrol"] focus
@@ -232,7 +236,7 @@ focus_follows_mouse no
     for_window [app_id="fc"] floating enable, resize set width 1300 height 700
 
     bindsym XF86Search exec ~/.config/sway/scripts/hidescratchpad.sh "foot -a fc searchandopen.sh"
-    bindsym $mod+Mod1+s exec ~/.config/sway/scripts/hidescratchpad.sh "foot -a fc searchandopen.sh"
+    bindsym $mod+Mod1+f exec ~/.config/sway/scripts/hidescratchpad.sh "foot -a fc searchandopen.sh"
 
     bindsym $mod+Control+n exec emacsclient -r -e \"(me/batch-open-rad-notes)\" -a emacs
     

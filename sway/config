@@ -306,6 +306,15 @@ focus_follows_mouse no
     bindsym $mod+$right exec ~/.config/sway/scripts/switchworkspace.sh next
     bindsym $mod+left exec ~/.config/sway/scripts/switchworkspace.sh prev
     bindsym $mod+$left exec ~/.config/sway/scripts/switchworkspace.sh prev
+
+    # Move focus to the next output (monitor)
+    bindsym $mod+Control+l focus output DP-6
+
+    # Move focus to the previous output (monitor)
+    bindsym $mod+Control+h focus output DP-5
+
+
+
 #
 # Workspaces:
 #
@@ -351,7 +360,27 @@ focus_follows_mouse no
 
     bindsym --whole-window $mod+button8 workspace prev
     bindsym --whole-window $mod+button9 workspace next
-## button 4 and 5 are scroll wheel i think
+    ## button 4 and 5 are scroll wheel i think
+
+
+
+   # Assign workspaces 1-9 to DP-5
+   workspace 1 output DP-5
+   workspace 2 output DP-5
+   workspace 3 output DP-5
+   workspace 4 output DP-5
+   workspace 5 output DP-5
+   workspace 6 output DP-5
+   workspace 7 output DP-5
+   workspace 8 output DP-5
+   workspace 9 output DP-5
+
+   # Assign workspace 0 to DP-6
+   workspace 10 output DP-6
+
+
+   bindsym $mod+comma exec ~/.config/sway/scripts/movetoleftmonitor.sh
+   bindsym $mod+Mod1+period exec ~/.config/sway/scripts/togglerightmonitor.sh
 
 
 #

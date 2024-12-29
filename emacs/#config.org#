@@ -686,6 +686,17 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
 #+end_src
 
 
+* Ranger
+
+#+begin_src emacs-lisp
+
+  (use-package ranger
+  :ensure t
+  :config
+  (ranger-override-dired-mode t)) ;; Optional, replaces dired with ranger
+
+#+end_src
+
 * Window management
 
 #+begin_src emacs-lisp

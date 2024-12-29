@@ -686,6 +686,17 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
 #+end_src
 
 
+* Ranger
+
+#+begin_src emacs-lisp
+
+  (use-package ranger
+  :ensure t
+  :config
+  (ranger-override-dired-mode t)) ;; Optional, replaces dired with ranger
+
+#+end_src
+
 * Window management
 
 #+begin_src emacs-lisp
@@ -1406,14 +1417,16 @@ Store customize options in a separate file:
 
 #+begin_src emacs-lisp
 
-     (defhydra file-hydra
-         (:color blue)
-         "Select action"
-         ("f" find-file "Find file")
-         ("n" write-file "Save as")
-         ("p" ffap "Find file at point")
-         ("s" save-buffer "Save buffer")
-         ("q" hydra-keyboard-quit "quit" :exit t))
+  (defhydra file-hydra
+    (:color blue)
+    "Select action"
+    ("d" dired "Open dired")
+    ("r" find-file "Find file")
+    ("r" ranger "Open ranger")
+    ("n" write-file "Save as")
+    ("p" ffap "Find file at point")
+    ("s" save-buffer "Save buffer")
+    ("q" hydra-keyboard-quit "quit" :exit t))
 
 #+end_src
 

@@ -300,33 +300,33 @@
 
 #+begin_src emacs-lisp
 
-              (use-package dired-hide-dotfiles
-                :hook
-                (dired-mode . dired-hide-dotfiles-mode)
-                :bind
-                (:map dired-mode-map
-;;                      ("h" . dired-up-directory )
-                      ("." . dired-hide-dotfiles-mode )))
+            ;;     (use-package dired-hide-dotfiles
+  ;;                 :hook
+  ;;                 (dired-mode . dired-hide-dotfiles-mode)
+  ;;                 :bind
+  ;;                 (:map dired-mode-map
+  ;; ;;                      ("h" . dired-up-directory )
+  ;;                       ("." . dired-hide-dotfiles-mode )))
 
-              (add-hook 'dired-mode-hook 'dired-hide-details-mode)
-              (setq dired-listing-switches "-al --group-directories-first")
+  ;;               (add-hook 'dired-mode-hook 'dired-hide-details-mode)
+                (setq dired-listing-switches "-al --group-directories-first")
 
-              ;; Dired - Store backups
-              (setq
-                 backup-by-copying t      ; don't clobber symlinks
-                 backup-directory-alist
-                  '(("." . "~/.backups/"))    ; don't litter my fs tree
-                 delete-old-versions t
-                 kept-new-versions 6
-                 kept-old-versions 2
-                 version-control t)       ; use versioned backups
+                ;; Dired - Store backups
+                (setq
+                   backup-by-copying t      ; don't clobber symlinks
+                   backup-directory-alist
+                    '(("." . "~/.backups/"))    ; don't litter my fs tree
+                   delete-old-versions t
+                   kept-new-versions 6
+                   kept-old-versions 2
+                   version-control t)       ; use versioned backups
 
-              ;; Avoid lock files
-              (setq create-lockfiles nil)
+                ;; Avoid lock files
+                (setq create-lockfiles nil)
 
-              ;; Copy between open dired-buffers
-              (setq dired-dwim-target t)
-              (add-hook 'dired-mode-hook 'my-test-keys-insert-mode-activate)
+                ;; Copy between open dired-buffers
+                (setq dired-dwim-target t)
+                (add-hook 'dired-mode-hook 'my-test-keys-insert-mode-activate)
 
 #+end_src
 
@@ -690,10 +690,50 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
 
 #+begin_src emacs-lisp
 
-  (use-package ranger
-  :ensure t
-  :config
-  (ranger-override-dired-mode t)) ;; Optional, replaces dired with ranger
+    (use-package ranger
+      :ensure t
+      :config
+      (ranger-override-dired-mode t)) ;; Optional, replaces dired with ranger
+
+
+    (defun my-ranger-setup ()
+      "Set cursor to block and switch to insert mode in ranger-mode."
+      (when (eq major-mode 'ranger-mode)
+        (setq cursor-type 'box)   ;; Set cursor to block
+        (my-test-keys-insert-mode-init)))     ;; Switch to insert mode
+
+
+    (defun my-ranger-key-setup ()
+      "Custom ranger keybindings."
+      (define-key ranger-mode-map (kbd "RET") 'ranger-open-in-external-app)  ;; Remap RET to external open function
+      (define-key ranger-mode-map (kbd "g") 'my-bookmark-jump))
+
+    (add-hook 'ranger-mode-hook #'my-ranger-key-setup)
+
+
+    (defun my-bookmark-open-with-ranger (bookmark)
+      "Open a bookmarked directory with ranger instead of dired."
+      (interactive)
+      (let ((file (bookmark-get-filename bookmark)))
+        (if (and file (file-directory-p file))
+            (ranger file)  ;; open with ranger if it's a directory
+          (bookmark-jump bookmark))))  ;; fallback to the normal bookmark jump for files
+
+
+    (defun my-bookmark-jump (bookmark)
+      "Jump to a bookmark, using ranger for directories."
+      (interactive
+       (list (bookmark-completing-read "Jump to bookmark: ")))
+      (my-bookmark-open-with-ranger bookmark))
+  
+  (defun my-ranger-exit-command ()
+    "The command to run when exiting ranger mode."
+    (message "Exiting ranger mode!"))
+
+  (add-hook 'ranger-mode-hook
+            (lambda ()
+              (add-hook 'kill-buffer-hook 'my-test-keys-command-mode-init nil t)))
+
 
 #+end_src
 
@@ -802,7 +842,7 @@ Store customize options in a separate file:
   (keymap-set my-test-keys-minor-mode-map "l" 'forward-char)
   (keymap-set my-test-keys-minor-mode-map "o" 'org-mode-hydra/body)
   (keymap-set my-test-keys-minor-mode-map "f" 'file-hydra/body)
-  (keymap-set my-test-keys-minor-mode-map "g" 'bookmark-jump)
+  (keymap-set my-test-keys-minor-mode-map "g" 'my-bookmark-jump)
   (keymap-set my-test-keys-minor-mode-map "r" 'undo-redo)
   (keymap-set my-test-keys-minor-mode-map "s" 'consult-line)
   (keymap-set my-test-keys-minor-mode-map "/" 'consult-line)

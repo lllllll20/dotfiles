@@ -2,7 +2,37 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("mck"
+(("ranger-w"
+ (filename . "~/work_docs/")
+ (front-context-string . "	Torbay hospita")
+ (rear-context-string . " 4k 12-04 19:52 ")
+ (position . 128)
+ (last-modified 26485 21026 747886 296000))
+("ranger-g"
+ (filename . "~/my_docs/")
+ (front-context-string . "11_St_Margarets/")
+ (rear-context-string . "k 10-02 18:00 	")
+ (position . 36)
+ (last-modified 26485 20858 714731 232000))
+("ranger-m"
+ (filename . "~/my_docs/")
+ (front-context-string . "11_St_Margarets/")
+ (rear-context-string . "k 10-02 18:00 	")
+ (position . 36)
+ (last-modified 26485 20856 580767 368000))
+("ranger-h"
+ (filename . "~/")
+ (front-context-string)
+ (rear-context-string . "k 09-06 16:32 	")
+ (position . 300)
+ (last-modified 26485 20618 439335 404000))
+("ranger-c"
+ (filename . "~/computing/git/dotfiles/emacs/")
+ (front-context-string . "config.org\n  -rw")
+ (rear-context-string . "k 01-01 13:59 	")
+ (position . 126)
+ (last-modified 26485 19027 264195 655000))
+("mck"
  (filename . "~/computing/git/dotfiles/emacs/my-custom-keys.el")
  (front-context-string)
  (rear-context-string . "er-exit-setup)\n\n")

@@ -183,15 +183,15 @@
   :hook
   (embark-collect-mode . consult-preview-at-point-mode))
 
-(use-package dired-hide-dotfiles
-                :hook
-                (dired-mode . dired-hide-dotfiles-mode)
-                :bind
-                (:map dired-mode-map
-;;                      ("h" . dired-up-directory )
-                      ("." . dired-hide-dotfiles-mode )))
+;;     (use-package dired-hide-dotfiles
+;;                 :hook
+;;                 (dired-mode . dired-hide-dotfiles-mode)
+;;                 :bind
+;;                 (:map dired-mode-map
+;; ;;                      ("h" . dired-up-directory )
+;;                       ("." . dired-hide-dotfiles-mode )))
 
-              (add-hook 'dired-mode-hook 'dired-hide-details-mode)
+;;               (add-hook 'dired-mode-hook 'dired-hide-details-mode)
               (setq dired-listing-switches "-al --group-directories-first")
 
               ;; Dired - Store backups
@@ -456,6 +456,42 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
   (css-mode . css-ts-mode)
   (python-mode . python-ts-mode)))
 
+(use-package ranger
+  :ensure t
+  :config
+  (ranger-override-dired-mode t)) ;; Optional, replaces dired with ranger
+
+
+(defun my-ranger-setup ()
+  "Set cursor to block and switch to insert mode in ranger-mode."
+  (when (eq major-mode 'ranger-mode)
+    (setq cursor-type 'box)   ;; Set cursor to block
+    (my-test-keys-insert-mode-init)))     ;; Switch to insert mode
+
+
+(defun my-ranger-key-setup ()
+  "Custom ranger keybindings."
+  (define-key ranger-mode-map (kbd "RET") 'ranger-open-in-external-app)  ;; Remap RET to external open function
+  (define-key ranger-mode-map (kbd "g") 'my-bookmark-jump))
+
+(add-hook 'ranger-mode-hook #'my-ranger-key-setup)
+
+
+(defun my-bookmark-open-with-ranger (bookmark)
+  "Open a bookmarked directory with ranger instead of dired."
+  (interactive)
+  (let ((file (bookmark-get-filename bookmark)))
+    (if (and file (file-directory-p file))
+        (ranger file)  ;; open with ranger if it's a directory
+      (bookmark-jump bookmark))))  ;; fallback to the normal bookmark jump for files
+
+
+(defun my-bookmark-jump (bookmark)
+  "Jump to a bookmark, using ranger for directories."
+  (interactive
+   (list (bookmark-completing-read "Jump to bookmark: ")))
+  (my-bookmark-open-with-ranger bookmark))
+
 ;; forces emacs to make vertical splits
   (setq split-height-threshold nil)
     (setq split-width-threshold 0)
@@ -474,7 +510,7 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
       (if (derived-mode-p 'dired-mode)
           (abort-recursive-edit)
         (my-test-keys-command-mode-activate)))))
-      
+
 
 (defvar my-insertmode-keys-minor-mode-map
   (let ((map (make-sparse-keymap)))
@@ -499,7 +535,7 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
     map) 
   "my-insertmode-keys-minor-mode keymap.") 
 
- 
+
 
 ;; create and enable the minor mode
 (define-minor-mode my-insertmode-keys-minor-mode
@@ -507,14 +543,14 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
   :init-value t
   :lighter " my-keys")
 
-  (my-insertmode-keys-minor-mode 1)
+(my-insertmode-keys-minor-mode 1)
 
 ;; The following is necessary to insertmode major mode keybindings, which otherwise take precedence
 (add-to-list 'emulation-mode-map-alists `(my-insertmode-keys-minor-mode . ,my-insertmode-keys-minor-mode-map)) 
 
 
 
-; Define the modal key mode and keymap
+                                        ; Define the modal key mode and keymap
 
 (define-minor-mode my-test-keys-minor-mode
   "Minor mode to be able to move using hjkl"
@@ -543,7 +579,7 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
 (keymap-set my-test-keys-minor-mode-map "l" 'forward-char)
 (keymap-set my-test-keys-minor-mode-map "o" 'org-mode-hydra/body)
 (keymap-set my-test-keys-minor-mode-map "f" 'file-hydra/body)
-(keymap-set my-test-keys-minor-mode-map "g" 'bookmark-jump)
+(keymap-set my-test-keys-minor-mode-map "g" 'my-bookmark-jump)
 (keymap-set my-test-keys-minor-mode-map "r" 'undo-redo)
 (keymap-set my-test-keys-minor-mode-map "s" 'consult-line)
 (keymap-set my-test-keys-minor-mode-map "/" 'consult-line)
@@ -554,7 +590,7 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
 (keymap-set my-test-keys-minor-mode-map "SPC" 'me/insert-space)
 (keymap-set my-test-keys-minor-mode-map "," 'eval-last-sexp)
 (define-key my-test-keys-minor-mode-map (kbd "<C-return>") 'er/expand-region)
-                                                                                                                                                    
+
 (defun me/insert-space ()
   "Just pass through a space"
   (interactive)
@@ -680,8 +716,8 @@ If cursor is between blank lines, copy the following text block."
   "Copy the entire buffer to the clipboard."
   (interactive)
   (save-excursion
-  (mark-whole-buffer)
-  (kill-ring-save (point-min) (point-max))))
+    (mark-whole-buffer)
+    (kill-ring-save (point-min) (point-max))))
 
 
 (defhydra copy-text-hydra
@@ -729,8 +765,11 @@ If cursor is between blank lines, copy the following text block."
   (:color blue)
   "select region of text to copy"
   ("e" er/expand-region "Expand region")      
-  ("r" rectangle-mark-mode "Mark rectangle")      
-  ("v" set-mark-command "Mark by line")
+  ("h" set-mark-command "Mark by line")
+  ("j" set-mark-command "Mark by line")
+  ("k" set-mark-command "Mark by line")
+  ("l" set-mark-command "Mark by line")      
+  ("r" rectangle-mark-mode "Mark rectangle")
   ("a" mark-whole-buffer "Mark whole buffer")
   ("p" mark-paragraph "Mark paragraph"))
 
@@ -744,24 +783,28 @@ If cursor is between blank lines, copy the following text block."
 
 
 (defun my-next-buffer ()
-         "Move to next buffer.
+  "Move to next buffer.
       Press l will do it again, press h will move to previous buffer. Press other key to exit."
-        (interactive)
-        (next-buffer)
-        (let ((map (make-sparse-keymap)))
-           (define-key map (kbd "l") 'next-buffer)
-           (define-key map (kbd "h") 'previous-buffer)
-           (set-transient-map map t)))
+  (interactive)
+  (let ((skip-buffers '("*Messages*" "*Scratch*" "*Async-native-compile-log*")))
+    (next-buffer)
+    (while (member (buffer-name) skip-buffers) (next-buffer)))
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "l") 'my-next-buffer)
+    (define-key map (kbd "h") 'my-previous-buffer)
+    (set-transient-map map t)))
 
-      (defun my-previous-buffer ()
-        "move cursor to previous buffer.
+(defun my-previous-buffer ()
+  "move cursor to previous buffer.
    Press h will do it again, press l will move to next buffer. Press other key to exit."
-        (interactive)
-        (previous-buffer)
-        (let ((map (make-sparse-keymap)))
-           (define-key map (kbd "l") 'next-buffer)
-           (define-key map (kbd "h") 'previous-buffer)
-           (set-transient-map map t)))
+  (interactive)
+  (let ((skip-buffers '("*Messages*" "*Scratch*" "*Async-native-compile-log*")))
+    (next-buffer)
+    (while (member (buffer-name) skip-buffers) (next-buffer)))
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "l") 'my-next-buffer)
+    (define-key map (kbd "h") 'my-previous-buffer)
+    (set-transient-map map t)))
 
 (defun me/find-org-files-in-my-documents ()
   "Use `find-dired` to identify .org files in ~/my_docs/ and display the results in a dired buffer."
@@ -793,6 +836,7 @@ If cursor is between blank lines, copy the following text block."
   ("l" my-next-buffer "Next buffer")      
   ("m" me/find-org-files-in-my-documents "My Org docs")      
   ("w" me/find-org-files-in-work-documents "My Org docs")      
+  ("e" (find-file "~/notes/Computing/Programs/emacs.org") "Emacs")
   ("t" (find-file "~/notes/todo.org") "Todo")      
   ("i" (find-file "~/notes/ideas.org") "Ideas")      
   ("q" (find-file "~/notes/quick_notes.org") "Quick notes")      
@@ -820,7 +864,7 @@ If cursor is between blank lines, copy the following text block."
   (when my-test-keys-command-mode--deactivate-func
     (funcall my-test-keys-command-mode--deactivate-func))
   (setq my-test-keys-command-mode--deactivate-func
-	(set-transient-map my-test-keys-minor-mode-map (lambda () t)))
+        (set-transient-map my-test-keys-minor-mode-map (lambda () t)))
   (update-mode-line-faces)
   (update-mode-line-indicator)
   (setq cursor-type 'box))
@@ -847,8 +891,8 @@ If cursor is between blank lines, copy the following text block."
 (defun update-mode-line-faces ()
   "Update modeline face based on current mode."
   (if my-insert-state-p
-	(set-face-attribute 'mode-line nil :background "#484d67" :foreground "#ffffff" :box "#979797")
-      (set-face-attribute 'mode-line nil :background "#a78cfa" :foreground "#ffffff" :box "#979797")))
+      (set-face-attribute 'mode-line nil :background "#484d67" :foreground "#ffffff" :box "#979797")
+    (set-face-attribute 'mode-line nil :background "#a78cfa" :foreground "#ffffff" :box "#979797")))
 
 ;; Hook to update modeline faces whenever mode changes
 ;;(add-hook 'post-command-hook 'update-mode-line-faces)
@@ -867,16 +911,16 @@ If cursor is between blank lines, copy the following text block."
   "Activate insertion mode."
   (interactive)
   (my-test-keys-insert-mode-init)
-;(run-hooks 'xah-fly-insert-mode-activate-hook)
+                                        ;(run-hooks 'xah-fly-insert-mode-activate-hook)
   )
 
 (defun my-test-keys-command-mode-activate ()
   "Activate commandion mode."
   (interactive)
   (my-test-keys-command-mode-init)
-;(run-hooks 'xah-fly-command-mode-activate-hook)
+                                        ;(run-hooks 'xah-fly-command-mode-activate-hook)
   )
-  
+
 (defun my-test-keys-mode-toggle ()
   (interactive)
   (if my-insert-state-p
@@ -889,18 +933,18 @@ If cursor is between blank lines, copy the following text block."
 
 (defun my-minibuffer-entry-insert-setup ()
   (if my-insert-state-p nil
-      (progn
-	(setq my-command-history-p t)
-	(my-test-keys-insert-mode-activate)
-    )))
+    (progn
+      (setq my-command-history-p t)
+      (my-test-keys-insert-mode-activate)
+      )))
 
 (defun my-minibuffer-exit-setup ()
-  
+
   (if my-command-history-p
       (progn
-	(setq my-command-history-p nil)
-	(my-test-keys-command-mode-activate)
-	)))
+        (setq my-command-history-p nil)
+        (my-test-keys-command-mode-activate)
+        )))
 
 (add-hook 'minibuffer-exit-hook 'my-minibuffer-exit-setup)
 
@@ -911,11 +955,11 @@ If cursor is between blank lines, copy the following text block."
   "Function to run after buffer list update." 
   (if (eq major-mode 'dired-mode)
       (progn
-	(my-test-keys-insert-mode-init)
-	(setq cursor-type 'box))
-;;	(setq my-insert-state-p nil))
+        (my-test-keys-insert-mode-init)
+        (setq cursor-type 'box))
+    ;;	(setq my-insert-state-p nil))
     (if my-insert-state-p			 
-	(my-test-keys-insert-mode-init)	 
+        (my-test-keys-insert-mode-init)	 
       (my-test-keys-command-mode-init))))
 
 ;;(add-hook 'dired-mode-hook 'my-test-keys-insert-mode-activate)
@@ -1100,13 +1144,15 @@ Press k will do it again, press j will move to next heading. Press other key to 
       ("q" hydra-keyboard-quit "quit" :exit t))
 
 (defhydra file-hydra
-    (:color blue)
-    "Select action"
-    ("f" find-file "Find file")
-    ("n" write-file "Save as")
-    ("p" ffap "Find file at point")
-    ("s" save-buffer "Save buffer")
-    ("q" hydra-keyboard-quit "quit" :exit t))
+  (:color blue)
+  "Select action"
+  ("d" dired "Open dired")
+  ("r" find-file "Find file")
+  ("r" ranger "Open ranger")
+  ("n" write-file "Save as")
+  ("p" ffap "Find file at point")
+  ("s" save-buffer "Save buffer")
+  ("q" hydra-keyboard-quit "quit" :exit t))
 
 (global-set-key (kbd "C-c n") #'me/vertico-notes)
 (global-set-key (kbd "C-c olf") #'me/show-in-lf)

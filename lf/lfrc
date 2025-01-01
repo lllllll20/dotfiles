@@ -12,7 +12,6 @@ set cursorpreviewfmt "\033[7m"
 
 
 cmd open ${{
-    swaymsg scratchpad show
     lf -remote "send unselect \"${myfiles[@]}\""
     readarray -t myfiles < <(printf "%s" "$fx")
     length=${#myfiles[@]}
@@ -34,13 +33,11 @@ cmd open ${{
         #else
             #setsid -f foot -a neovim nvim --listen /tmp/nvim.pipe "${myfiles[@]}" >/dev/null 2>&1
         #fi
-    # swaymsg workspace 2
       setsid -f emacsclient -r -a emacs "${myfiles[@]}" >/dev/null 2>&1
     fi
 }}
 
 cmd openwith ${{
-swaymsg scratchpad show
 readarray -t myfiles < <(printf "%s" "$fx")
 setsid -f $1 "${myfiles[@]}" >/dev/null 2>&1 
 lf -remote "send unselect \"${myfiles[@]}\""
@@ -103,7 +100,6 @@ cmd mkdirectory ${{
 cmd mkfile ${{
   IFS=
   read -rp "File Name: "
-  swaymsg scratchpad show
   #if wlrctl window focus "neovim" == true;
   #then
     #nvim --server /tmp/nvim.pipe --remote "${PWD}"/"${REPLY}" >/dev/null 2>&1
@@ -153,7 +149,6 @@ cmd sudomkfile ${{
 cmd copyfilename ${{
   wl-copy "$f"
   lf -remote "send echomsg \"$f copied to clipboard\""
-  swaymsg scratchpad show
 }}
 
 cmd cleanname ${{
@@ -194,13 +189,11 @@ cmd grabtext ${{
 }}
 
 cmd nautilus ${{
-  sway scratchpad show
   name=$(pwd)  
   setsid -f nautilus "${name}" >/dev/null 2>&1
 }}
 
 cmd terminal ${{
-  sway scratchpad show
   setsid -f foot -D "$(pwd)" >/dev/null 2>&1
 }}
 
@@ -301,7 +294,6 @@ cmd tarbz2 ${{
 }}
 
 cmd minimise_lf ${{
-    sway scratchpad show
 }}
 
 # Trash cli bindings

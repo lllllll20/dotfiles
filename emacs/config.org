@@ -1,4 +1,3 @@
-
 #+title Emacs Configuration
 #+PROPERTY: header-args:emacs-lisp :tangle yes
 #+STARTUP: overview
@@ -770,8 +769,8 @@ Store customize options in a separate file:
         (deactivate-mark)
       (if (active-minibuffer-window)
           (abort-recursive-edit)
-        (if (derived-mode-p 'dired-mode)
-            (abort-recursive-edit)
+          (if (derived-mode-p 'ranger-mode)
+            (ranger-close)
           (my-test-keys-command-mode-activate)))))
 
 
@@ -1013,15 +1012,16 @@ Store customize options in a separate file:
           (setq count (1+ count))))
       (message "Killed %d Dired buffer(s)" count)))
 
-  (defhydra miscellaneous-hydra
+  (defhydra mode-hydra
     (:color blue)
     "Miscellaneous functions"
     ("s" search-hydra/body "Search and replace operations")      
-    ("e" kill-line "Cut to end of line")      
+    ("e" kill-line "Cut to end of line")
+    ("r" ranger "Ranger mode")
     ("b" me/delete-current-text-block "Cut block")      
     ("d" me/kill-all-dired-buffers "Kill all dired buffers"))
 
-  (keymap-set my-test-keys-minor-mode-map "m" 'miscellaneous-hydra/body)
+  (keymap-set my-test-keys-minor-mode-map "m" 'mode-hydra/body)
 
 
   (defhydra set-mark-hydra
@@ -1453,7 +1453,8 @@ Store customize options in a separate file:
 
 #+End_src
 
-** File hydra
+**
+File hydra
 
 #+begin_src emacs-lisp
 
@@ -1461,8 +1462,7 @@ Store customize options in a separate file:
     (:color blue)
     "Select action"
     ("d" dired "Open dired")
-    ("r" find-file "Find file")
-    ("r" ranger "Open ranger")
+    ("f" find-file "Find file")
     ("n" write-file "Save as")
     ("p" ffap "Find file at point")
     ("s" save-buffer "Save buffer")

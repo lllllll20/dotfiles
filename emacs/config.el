@@ -457,40 +457,48 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
   (python-mode . python-ts-mode)))
 
 (use-package ranger
-  :ensure t
-  :config
-  (ranger-override-dired-mode t)) ;; Optional, replaces dired with ranger
+    :ensure t
+    :config
+    (ranger-override-dired-mode t)) ;; Optional, replaces dired with ranger
 
 
-(defun my-ranger-setup ()
-  "Set cursor to block and switch to insert mode in ranger-mode."
-  (when (eq major-mode 'ranger-mode)
-    (setq cursor-type 'box)   ;; Set cursor to block
-    (my-test-keys-insert-mode-init)))     ;; Switch to insert mode
+  (defun my-ranger-setup ()
+    "Set cursor to block and switch to insert mode in ranger-mode."
+    (when (eq major-mode 'ranger-mode)
+      (setq cursor-type 'box)   ;; Set cursor to block
+      (my-test-keys-insert-mode-init)))     ;; Switch to insert mode
 
 
-(defun my-ranger-key-setup ()
-  "Custom ranger keybindings."
-  (define-key ranger-mode-map (kbd "RET") 'ranger-open-in-external-app)  ;; Remap RET to external open function
-  (define-key ranger-mode-map (kbd "g") 'my-bookmark-jump))
+  (defun my-ranger-key-setup ()
+    "Custom ranger keybindings."
+    (define-key ranger-mode-map (kbd "RET") 'ranger-open-in-external-app)  ;; Remap RET to external open function
+    (define-key ranger-mode-map (kbd "g") 'my-bookmark-jump))
 
-(add-hook 'ranger-mode-hook #'my-ranger-key-setup)
-
-
-(defun my-bookmark-open-with-ranger (bookmark)
-  "Open a bookmarked directory with ranger instead of dired."
-  (interactive)
-  (let ((file (bookmark-get-filename bookmark)))
-    (if (and file (file-directory-p file))
-        (ranger file)  ;; open with ranger if it's a directory
-      (bookmark-jump bookmark))))  ;; fallback to the normal bookmark jump for files
+  (add-hook 'ranger-mode-hook #'my-ranger-key-setup)
 
 
-(defun my-bookmark-jump (bookmark)
-  "Jump to a bookmark, using ranger for directories."
-  (interactive
-   (list (bookmark-completing-read "Jump to bookmark: ")))
-  (my-bookmark-open-with-ranger bookmark))
+  (defun my-bookmark-open-with-ranger (bookmark)
+    "Open a bookmarked directory with ranger instead of dired."
+    (interactive)
+    (let ((file (bookmark-get-filename bookmark)))
+      (if (and file (file-directory-p file))
+          (ranger file)  ;; open with ranger if it's a directory
+        (bookmark-jump bookmark))))  ;; fallback to the normal bookmark jump for files
+
+
+  (defun my-bookmark-jump (bookmark)
+    "Jump to a bookmark, using ranger for directories."
+    (interactive
+     (list (bookmark-completing-read "Jump to bookmark: ")))
+    (my-bookmark-open-with-ranger bookmark))
+
+(defun my-ranger-exit-command ()
+  "The command to run when exiting ranger mode."
+  (message "Exiting ranger mode!"))
+
+(add-hook 'ranger-mode-hook
+          (lambda ()
+            (add-hook 'kill-buffer-hook 'my-test-keys-command-mode-init nil t)))
 
 ;; forces emacs to make vertical splits
   (setq split-height-threshold nil)
@@ -507,8 +515,8 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
       (deactivate-mark)
     (if (active-minibuffer-window)
         (abort-recursive-edit)
-      (if (derived-mode-p 'dired-mode)
-          (abort-recursive-edit)
+        (if (derived-mode-p 'ranger-mode)
+          (ranger-close)
         (my-test-keys-command-mode-activate)))))
 
 
@@ -750,15 +758,16 @@ If cursor is between blank lines, copy the following text block."
         (setq count (1+ count))))
     (message "Killed %d Dired buffer(s)" count)))
 
-(defhydra miscellaneous-hydra
+(defhydra mode-hydra
   (:color blue)
   "Miscellaneous functions"
   ("s" search-hydra/body "Search and replace operations")      
-  ("e" kill-line "Cut to end of line")      
+  ("e" kill-line "Cut to end of line")
+  ("r" ranger "Ranger mode")
   ("b" me/delete-current-text-block "Cut block")      
   ("d" me/kill-all-dired-buffers "Kill all dired buffers"))
 
-(keymap-set my-test-keys-minor-mode-map "m" 'miscellaneous-hydra/body)
+(keymap-set my-test-keys-minor-mode-map "m" 'mode-hydra/body)
 
 
 (defhydra set-mark-hydra
@@ -1147,8 +1156,7 @@ Press k will do it again, press j will move to next heading. Press other key to 
   (:color blue)
   "Select action"
   ("d" dired "Open dired")
-  ("r" find-file "Find file")
-  ("r" ranger "Open ranger")
+  ("f" find-file "Find file")
   ("n" write-file "Save as")
   ("p" ffap "Find file at point")
   ("s" save-buffer "Save buffer")

@@ -60,32 +60,35 @@
   (visual-line-mode 1))
 
 (use-package org
-      :hook (org-mode . me/org-mode-setup))
+  :hook (org-mode . me/org-mode-setup))
 
 
-    (global-set-key "\C-cl" 'org-store-link)
-    (global-set-key "\C-ca" 'org-agenda)
+(global-set-key "\C-cl" 'org-store-link)
+(global-set-key "\C-ca" 'org-agenda)
 
-    ;; org-capture notes
+;; org-capture notes
 
-  (setq org-default-notes-file "~/notes/quick_notes.org")
-  (setq org-support-shift-select t)
+(setq org-default-notes-file "~/notes/quick_notes.org")
+(setq org-support-shift-select t)
 
-  (setq org-capture-templates
-        '(("n" "Quick Note" entry
-           (file org-default-notes-file)
-           "* %?\n %i" :empty-lines 1)
-          ("r" "Recipe" entry
-           (file+headline "~/notes/ideas.org" "Recipe ideas")
-           "** %?\n")
-          ("j" "Journal entry" entry
-           (file+datetree "~/notes/journal.org")
-           "**** %U %^{Title}\n %?" :empty-lines 1)))
+(setq org-M-RET-may-split-line '((default . nil)))
+(setq org-insert-heading-respect-content t)
+
+(setq org-capture-templates
+      '(("n" "Quick Note" entry
+         (file org-default-notes-file)
+         "* %?\n %i" :empty-lines 1)
+        ("r" "Recipe" entry
+         (file+headline "~/notes/ideas.org" "Recipe ideas")
+         "** %?\n")
+        ("j" "Journal entry" entry
+         (file+datetree "~/notes/journal.org")
+         "**** %U %^{Title}\n %?" :empty-lines 1)))
 
 (org-babel-do-load-languages
-  'org-babel-load-languages
-  '((emacs-lisp . t)
-    (python . t)))
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (python . t)))
 
 (require 'org-tempo)
 

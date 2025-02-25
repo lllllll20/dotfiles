@@ -1075,18 +1075,13 @@ Store customize options in a separate file:
   (defun me/find-org-files-in-my-documents ()
     "Use `find-dired` to identify .org files in ~/my_docs/ and display the results in a dired buffer."
     (interactive)
-    (let ((directory "~/my_docs/")
-          (args "-type f -name \"*.org\""))
-      (find-dired directory args)))
+    (find-lisp-find-dired "~/my_docs/" "\\.org$"))
 
 
   (defun me/find-org-files-in-work-documents ()
     "Use `find-dired` to identify .org files in ~/work_docs/ and display the results in a dired buffer."
     (interactive)
-    (let ((directory "~/work_docs/")
-          (args "-type f -name \"*.org\""))
-      (find-dired directory args)))
-
+    (find-lisp-find-dired "~/work_docs/" "\\.org$"))
 
 
 

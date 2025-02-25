@@ -63,15 +63,15 @@
                   eshell-mode-hook))
     (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-  (set-face-attribute 'default nil :font "FreeSerif Mono" :height 140)
+  (set-face-attribute 'default nil :font "FreeSans" :height 140)
 
   ;; Set the fixed pitch face
-  (set-face-attribute 'fixed-pitch nil :font "FreeSerif Mono" :height 140)
+  (set-face-attribute 'fixed-pitch nil :font "FreeSans" :height 140)
 
   ;; Set the variable pitch face
   (set-face-attribute 'variable-pitch nil :font "FreeSerif" :height 160 :weight 'regular)
 
-  (set-face-attribute 'org-block nil :font "FreeSerif Mono" :height 160 :weight 'regular)
+  (set-face-attribute 'org-block nil :font "FreeSans" :height 160 :weight 'regular)
   
   ;; Enable transient mark mode
   (transient-mark-mode 1)

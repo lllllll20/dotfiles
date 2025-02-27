@@ -26,7 +26,8 @@
 (scroll-bar-mode -1) ; Disable visible scroll bar
 (tool-bar-mode -1) ; Disable toolbar
 (tooltip-mode -1)  ; Disable tooltips
-(set-fringe-mode 10)
+(set-fringe-mode 0)
+
 (menu-bar-mode -1)
 (setq-default cursor-type 'bar)
 
@@ -48,7 +49,9 @@
 (set-face-attribute 'fixed-pitch nil :font "FreeSans" :height 140)
 
 ;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font "FreeSans" :height 140 :weight 'regular)
+(set-face-attribute 'variable-pitch nil :font "FreeSerif" :height 160 :weight 'regular)
+
+(set-face-attribute 'org-block nil :font "FreeSans" :height 160 :weight 'regular)
 
 ;; Enable transient mark mode
 (transient-mark-mode 1)
@@ -133,6 +136,32 @@
 (recentf-mode 1)
 (setq recentf-max-menu-items 25)
 (setq recentf-max-saved-items 25)
+
+(defun my-toggle-writing-mode ()
+  "Toggle distraction-free writing mode.
+  Enables or disables `olivetti-mode`, sets `olivetti-body-width` to 0.8,
+  and hides/shows the mode line."
+  (interactive)
+  ;; Set the body width to 80% for olivetti mode
+  (setq olivetti-body-width 0.8)
+
+
+  
+  ;; Toggle the mode line visibility
+  (if (eq mode-line-format nil)
+      (progn
+        (setq mode-line-format (default-value 'mode-line-format))
+        (force-mode-line-update))  ;; Restore the mode line
+    (progn
+      (setq mode-line-format nil)
+      (force-mode-line-update)))  ;; Hide the mode line
+
+  ;; Toggle olivetti-mode
+  (olivetti-mode 'toggle))
+
+   
+    ;; Assign it to a keybinding for quick access
+    (global-set-key (kbd "C-c w") #'my-toggle-writing-mode)
 
 (use-package vertico
   :ensure t
@@ -821,18 +850,13 @@ If cursor is between blank lines, copy the following text block."
 (defun me/find-org-files-in-my-documents ()
   "Use `find-dired` to identify .org files in ~/my_docs/ and display the results in a dired buffer."
   (interactive)
-  (let ((directory "~/my_docs/")
-        (args "-type f -name \"*.org\""))
-    (find-dired directory args)))
+  (find-lisp-find-dired "~/my_docs/" "\\.org$"))
 
 
 (defun me/find-org-files-in-work-documents ()
   "Use `find-dired` to identify .org files in ~/work_docs/ and display the results in a dired buffer."
   (interactive)
-  (let ((directory "~/work_docs/")
-        (args "-type f -name \"*.org\""))
-    (find-dired directory args)))
-
+  (find-lisp-find-dired "~/work_docs/" "\\.org$"))
 
 
 
@@ -1151,6 +1175,7 @@ Press k will do it again, press j will move to next heading. Press other key to 
       ("k" my-previous-heading "Move up")
       ("l" org-insert-link "Insert link")
       ("m" consult-imenu "Search by heading")
+      ("o" my-toggle-writing-mode "Toggle Olivetti mode")
       ("s" (lambda () (interactive) (hydra-keyboard-quit) (org-insert-structure-template "src emacs-lisp")) "Structure template" :exit t)
       ("t" me/insert-date-stamp "Timestamp")
       ("q" hydra-keyboard-quit "quit" :exit t))

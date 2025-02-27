@@ -47,7 +47,8 @@
   (scroll-bar-mode -1) ; Disable visible scroll bar
   (tool-bar-mode -1) ; Disable toolbar
   (tooltip-mode -1)  ; Disable tooltips
-  (set-fringe-mode 10)
+  (set-fringe-mode 0)
+
   (menu-bar-mode -1)
   (setq-default cursor-type 'bar)
 
@@ -72,7 +73,7 @@
   (set-face-attribute 'variable-pitch nil :font "FreeSerif" :height 160 :weight 'regular)
 
   (set-face-attribute 'org-block nil :font "FreeSans" :height 160 :weight 'regular)
-  
+
   ;; Enable transient mark mode
   (transient-mark-mode 1)
 
@@ -225,27 +226,33 @@
 ** Olivetti mode
 
 #+begin_src emacs-lisp
-  
-    (defun my-toggle-writing-mode ()
-    "Toggle distraction-free writing mode.
-  Enables or disables `olivetti-mode`, sets `olivetti-body-width` to 0.8,
-  and hides/shows the mode line."
-    (interactive)
-    (if olivetti-mode
-        ;; If Olivetti is active, turn it off and restore the mode line
-        (progn
-          (olivetti-mode -1)
-          (setq mode-line-format (default-value 'mode-line-format))
-          (force-mode-line-update))
-      ;; Otherwise, enable Olivetti with custom width and hide mode line
-      (progn
-        (setq olivetti-body-width 0.8)
-        (olivetti-mode 1)
-        (setq mode-line-format nil)
-        (force-mode-line-update))))
 
-  ;; Assign it to a keybinding for quick access
-  (global-set-key (kbd "C-c w") #'my-toggle-writing-mode)
+
+    (defun my-toggle-writing-mode ()
+      "Toggle distraction-free writing mode.
+      Enables or disables `olivetti-mode`, sets `olivetti-body-width` to 0.8,
+      and hides/shows the mode line."
+      (interactive)
+      ;; Set the body width to 80% for olivetti mode
+      (setq olivetti-body-width 0.8)
+
+
+      
+      ;; Toggle the mode line visibility
+      (if (eq mode-line-format nil)
+          (progn
+            (setq mode-line-format (default-value 'mode-line-format))
+            (force-mode-line-update))  ;; Restore the mode line
+        (progn
+          (setq mode-line-format nil)
+          (force-mode-line-update)))  ;; Hide the mode line
+
+      ;; Toggle olivetti-mode
+      (olivetti-mode 'toggle))
+
+       
+        ;; Assign it to a keybinding for quick access
+        (global-set-key (kbd "C-c w") #'my-toggle-writing-mode)
 
 #+end_src
 

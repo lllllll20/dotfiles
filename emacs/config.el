@@ -31,6 +31,7 @@
 (menu-bar-mode -1)
 (setq-default cursor-type 'bar)
 
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 
 (column-number-mode)

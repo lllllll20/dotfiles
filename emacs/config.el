@@ -386,8 +386,7 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
    ;; This is recommended since Dabbrev can be used globally (M-/).
    ;; See also `corfu-excluded-modes'.
    :init
-   (global-corfu-mode) ; This does not play well in eshell if you run a repl
-   (setq corfu-auto t))
+   (global-corfu-mode)) ; This does not play well in eshell if you run a repl
    (define-key corfu-map [escape] #'corfu-quit)
 
 ;; Add extensions
@@ -462,6 +461,8 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
               ("k" . pdf-view-previous-line-or-previous-page))
   :init (pdf-loader-install)
   :config (add-to-list 'revert-without-query ".pdf"))
+
+(use-package hydra)
 
 (setq treesit-language-source-alist
     '((bash "https://github.com/tree-sitter/tree-sitter-bash")

@@ -562,8 +562,7 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
      ;; This is recommended since Dabbrev can be used globally (M-/).
      ;; See also `corfu-excluded-modes'.
      :init
-     (global-corfu-mode) ; This does not play well in eshell if you run a repl
-     (setq corfu-auto t))
+     (global-corfu-mode)) ; This does not play well in eshell if you run a repl
      (define-key corfu-map [escape] #'corfu-quit)
 
 #+end_src
@@ -686,7 +685,7 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
 
 * Hydra
 
-#+begin_src
+#+begin_src emacs-lisp
 
 (use-package hydra)
 

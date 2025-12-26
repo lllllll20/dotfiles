@@ -29,40 +29,40 @@
     (package-install 'use-package))
 
 (use-package emacs
-   :init
-   (setq inhibit-startup-message t)
-   (scroll-bar-mode -1)
-   (tool-bar-mode -1)
-   (tooltip-mode -1)
-   (menu-bar-mode -1)
-   (column-number-mode t)
-   :config
-   (set-face-attribute 'default nil :font "FreeSans" :height 140)
-   (set-face-attribute 'variable-pitch nil :font "FreeSerif" :height 160)
-   ;; Simplified line number hook
-   (dolist (hook '(org-mode-hook term-mode-hook shell-mode-hook eshell-mode-hook))
-     (add-hook hook (lambda () (display-line-numbers-mode -1)))))
+  :init
+  (setq inhibit-startup-message t)
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1)
+  (tooltip-mode -1)
+  (menu-bar-mode -1)
+  (column-number-mode t)
+  :config
+  (set-face-attribute 'default nil :font "FreeSans" :height 140)
+  (set-face-attribute 'variable-pitch nil :font "FreeSerif" :height 160)
+  ;; Simplified line number hook
+  (dolist (hook '(org-mode-hook term-mode-hook shell-mode-hook eshell-mode-hook))
+    (add-hook hook (lambda () (display-line-numbers-mode -1)))))
 
 
 
-;; (set-fringe-mode 0)
+(set-fringe-mode 0)
 
- ;; (setq-default cursor-type 'bar)
+;; (setq-default cursor-type 'bar)
 
- ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
 
 
 ;; (global-display-line-numbers-mode -1)
 
 
- ;; Enable transient mark mode
- (transient-mark-mode 1)
+;; Enable transient mark mode
+(transient-mark-mode 1)
 
- ;; Enable visual-line-mode
- (defun me/org-mode-setup ()
-   (org-indent-mode)
-   (variable-pitch-mode 1)
-   (visual-line-mode 1))
+;; Enable visual-line-mode
+(defun me/org-mode-setup ()
+  (org-indent-mode)
+  (variable-pitch-mode 1)
+  (visual-line-mode 1))
 
 (use-package org
   :hook (org-mode . me/org-mode-setup))
@@ -392,6 +392,9 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
 
 ;; Add extensions
 (use-package cape
+  :init
+(dolist (func (list #'cape-dabbrev #'cape-file #'cape-elisp-block))
+  (add-to-list 'completion-at-point-functions func))
   ;; Bind dedicated completion commands
   ;; Alternative prefix keys: C-c p, M-p, M-+, ...
   :bind (("C-c p p" . completion-at-point) ;; capf
@@ -411,14 +414,13 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
          ("C-c p ^" . cape-tex)
          ("C-c p &" . cape-sgml)
          ("C-c p r" . cape-rfc1345))
-  :init
   ;; Add to the global default value of `completion-at-point-functions' which is
   ;; used by `completion-at-point'.  The order of the functions matters, the
   ;; first function returning a result wins.  Note that the list of buffer-local
   ;; completion functions takes precedence over the global list.
-  (add-to-list 'completion-at-point-functions #'cape-dabbrev)
-  (add-to-list 'completion-at-point-functions #'cape-file)
-  (add-to-list 'completion-at-point-functions #'cape-elisp-block)
+  ;; (add-to-list 'completion-at-point-functions #'cape-dabbrev)
+  ;; (add-to-list 'completion-at-point-functions #'cape-file)
+  ;; (add-to-list 'completion-at-point-functions #'cape-elisp-block)
   ;;(add-to-list 'completion-at-point-functions #'cape-history)
   ;;(add-to-list 'completion-at-point-functions #'cape-keyword)
   ;;(add-to-list 'completion-at-point-functions #'cape-tex)

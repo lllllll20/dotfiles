@@ -2,66 +2,67 @@
 (server-start)
 
 ;; Initialize package sources
- (require 'package)
+  (require 'package)
 
- (setq package-archives '(("melpa" . "https://melpa.org/packages/")
-                          ("org" . "https://orgmode.org/elpa/")
-                          ("elpa" . "https://elpa.gnu.org/packages/")))
+  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+                           ("org" . "https://orgmode.org/elpa/")
+                           ("elpa" . "https://elpa.gnu.org/packages/")))
 
- (unless package--initialized
-   (package-initialize))
+(package-initialize)
 
- (unless package-archive-contents
-   (package-refresh-contents))
+;; Modern use-package setup
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+(require 'use-package)
+(setq use-package-always-ensure t)  (unless package--initialized
+    (package-initialize))
 
-
-;; (require 'use-package)
- (setq use-package-always-ensure t)
-
- (unless (package-installed-p 'use-package)
-   (package-install 'use-package))
-
-;; Visuals
-(setq inhibit-startup-message t) ;Disable the splash screen (to enable it again, replace the t with 0)
-(scroll-bar-mode -1) ; Disable visible scroll bar
-(tool-bar-mode -1) ; Disable toolbar
-(tooltip-mode -1)  ; Disable tooltips
-(set-fringe-mode 0)
-
-(menu-bar-mode -1)
-(setq-default cursor-type 'bar)
-
-(add-to-list 'default-frame-alist '(fullscreen . maximized))
+  (unless package-archive-contents
+    (package-refresh-contents))
 
 
-(column-number-mode)
-(global-display-line-numbers-mode -1)
+ ;; (require 'use-package)
+  (setq use-package-always-ensure t)
 
-;; Disable line numbers for some modes
-(dolist (mode '(org-mode-hook
-                term-mode-hook
-                shell-mode-hook
-                eshell-mode-hook))
-  (add-hook mode (lambda () (display-line-numbers-mode 0))))
+  (unless (package-installed-p 'use-package)
+    (package-install 'use-package))
 
-(set-face-attribute 'default nil :font "FreeSans" :height 140)
+(use-package emacs
+   :init
+   (setq inhibit-startup-message t)
+   (scroll-bar-mode -1)
+   (tool-bar-mode -1)
+   (tooltip-mode -1)
+   (menu-bar-mode -1)
+   (column-number-mode t)
+   :config
+   (set-face-attribute 'default nil :font "FreeSans" :height 140)
+   (set-face-attribute 'variable-pitch nil :font "FreeSerif" :height 160)
+   ;; Simplified line number hook
+   (dolist (hook '(org-mode-hook term-mode-hook shell-mode-hook eshell-mode-hook))
+     (add-hook hook (lambda () (display-line-numbers-mode -1)))))
 
-;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "FreeSans" :height 140)
 
-;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font "FreeSerif" :height 160 :weight 'regular)
 
-(set-face-attribute 'org-block nil :font "FreeSans" :height 160 :weight 'regular)
+;; (set-fringe-mode 0)
 
-;; Enable transient mark mode
-(transient-mark-mode 1)
+ ;; (setq-default cursor-type 'bar)
 
-;; Enable visual-line-mode
-(defun me/org-mode-setup ()
-  (org-indent-mode)
-  (variable-pitch-mode 1)
-  (visual-line-mode 1))
+ ;; (add-to-list 'default-frame-alist '(fullscreen . maximized))
+
+
+;; (global-display-line-numbers-mode -1)
+
+
+ ;; Enable transient mark mode
+ (transient-mark-mode 1)
+
+ ;; Enable visual-line-mode
+ (defun me/org-mode-setup ()
+   (org-indent-mode)
+   (variable-pitch-mode 1)
+   (visual-line-mode 1))
 
 (use-package org
   :hook (org-mode . me/org-mode-setup))
@@ -543,102 +544,102 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
 
 ;Define a general key-map which can override major mode bindings
 
-  (defun my-test-keys-insert-mode-escape ()
+(defun my-test-keys-insert-mode-escape ()
+  (interactive)
+  (if (region-active-p)
+      (deactivate-mark)
+    (if (active-minibuffer-window)
+        (abort-recursive-edit)
+      (if (derived-mode-p 'ranger-mode)
+          (ranger-close)
+        (my-test-keys-command-mode-activate)))))
+
+
+(defvar my-insertmode-keys-minor-mode-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "C-h") 'backward-word)
+    (define-key map (kbd "C-j") 'forward-paragraph)
+    (define-key map (kbd "C-k") 'backward-paragraph)
+    (define-key map (kbd "C-l") 'forward-word)
+    (define-key map (kbd "M-h") 'backward-char)
+    (define-key map (kbd "M-j") 'next-line)
+    (define-key map (kbd "M-k") 'previous-line)
+    (define-key map (kbd "M-l") 'forward-char)
+    (define-key map (kbd "C-M-h") 'previous-buffer)
+    (define-key map (kbd "C-M-j") 'end-of-buffer)
+    (define-key map (kbd "C-M-k") 'beginning-of-buffer)
+    (define-key map (kbd "C-M-l") 'next-buffer)
+    (define-key map (kbd "<f1>-k") 'describe-key)
+    (define-key map (kbd "<f1>-f") 'describe-function)
+    (define-key map (kbd "<f1>-v") 'describe-variable)
+    (define-key map (kbd "<f1>-m") 'describe-mode)
+    (define-key map (kbd "M-SPC") 'rectangle-mark-mode)
+    (define-key map (kbd "<escape>") 'my-test-keys-insert-mode-escape)
+    map) 
+  "my-insertmode-keys-minor-mode keymap.") 
+
+
+
+;; create and enable the minor mode
+(define-minor-mode my-insertmode-keys-minor-mode
+  "A minor mode for more comfortable navigation."
+  :init-value t
+  :lighter " my-keys")
+
+(my-insertmode-keys-minor-mode 1)
+
+;; The following is necessary to insertmode major mode keybindings, which otherwise take precedence
+(add-to-list 'emulation-mode-map-alists `(my-insertmode-keys-minor-mode . ,my-insertmode-keys-minor-mode-map)) 
+
+
+
+					; Define the modal key mode and keymap
+
+(define-minor-mode my-test-keys-minor-mode
+  "Minor mode to be able to move using hjkl"
+  :lighter " my-test-modal-keys"
+  :keymap '(([remap self-insert-command]  ignore)) ; The actual keymaps are defined later below
+  )
+
+(progn
+  (defun my-test-keys-command-mode-escape ()
     (interactive)
-    (if (region-active-p)
-        (deactivate-mark)
-      (if (active-minibuffer-window)
-          (abort-recursive-edit)
-          (if (derived-mode-p 'ranger-mode)
-            (ranger-close)
-          (my-test-keys-command-mode-activate)))))
+    (when (region-active-p)
+      (deactivate-mark))
+    (when (active-minibuffer-window)
+      (abort-recursive-edit)))
 
+  (define-key my-test-keys-minor-mode-map (kbd "<escape>")     'my-test-keys-command-mode-escape))
 
-  (defvar my-insertmode-keys-minor-mode-map
-    (let ((map (make-sparse-keymap)))
-      (define-key map (kbd "C-h") 'backward-word)
-      (define-key map (kbd "C-j") 'forward-paragraph)
-      (define-key map (kbd "C-k") 'backward-paragraph)
-      (define-key map (kbd "C-l") 'forward-word)
-      (define-key map (kbd "M-h") 'backward-char)
-      (define-key map (kbd "M-j") 'next-line)
-      (define-key map (kbd "M-k") 'previous-line)
-      (define-key map (kbd "M-l") 'forward-char)
-      (define-key map (kbd "C-M-h") 'previous-buffer)
-      (define-key map (kbd "C-M-j") 'end-of-buffer)
-      (define-key map (kbd "C-M-k") 'beginning-of-buffer)
-      (define-key map (kbd "C-M-l") 'next-buffer)
-      (define-key map (kbd "<f1>-k") 'describe-key)
-      (define-key map (kbd "<f1>-f") 'describe-function)
-      (define-key map (kbd "<f1>-v") 'describe-variable)
-      (define-key map (kbd "<f1>-m") 'describe-mode)
-      (define-key map (kbd "M-SPC") 'rectangle-mark-mode)
-      (define-key map (kbd "<escape>") 'my-test-keys-insert-mode-escape)
-      map) 
-    "my-insertmode-keys-minor-mode keymap.") 
+;;(add-to-list 'emulation-mode-map-alists '(my-modal-keys-minor-mode . ,my-modal-keys-minor-mode-map))
 
+(keymap-set my-test-keys-minor-mode-map "a" 'move-beginning-of-line)
+(keymap-set my-test-keys-minor-mode-map "e" 'move-end-of-line)
+(keymap-set my-test-keys-minor-mode-map "h" 'backward-char)
+(keymap-set my-test-keys-minor-mode-map "i" 'my-test-keys-insert-mode-activate)
+(keymap-set my-test-keys-minor-mode-map "j" 'next-line)
+(keymap-set my-test-keys-minor-mode-map "k" 'previous-line)
+(keymap-set my-test-keys-minor-mode-map "l" 'forward-char)
+(keymap-set my-test-keys-minor-mode-map "o" 'org-mode-hydra/body)
+(keymap-set my-test-keys-minor-mode-map "f" 'file-hydra/body)
+(keymap-set my-test-keys-minor-mode-map "g" 'my-bookmark-jump)
+(keymap-set my-test-keys-minor-mode-map "r" 'undo-redo)
+(keymap-set my-test-keys-minor-mode-map "s" 'consult-line)
+(keymap-set my-test-keys-minor-mode-map "/" 'consult-line)
+(keymap-set my-test-keys-minor-mode-map "u" 'undo)
+(keymap-set my-test-keys-minor-mode-map "w" 'window-hydra/body)
+(keymap-set my-test-keys-minor-mode-map "x" 'execute-extended-command)
+(keymap-set my-test-keys-minor-mode-map "y" 'yank)
+(keymap-set my-test-keys-minor-mode-map "SPC" 'me/insert-space)
+(keymap-set my-test-keys-minor-mode-map "," 'eval-last-sexp)
+(define-key my-test-keys-minor-mode-map (kbd "<C-return>") 'er/expand-region)
 
+(defun me/insert-space ()
+  "Just pass through a space"
+  (interactive)
+  (self-insert-command 1 ?\s))
 
-  ;; create and enable the minor mode
-  (define-minor-mode my-insertmode-keys-minor-mode
-    "A minor mode for more comfortable navigation."
-    :init-value t
-    :lighter " my-keys")
-
-  (my-insertmode-keys-minor-mode 1)
-
-  ;; The following is necessary to insertmode major mode keybindings, which otherwise take precedence
-  (add-to-list 'emulation-mode-map-alists `(my-insertmode-keys-minor-mode . ,my-insertmode-keys-minor-mode-map)) 
-
-
-
-                                          ; Define the modal key mode and keymap
-
-  (define-minor-mode my-test-keys-minor-mode
-    "Minor mode to be able to move using hjkl"
-    :lighter " my-test-modal-keys"
-    :keymap '(([remap self-insert-command]  ignore)) ; The actual keymaps are defined later below
-    )
-
-  (progn
-    (defun my-test-keys-command-mode-escape ()
-      (interactive)
-      (when (region-active-p)
-        (deactivate-mark))
-      (when (active-minibuffer-window)
-        (abort-recursive-edit)))
-
-    (define-key my-test-keys-minor-mode-map (kbd "<escape>")     'my-test-keys-command-mode-escape))
-
-  ;;(add-to-list 'emulation-mode-map-alists '(my-modal-keys-minor-mode . ,my-modal-keys-minor-mode-map))
-
-  (keymap-set my-test-keys-minor-mode-map "a" 'move-beginning-of-line)
-  (keymap-set my-test-keys-minor-mode-map "e" 'move-end-of-line)
-  (keymap-set my-test-keys-minor-mode-map "h" 'backward-char)
-  (keymap-set my-test-keys-minor-mode-map "i" 'my-test-keys-insert-mode-activate)
-  (keymap-set my-test-keys-minor-mode-map "j" 'next-line)
-  (keymap-set my-test-keys-minor-mode-map "k" 'previous-line)
-  (keymap-set my-test-keys-minor-mode-map "l" 'forward-char)
-  (keymap-set my-test-keys-minor-mode-map "o" 'org-mode-hydra/body)
-  (keymap-set my-test-keys-minor-mode-map "f" 'file-hydra/body)
-  (keymap-set my-test-keys-minor-mode-map "g" 'my-bookmark-jump)
-  (keymap-set my-test-keys-minor-mode-map "r" 'undo-redo)
-  (keymap-set my-test-keys-minor-mode-map "s" 'consult-line)
-  (keymap-set my-test-keys-minor-mode-map "/" 'consult-line)
-  (keymap-set my-test-keys-minor-mode-map "u" 'undo)
-  (keymap-set my-test-keys-minor-mode-map "w" 'window-hydra/body)
-  (keymap-set my-test-keys-minor-mode-map "x" 'execute-extended-command)
-  (keymap-set my-test-keys-minor-mode-map "y" 'yank)
-  (keymap-set my-test-keys-minor-mode-map "SPC" 'me/insert-space)
-  (keymap-set my-test-keys-minor-mode-map "," 'eval-last-sexp)
-  (define-key my-test-keys-minor-mode-map (kbd "<C-return>") 'er/expand-region)
-
-  (defun me/insert-space ()
-    "Just pass through a space"
-    (interactive)
-    (self-insert-command 1 ?\s))
-
-  (defun me/zap-to-stop ()
+(defun me/zap-to-stop ()
   "Zap to the next occurrence of a period ('.') character."
   (interactive)
   (zap-to-char 1 ?.))
@@ -662,371 +663,378 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
     (when (and start end)
       (kill-region start end))))
 
-  (defun me/cut-thing ()
-    "Cut active region or offer choice"
-    (interactive)
+(defun me/cut-thing ()
+  "Cut active region or offer choice"
+  (interactive)
+  (if (region-active-p)
+      (kill-region (point) (mark))
+    (cut-text-hydra/body)))
+
+(defun me/delete-current-text-block ()
+  "Cut the current text block plus blank lines, or selection, and copy to `kill-ring'.
+
+    If cursor is between blank lines, delete following blank lines.
+
+    URL `http://xahlee.info/emacs/emacs/emacs_delete_block.html'
+    Created: 2017-07-09
+    Version: 2023-10-09"
+  (interactive)
+  (let (xp1 xp2)
     (if (region-active-p)
-        (kill-region (point) (mark))
-      (cut-text-hydra/body)))
+        (setq xp1 (region-beginning) xp2 (region-end))
+      (progn
+        (if (re-search-backward "\n[ \t]*\n+" nil :move)
+            (setq xp1 (goto-char (match-end 0)))
+          (setq xp1 (point)))
+        (if (re-search-forward "\n[ \t]*\n+" nil :move)
+            (setq xp2 (match-end 0))
+          (setq xp2 (point-max)))))
+    (kill-region xp1 xp2)))
 
-  (defun me/delete-current-text-block ()
-    "Cut the current text block plus blank lines, or selection, and copy to `kill-ring'.
+(defhydra cut-text-hydra
+  (:color blue)
+  "select region of text to copy"
+  ("w" kill-word "Cut to end of word")      
+  ("e" kill-line "Cut to end of line")      
+  ("p" me/delete-current-text-block "Cut block")
+  ("s" me/delete-sentence "Delete sentence")
+  ("f" me/zap-to-stop "Delete end of sentence")
+  ("d" kill-whole-line "Cut whole line"))
 
-  If cursor is between blank lines, delete following blank lines.
+(keymap-set my-test-keys-minor-mode-map "d" 'me/cut-thing)
 
-  URL `http://xahlee.info/emacs/emacs/emacs_delete_block.html'
-  Created: 2017-07-09
-  Version: 2023-10-09"
-    (interactive)
-    (let (xp1 xp2)
+(defun me/copy-current-text-block ()
+  "Copy the current text block without surrounding blank lines to `kill-ring`.
+    If cursor is between blank lines, copy the following text block."
+  (interactive)
+  (let (xp1 xp2)
+    (save-excursion
       (if (region-active-p)
           (setq xp1 (region-beginning) xp2 (region-end))
         (progn
-          (if (re-search-backward "\n[ \t]*\n+" nil :move)
+          (if (re-search-backward "\n[ \t]*\n" nil :move)
               (setq xp1 (goto-char (match-end 0)))
-            (setq xp1 (point)))
-          (if (re-search-forward "\n[ \t]*\n+" nil :move)
-              (setq xp2 (match-end 0))
+            (setq xp1 (point-min)))
+          (if (re-search-forward "\n[ \t]*\n" nil :move)
+              (setq xp2 (match-beginning 0))
             (setq xp2 (point-max)))))
-      (kill-region xp1 xp2)))
+      ;; Move the start and end points to skip over any leading/trailing whitespace
+      (goto-char xp1)
+      (skip-chars-forward " \t\n")
+      (setq xp1 (point))
+      (goto-char xp2)
+      (skip-chars-backward " \t\n")
+      (setq xp2 (point)))
+    (kill-ring-save xp1 xp2)
+    (message "Text block copied to kill-ring.")))
 
-  (defhydra cut-text-hydra
-    (:color blue)
-    "select region of text to copy"
-    ("w" kill-word "Cut to end of word")      
-    ("e" kill-line "Cut to end of line")      
-    ("p" me/delete-current-text-block "Cut block")
-    ("s" me/delete-sentence "Delete sentence")
-    ("f" me/zap-to-stop "Delete end of sentence")
-    ("d" kill-whole-line "Cut whole line"))
+(defun me/copy-thing ()
+  "Copy active region or offer choice"
+  (interactive)
+  (if (region-active-p)
+      (kill-ring-save (point) (mark))
+    (copy-text-hydra/body)))
 
-  (keymap-set my-test-keys-minor-mode-map "d" 'me/cut-thing)
-
-  (defun me/copy-current-text-block ()
-    "Copy the current text block without surrounding blank lines to `kill-ring`.
-  If cursor is between blank lines, copy the following text block."
-    (interactive)
-    (let (xp1 xp2)
-      (save-excursion
-        (if (region-active-p)
-            (setq xp1 (region-beginning) xp2 (region-end))
-          (progn
-            (if (re-search-backward "\n[ \t]*\n" nil :move)
-                (setq xp1 (goto-char (match-end 0)))
-              (setq xp1 (point-min)))
-            (if (re-search-forward "\n[ \t]*\n" nil :move)
-                (setq xp2 (match-beginning 0))
-              (setq xp2 (point-max)))))
-        ;; Move the start and end points to skip over any leading/trailing whitespace
-        (goto-char xp1)
-        (skip-chars-forward " \t\n")
-        (setq xp1 (point))
-        (goto-char xp2)
-        (skip-chars-backward " \t\n")
-        (setq xp2 (point)))
-      (kill-ring-save xp1 xp2)
-      (message "Text block copied to kill-ring.")))
-
-  (defun me/copy-thing ()
-    "Copy active region or offer choice"
-    (interactive)
-    (if (region-active-p)
-        (kill-ring-save (point) (mark))
-      (copy-text-hydra/body)))
-
-  (defun me/copy-line ()
-    "Copy the current line, or lines if a region is active, to the `kill-ring'."
-    (interactive)
-    (let (start end)
-      (if (use-region-p)
-          (setq start (region-beginning) end (region-end))
-        (setq start (line-beginning-position)
-              end (line-beginning-position 2)))
-      (kill-ring-save start end)
-      (message "Line copied to kill-ring.")))
+(defun me/copy-line ()
+  "Copy the current line, or lines if a region is active, to the `kill-ring'."
+  (interactive)
+  (let (start end)
+    (if (use-region-p)
+        (setq start (region-beginning) end (region-end))
+      (setq start (line-beginning-position)
+            end (line-beginning-position 2)))
+    (kill-ring-save start end)
+    (message "Line copied to kill-ring.")))
 
 
-  (defun me/copy-word ()
-    "Copy the word at point, including hyphenated words, to the `kill-ring'."
-    (interactive)
-    (let (start end)
-      (save-excursion
-        ;; Move to the beginning of the word or hyphenated word
-        (skip-syntax-backward "w_")
-        (while (looking-back "-")
-          (skip-syntax-backward "w_"))
-        (setq start (point))
-        ;; Move to the end of the word or hyphenated word
-        (skip-syntax-forward "w_")
-        (while (looking-at "-")
-          (skip-forward "w_"))
-        (setq end (point)))
-      (kill-ring-save start end)
-      (message "Word copied to kill-ring.")))
-
-
-  (defun me/copy-sentence ()
-    "Copy the sentence at point to the `kill-ring'."
-    (interactive)
-    (let (start end)
-      (save-excursion
-        ;; Move to the beginning of the sentence
-        (backward-sentence)
-        (setq start (point))
-        ;; Move to the end of the sentence
-        (forward-sentence)
-        (setq end (point)))
-      (kill-ring-save start end)
-      (message "Sentence copied to kill-ring.")))
-
-  (defun me/copy-whole-buffer ()
-    "Copy the entire buffer to the clipboard."
-    (interactive)
+(defun me/copy-word ()
+  "Copy the word at point, including hyphenated words, to the `kill-ring'."
+  (interactive)
+  (let (start end)
     (save-excursion
-      (mark-whole-buffer)
-      (kill-ring-save (point-min) (point-max))))
+      ;; Move to the beginning of the word or hyphenated word
+      (skip-syntax-backward "w_")
+      (while (looking-back "-")
+        (skip-syntax-backward "w_"))
+      (setq start (point))
+      ;; Move to the end of the word or hyphenated word
+      (skip-syntax-forward "w_")
+      (while (looking-at "-")
+        (skip-forward "w_"))
+      (setq end (point)))
+    (kill-ring-save start end)
+    (message "Word copied to kill-ring.")))
 
 
-  (defhydra copy-text-hydra
-    (:color blue)
-    "select region of text to copy"
-    ("w" me/copy-word "Cut to end of word")      
-    ("c" me/copy-line "Copy line")
-    ("l" me/copy-line "Copy line")
-    ("a" me/copy-whole-buffer "Copy whole buffer")      
-    ("p" me/copy-current-text-block "Copy paragraph")      
-    ("s" me/copy-sentence "Copy paragraph")      
-    ("d" kill-whole-line "Cut whole line"))
+(defun me/copy-sentence ()
+  "Copy the sentence at point to the `kill-ring'."
+  (interactive)
+  (let (start end)
+    (save-excursion
+      ;; Move to the beginning of the sentence
+      (backward-sentence)
+      (setq start (point))
+      ;; Move to the end of the sentence
+      (forward-sentence)
+      (setq end (point)))
+    (kill-ring-save start end)
+    (message "Sentence copied to kill-ring.")))
 
-  (keymap-set my-test-keys-minor-mode-map "c" 'me/copy-thing)
-
-
-  (defhydra search-hydra
-    (:color blue)
-    "Select type of search"
-    ("s" consult-line "Consult-Line")      
-    ("r" query-replace "Query-Replace"))
-
-  (defun me/kill-all-dired-buffers ()
-    "Kill all Dired buffers."
-    (interactive)
-    (let ((count 0))
-      (dolist (buffer (buffer-list))
-        (when (eq (buffer-local-value 'major-mode buffer) 'dired-mode)
-          (kill-buffer buffer)
-          (setq count (1+ count))))
-      (message "Killed %d Dired buffer(s)" count)))
-
-  (defhydra mode-hydra
-    (:color blue)
-    "Miscellaneous functions"
-    ("s" search-hydra/body "Search and replace operations")      
-    ("e" kill-line "Cut to end of line")
-    ("r" ranger "Ranger mode")
-    ("b" me/delete-current-text-block "Cut block")      
-    ("d" me/kill-all-dired-buffers "Kill all dired buffers"))
-
-  (keymap-set my-test-keys-minor-mode-map "m" 'mode-hydra/body)
+(defun me/copy-whole-buffer ()
+  "Copy the entire buffer to the clipboard."
+  (interactive)
+  (save-excursion
+    (mark-whole-buffer)
+    (kill-ring-save (point-min) (point-max))))
 
 
-  (defhydra set-mark-hydra
-    (:color blue)
-    "select region of text to copy"
-    ("e" er/expand-region "Expand region")      
-    ("h" set-mark-command "Mark by line")
-    ("j" set-mark-command "Mark by line")
-    ("k" set-mark-command "Mark by line")
-    ("l" set-mark-command "Mark by line")      
-    ("r" rectangle-mark-mode "Mark rectangle")
-    ("a" mark-whole-buffer "Mark whole buffer")
-    ("p" mark-paragraph "Mark paragraph"))
+(defhydra copy-text-hydra
+  (:color blue)
+  "select region of text to copy"
+  ("w" me/copy-word "Cut to end of word")      
+  ("c" me/copy-line "Copy line")
+  ("l" me/copy-line "Copy line")
+  ("a" me/copy-whole-buffer "Copy whole buffer")      
+  ("p" me/copy-current-text-block "Copy paragraph")      
+  ("s" me/copy-sentence "Copy paragraph")      
+  ("d" kill-whole-line "Cut whole line"))
 
-  (defun my-set-mark-wrapper ()
-    "Set the mark or toggle position if region active"
-    (interactive)
-    (if (region-active-p) (exchange-point-and-mark)
-      (set-mark-hydra/body)))
-
-  (keymap-set my-test-keys-minor-mode-map "v" 'my-set-mark-wrapper)
+(keymap-set my-test-keys-minor-mode-map "c" 'me/copy-thing)
 
 
-  (defun my-next-buffer ()
-    "Move to next buffer.
-        Press l will do it again, press h will move to previous buffer. Press other key to exit."
-    (interactive)
-    (let ((skip-buffers '("*Messages*" "*Scratch*" "*Async-native-compile-log*")))
-      (next-buffer)
-      (while (member (buffer-name) skip-buffers) (next-buffer)))
-    (let ((map (make-sparse-keymap)))
-      (define-key map (kbd "l") 'my-next-buffer)
-      (define-key map (kbd "h") 'my-previous-buffer)
-      (set-transient-map map t)))
+(defhydra search-hydra
+  (:color blue)
+  "Select type of search"
+  ("s" consult-line "Consult-Line")      
+  ("r" query-replace "Query-Replace"))
 
-  (defun my-previous-buffer ()
-    "move cursor to previous buffer.
-     Press h will do it again, press l will move to next buffer. Press other key to exit."
-    (interactive)
-    (let ((skip-buffers '("*Messages*" "*Scratch*" "*Async-native-compile-log*")))
-      (next-buffer)
-      (while (member (buffer-name) skip-buffers) (next-buffer)))
-    (let ((map (make-sparse-keymap)))
-      (define-key map (kbd "l") 'my-next-buffer)
-      (define-key map (kbd "h") 'my-previous-buffer)
-      (set-transient-map map t)))
+(defun me/kill-all-dired-buffers ()
+  "Kill all Dired buffers."
+  (interactive)
+  (let ((count 0))
+    (dolist (buffer (buffer-list))
+      (when (eq (buffer-local-value 'major-mode buffer) 'dired-mode)
+        (kill-buffer buffer)
+        (setq count (1+ count))))
+    (message "Killed %d Dired buffer(s)" count)))
 
-  (defun me/find-org-files-in-my-documents ()
-    "Use `find-dired` to identify .org files in ~/my_docs/ and display the results in a dired buffer."
-    (interactive)
-    (find-lisp-find-dired "~/my_docs/" "\\.org$"))
+(defhydra mode-hydra
+  (:color blue)
+  "Miscellaneous functions"
+  ("s" search-hydra/body "Search and replace operations")      
+  ("e" kill-line "Cut to end of line")
+  ("r" ranger "Ranger mode")
+  ("b" me/delete-current-text-block "Cut block")      
+  ("d" me/kill-all-dired-buffers "Kill all dired buffers"))
+
+(keymap-set my-test-keys-minor-mode-map "m" 'mode-hydra/body)
 
 
-  (defun me/find-org-files-in-work-documents ()
-    "Use `find-dired` to identify .org files in ~/work_docs/ and display the results in a dired buffer."
-    (interactive)
-    (find-lisp-find-dired "~/work_docs/" "\\.org$"))
+(defhydra set-mark-hydra
+  (:color blue)
+  "select region of text to copy"
+  ("e" er/expand-region "Expand region")      
+  ("h" set-mark-command "Mark by line")
+  ("j" set-mark-command "Mark by line")
+  ("k" set-mark-command "Mark by line")
+  ("l" set-mark-command "Mark by line")      
+  ("r" rectangle-mark-mode "Mark rectangle")
+  ("a" mark-whole-buffer "Mark whole buffer")
+  ("p" mark-paragraph "Mark paragraph"))
+
+(defun my-set-mark-wrapper ()
+  "Set the mark or toggle position if region active"
+  (interactive)
+  (if (region-active-p) (exchange-point-and-mark)
+    (set-mark-hydra/body)))
+
+(keymap-set my-test-keys-minor-mode-map "v" 'my-set-mark-wrapper)
+
+
+(defun my-next-buffer ()
+  "Move to next buffer.
+          Press l will do it again, press h will move to previous buffer. Press other key to exit."
+  (interactive)
+  (let ((skip-buffers '("*Messages*" "*Scratch*" "*Async-native-compile-log*")))
+    (next-buffer)
+    (while (member (buffer-name) skip-buffers) (next-buffer)))
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "l") 'my-next-buffer)
+    (define-key map (kbd "h") 'my-previous-buffer)
+    (set-transient-map map t)))
+
+(defun my-previous-buffer ()
+  "move cursor to previous buffer.
+       Press h will do it again, press l will move to next buffer. Press other key to exit."
+  (interactive)
+  (let ((skip-buffers '("*Messages*" "*Scratch*" "*Async-native-compile-log*")))
+    (next-buffer)
+    (while (member (buffer-name) skip-buffers) (next-buffer)))
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "l") 'my-next-buffer)
+    (define-key map (kbd "h") 'my-previous-buffer)
+    (set-transient-map map t)))
+
+(defun me/find-org-files-in-my-documents ()
+  "Use `find-dired` to identify .org files in ~/my_docs/ and display the results in a dired buffer."
+  (interactive)
+  (find-lisp-find-dired "~/my_docs/" "\\.org$"))
+
+
+(defun me/find-org-files-in-work-documents ()
+  "Use `find-dired` to identify .org files in ~/work_docs/ and display the results in a dired buffer."
+  (interactive)
+  (find-lisp-find-dired "~/work_docs/" "\\.org$"))
 
 
 
-  (defhydra select-buffer-or-file-hydra
-    (:color blue)
-    "Open Buffer"
-    ("d" (progn (dired "~/") (my-test-keys-insert-mode-activate)) "Open dired")      
-    ("r" recentf "Recent file")      
-    ("j" switch-to-buffer "List buffers")      
-    ("s" scratch-buffer "Show scratch buffer")      
-    ("k" kill-current-buffer "Kill current buffer")      
-    ("h" my-previous-buffer "Previous buffer")      
-    ("l" my-next-buffer "Next buffer")      
-    ("m" me/find-org-files-in-my-documents "My Org docs")      
-    ("w" me/find-org-files-in-work-documents "My Org docs")      
-    ("e" (find-file "~/notes/Computing/Programs/emacs.org") "Emacs")
-    ("t" (find-file "~/notes/todo.org") "Todo")      
-    ("i" (find-file "~/notes/ideas.org") "Ideas")      
-    ("q" (find-file "~/notes/quick_notes.org") "Quick notes")      
-    ("n" me/vertico-notes "Select notes")      
-    ("b" bookmark-jump "Select bookmarked file")) 
+(defhydra select-buffer-or-file-hydra
+  (:color blue)
+  "Open Buffer"
+  ("d" (progn (dired "~/") (my-test-keys-insert-mode-activate)) "Open dired")      
+  ("r" recentf "Recent file")      
+  ("j" switch-to-buffer "List buffers")      
+  ("s" scratch-buffer "Show scratch buffer")      
+  ("k" kill-current-buffer "Kill current buffer")      
+  ("h" my-previous-buffer "Previous buffer")      
+  ("l" my-next-buffer "Next buffer")      
+  ("m" me/find-org-files-in-my-documents "My Org docs")      
+  ("w" me/find-org-files-in-work-documents "My Org docs")      
+  ("e" (find-file "~/notes/Computing/Programs/emacs.org") "Emacs")
+  ("t" (find-file "~/notes/todo.org") "Todo")      
+  ("i" (find-file "~/notes/ideas.org") "Ideas")      
+  ("q" (find-file "~/notes/quick_notes.org") "Quick notes")      
+  ("n" me/vertico-notes "Select notes")      
+  ("b" bookmark-jump "Select bookmarked file")) 
 
-  (keymap-set my-test-keys-minor-mode-map "b" 'select-buffer-or-file-hydra/body)
+(keymap-set my-test-keys-minor-mode-map "b" 'select-buffer-or-file-hydra/body)
 
-  (defvar my-test-keys-command-mode--deactivate-func nil)
-  (defvar my-insert-state-p t)
+(defvar my-test-keys-command-mode--deactivate-func nil)
+(defvar my-insert-state-p t)
 
-  (defvar my-mode-line-indicator " COMMAND"
-    "Indicator for the current mode (insert or command) in the mode line.")
+(defvar my-mode-line-indicator " COMMAND"
+  "Indicator for the current mode (insert or command) in the mode line.")
 
-  (defun update-mode-line-indicator ()
-    "Update the mode line indicator based on the current state."
-    (setq my-mode-line-indicator
-          (if my-insert-state-p " INSERT" " COMMAND"))
-    (force-mode-line-update))
+(defun update-mode-line-indicator ()
+  "Update the mode line indicator based on the current state."
+  (setq my-mode-line-indicator
+        (if my-insert-state-p " INSERT" " COMMAND"))
+  (force-mode-line-update))
 
 
-  (defun my-test-keys-command-mode-init ()
-    (interactive)
-    (setq my-insert-state-p nil)
-    (when my-test-keys-command-mode--deactivate-func
-      (funcall my-test-keys-command-mode--deactivate-func))
-    (setq my-test-keys-command-mode--deactivate-func
-          (set-transient-map my-test-keys-minor-mode-map (lambda () t)))
-    (update-mode-line-faces)
-    (update-mode-line-indicator)
-    (setq cursor-type 'box))
-
-  (defun my-test-keys-insert-mode-init ()
-    (interactive)
-    (setq my-insert-state-p t)
-    (when my-test-keys-command-mode--deactivate-func
-      (funcall my-test-keys-command-mode--deactivate-func))
-    (update-mode-line-faces)
-    (update-mode-line-indicator)
-    (setq cursor-type 'bar))
-
-  ;; Define custom faces for insert and command mode
-  (defface my-insert-mode-face
-    '((t (:foreground "#ffffff" :background "#484d67" :box "#979797"))) ; Modus Vivendi Tinted insert mode color
-    "Face for insert mode in the mode line.")
-
-  (defface my-command-mode-face
-    '((t (:foreground "#ffffff" :background "#a78cfa" :box "#979797"))) ; Modus Vivendi Tinted command mode color
-    "Face for command mode in the mode line.")
-
-  ;; Function to update modeline face based on current mode
-  (defun update-mode-line-faces ()
-    "Update modeline face based on current mode."
-    (if my-insert-state-p
-        (set-face-attribute 'mode-line nil :background "#484d67" :foreground "#ffffff" :box "#979797")
-      (set-face-attribute 'mode-line nil :background "#a78cfa" :foreground "#ffffff" :box "#979797")))
-
-  ;; Hook to update modeline faces whenever mode changes
-  ;;(add-hook 'post-command-hook 'update-mode-line-faces)
-
-  ;; Append the indicator to the global mode string
-  (add-to-list 'global-mode-string '(:eval my-mode-line-indicator) t)
-
-  ;; Initial update
+(defun my-test-keys-command-mode-init ()
+  (interactive)
+  (setq my-insert-state-p nil)
+  (when my-test-keys-command-mode--deactivate-func
+    (funcall my-test-keys-command-mode--deactivate-func))
+  (setq my-test-keys-command-mode--deactivate-func
+        (set-transient-map my-test-keys-minor-mode-map (lambda () t)))
+  (update-mode-line-faces)
   (update-mode-line-indicator)
+  (setq cursor-type 'box))
+
+(defun my-test-keys-insert-mode-init ()
+  (interactive)
+  (setq my-insert-state-p t)
+  (when my-test-keys-command-mode--deactivate-func
+    (funcall my-test-keys-command-mode--deactivate-func))
+  (update-mode-line-faces)
+  (update-mode-line-indicator)
+  (setq cursor-type 'bar))
+
+;; Define custom faces for insert and command mode
+(defface my-insert-mode-face
+  '((t (:foreground "#ffffff" :background "#484d67" :box "#979797"))) ; Modus Vivendi Tinted insert mode color
+  "Face for insert mode in the mode line.")
+
+(defface my-command-mode-face
+  '((t (:foreground "#ffffff" :background "#a78cfa" :box "#979797"))) ; Modus Vivendi Tinted command mode color
+  "Face for command mode in the mode line.")
+
+;; Function to update modeline face based on current mode
+(defun update-mode-line-faces ()
+  "Update modeline face based on current mode."
+  (if my-insert-state-p
+      (set-face-attribute 'mode-line nil :background "#484d67" :foreground "#ffffff" :box "#979797")
+    (set-face-attribute 'mode-line nil :background "#a78cfa" :foreground "#ffffff" :box "#979797")))
+
+;; Hook to update modeline faces whenever mode changes
+;;(add-hook 'post-command-hook 'update-mode-line-faces)
+
+;; Append the indicator to the global mode string
+(add-to-list 'global-mode-string '(:eval my-mode-line-indicator) t)
+
+;; Initial update
+(update-mode-line-indicator)
 
 
 
-  ;;; (funcall my-test-keys-command-mode--deactivate-func) This is all thats needed to deactivate command mode
+    ;;; (funcall my-test-keys-command-mode--deactivate-func) This is all thats needed to deactivate command mode
 
-  (defun my-test-keys-insert-mode-activate ()
-    "Activate insertion mode."
-    (interactive)
-    (my-test-keys-insert-mode-init)
-                                          ;(run-hooks 'xah-fly-insert-mode-activate-hook)
-    )
+(defun my-test-keys-insert-mode-activate ()
+  "Activate insertion mode."
+  (interactive)
+  (my-test-keys-insert-mode-init)
+					;(run-hooks 'xah-fly-insert-mode-activate-hook)
+  )
 
-  (defun my-test-keys-command-mode-activate ()
-    "Activate commandion mode."
-    (interactive)
-    (my-test-keys-command-mode-init)
-                                          ;(run-hooks 'xah-fly-command-mode-activate-hook)
-    )
+(defun my-test-keys-command-mode-activate ()
+  "Activate commandion mode."
+  (interactive)
+  (my-test-keys-command-mode-init)
+					;(run-hooks 'xah-fly-command-mode-activate-hook)
+  )
 
-  (defun my-test-keys-mode-toggle ()
-    (interactive)
-    (if my-insert-state-p
-        (my-test-keys-command-mode-activate)
-      (my-test-keys-insert-mode-activate)))
+(defun my-test-keys-mode-toggle ()
+  (interactive)
+  (if my-insert-state-p
+      (my-test-keys-command-mode-activate)
+    (my-test-keys-insert-mode-activate)))
 
-  (add-hook 'minibuffer-setup-hook 'my-minibuffer-entry-insert-setup)
+(add-hook 'minibuffer-setup-hook 'my-minibuffer-entry-insert-setup)
 
-  (defvar my-command-history-p nil)
+(defvar my-command-history-p nil)
 
-  (defun my-minibuffer-entry-insert-setup ()
-    (if my-insert-state-p nil
+(defun my-minibuffer-entry-insert-setup ()
+  (if my-insert-state-p nil
+    (progn
+      (setq my-command-history-p t)
+      (my-test-keys-insert-mode-activate)
+      )))
+
+(defun my-minibuffer-exit-setup ()
+
+  (if my-command-history-p
       (progn
-        (setq my-command-history-p t)
-        (my-test-keys-insert-mode-activate)
+        (setq my-command-history-p nil)
+        (my-test-keys-command-mode-activate)
         )))
 
-  (defun my-minibuffer-exit-setup ()
+(add-hook 'minibuffer-exit-hook 'my-minibuffer-exit-setup)
 
-    (if my-command-history-p
-        (progn
-          (setq my-command-history-p nil)
-          (my-test-keys-command-mode-activate)
-          )))
-
-  (add-hook 'minibuffer-exit-hook 'my-minibuffer-exit-setup)
-
-  (add-hook 'buffer-list-update-hook 'my-cursor-hack-function)
+(add-hook 'buffer-list-update-hook 'my-cursor-hack-function)
 
 
-  (defun my-cursor-hack-function ()		 
-    "Function to run after buffer list update." 
-    (if (eq major-mode 'dired-mode)
-        (progn
-          (my-test-keys-insert-mode-init)
-          (setq cursor-type 'box))
-      ;;	(setq my-insert-state-p nil))
-      (if my-insert-state-p			 
-          (my-test-keys-insert-mode-init)	 
-        (my-test-keys-command-mode-init))))
+(defun my-cursor-hack-function ()		 
+  "Function to run after buffer list update." 
+  (if (eq major-mode 'dired-mode)
+      (progn
+        (my-test-keys-insert-mode-init)
+        (setq cursor-type 'box))
+    ;;	(setq my-insert-state-p nil))
+    (if my-insert-state-p			 
+        (my-test-keys-insert-mode-init)	 
+      (my-test-keys-command-mode-init))))
 
-  ;;(add-hook 'dired-mode-hook 'my-test-keys-insert-mode-activate)
-  (advice-add 'quit-window :after 'my-test-keys-command-mode-activate)
+;;(add-hook 'dired-mode-hook 'my-test-keys-insert-mode-activate)
+(advice-add 'quit-window :after 'my-test-keys-command-mode-activate)
+
+
+;; Force command mode on startup
+(add-hook 'emacs-startup-hook #'my-test-keys-command-mode-activate)
+
+;; Ensure new buffers also start in command mode
+(add-hook 'buffer-list-update-hook #'my-cursor-hack-function)
 
 (defun me/vertico-notes ()
   "list all note files"

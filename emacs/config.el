@@ -45,11 +45,19 @@
 
 
 
+<<<<<<< HEAD
 (set-fringe-mode 0)
+=======
+ (set-fringe-mode 0)
+>>>>>>> 3c205f6 (change)
 
 ;; (setq-default cursor-type 'bar)
 
+<<<<<<< HEAD
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
+=======
+  (add-to-list 'default-frame-alist '(fullscreen . maximized))
+>>>>>>> 3c205f6 (change)
 
 
 ;; (global-display-line-numbers-mode -1)

@@ -45,19 +45,13 @@
 
 
 
-<<<<<<< HEAD
 (set-fringe-mode 0)
-=======
- (set-fringe-mode 0)
->>>>>>> 3c205f6 (change)
 
 ;; (setq-default cursor-type 'bar)
 
-<<<<<<< HEAD
+
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
-=======
-  (add-to-list 'default-frame-alist '(fullscreen . maximized))
->>>>>>> 3c205f6 (change)
+
 
 
 ;; (global-display-line-numbers-mode -1)
@@ -316,6 +310,7 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
 
 ;; Define your shortcuts
 (keymap-set my-dired-goto-map "d" (lambda () (interactive) (dired "~/my_docs")))
+(keymap-set my-dired-goto-map "h" (lambda () (interactive) (dired "~/")))
 (keymap-set my-dired-goto-map "w" (lambda () (interactive) (dired "~/work_docs/")))
 (keymap-set my-dired-goto-map "." (lambda () (interactive) (dired "~/downloads/")))
 

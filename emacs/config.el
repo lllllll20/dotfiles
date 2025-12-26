@@ -243,7 +243,6 @@
 
               ;; Copy between open dired-buffers
               (setq dired-dwim-target t)
-              (add-hook 'dired-mode-hook 'my-test-keys-insert-mode-activate)
 
 (use-package dired-subtree :ensure t
   :after dired
@@ -303,14 +302,33 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
         (dired-find-alternate-file)
       (xah-open-in-external-app fname))))
 
+;; Define the 'goto' prefix map for two-key sequences
+(defvar my-dired-goto-map (make-sparse-keymap)
+  "Keymap for Dired jump sequences starting with 'g'.")
 
+;; Define your shortcuts
+(keymap-set my-dired-goto-map "d" (lambda () (interactive) (dired "~/my_docs")))
+(keymap-set my-dired-goto-map "w" (lambda () (interactive) (dired "~/work_docs/")))
+(keymap-set my-dired-goto-map "." (lambda () (interactive) (dired "~/downloads/")))
 
-(eval-after-load "dired" '(progn
-                            (define-key dired-mode-map (kbd "<return>") 'my-l)
-                            (define-key dired-mode-map (kbd "l") 'my-l)
-                            (define-key dired-mode-map (kbd "j") 'dired-next-line)
-                            (define-key dired-mode-map (kbd "k") 'dired-previous-line)
-                            (define-key dired-mode-map (kbd "h") (lambda () (interactive) (find-alternate-file "..")))))
+;; Bind 'gg' to your existing bookmark jump for convenience
+(keymap-set my-dired-goto-map "g" 'my-bookmark-jump)
+
+;; 1. Define the specific map for Dired navigation
+(defvar my-dired-state-map (make-sparse-keymap))
+
+;; 2. Bind the keys you just deleted to this new map
+(keymap-set my-dired-state-map "j" 'dired-next-line)
+(keymap-set my-dired-state-map "k" 'dired-previous-line)
+(keymap-set my-dired-state-map "l" 'my-l)
+(keymap-set my-dired-state-map "h" (lambda () (interactive) (find-alternate-file "..")))
+(keymap-set my-dired-state-map "RET" 'my-l)
+(keymap-set my-dired-state-map "g" my-dired-goto-map)
+
+;; 3. Apply it only when in Dired mode
+(add-hook 'dired-mode-hook
+          (lambda ()
+            (set-keymap-parent my-dired-state-map my-test-keys-minor-mode-map)))
 
 (defun get-full-path-of-file-at-point ()
   "Get the full path of the file at point in a dired buffer and yank it to the kill ring."
@@ -509,7 +527,7 @@ Version: 2019-11-04 2023-04-05 2023-06-26"
   (defun my-ranger-key-setup ()
     "Custom ranger keybindings."
     (define-key ranger-mode-map (kbd "RET") 'ranger-open-in-external-app)  ;; Remap RET to external open function
-    (define-key ranger-mode-map (kbd "g") 'my-bookmark-jump))
+    (keymap-set ranger-mode-map "g" my-dired-goto-map))
 
   (add-hook 'ranger-mode-hook #'my-ranger-key-setup)
 

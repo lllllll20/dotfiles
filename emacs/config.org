@@ -465,6 +465,7 @@
   (keymap-set my-dired-state-map "h" (lambda () (interactive) (find-alternate-file "..")))
   (keymap-set my-dired-state-map "RET" 'my-l)
   (keymap-set my-dired-state-map "g" my-dired-goto-map)
+  (keymap-set my-dired-goto-map "<escape>" 'keyboard-quit)
 
   ;; 3. Apply it only when in Dired mode
   (add-hook 'dired-mode-hook
@@ -775,6 +776,7 @@
     (defun my-ranger-key-setup ()
       "Custom ranger keybindings."
       (define-key ranger-mode-map (kbd "RET") 'ranger-open-in-external-app)  ;; Remap RET to external open function
+      (define-key ranger-mode-map (kbd "<escape>") 'ranger-close)
       (keymap-set ranger-mode-map "g" my-dired-goto-map))
 
     (add-hook 'ranger-mode-hook #'my-ranger-key-setup)
@@ -831,17 +833,34 @@ Store customize options in a separate file:
 
 #+begin_src emacs-lisp
 
-  					;Define a general key-map which can override major mode bindings
+      					;Define a general key-map which can override major mode bindings
 
   (defun my-test-keys-insert-mode-escape ()
     (interactive)
-    (if (region-active-p)
-        (deactivate-mark)
-      (if (active-minibuffer-window)
-          (abort-recursive-edit)
-        (if (derived-mode-p 'ranger-mode)
-            (ranger-close)
-          (my-test-keys-command-mode-activate)))))
+    (cond
+     ;; 1. Deactivate any active selection
+     ((region-active-p)
+      (deactivate-mark))
+
+     ;; 2. Exit the minibuffer if it's open
+     ((active-minibuffer-window)
+      (abort-recursive-edit))
+
+     ;; 3. FIX: Clear prefix command state (like the 'g' goto menu)
+     ;; This prevents the "prefix command" error when hitting escape
+     (overriding-terminal-local-map
+      (setq overriding-terminal-local-map nil)
+      (message "Quit prefix command"))
+
+     ;; 4. Handle Dired/Ranger/File-Manager states
+     ((derived-mode-p 'ranger-mode 'dired-mode 'my-file-manager-mode)
+      (if (derived-mode-p 'ranger-mode)
+          (ranger-close)
+        (my-test-keys-command-mode-activate)))
+
+     ;; 5. Default: Switch to Command Mode
+     (t
+      (my-test-keys-command-mode-activate))))
 
 
   (defvar my-insertmode-keys-minor-mode-map
@@ -882,7 +901,7 @@ Store customize options in a separate file:
 
 
 
-  					; Define the modal key mode and keymap
+      					; Define the modal key mode and keymap
 
   (define-minor-mode my-test-keys-minor-mode
     "Minor mode to be able to move using hjkl"
@@ -890,15 +909,28 @@ Store customize options in a separate file:
     :keymap '(([remap self-insert-command]  ignore)) ; The actual keymaps are defined later below
     )
 
-  (progn
-    (defun my-test-keys-command-mode-escape ()
-      (interactive)
-      (when (region-active-p)
-        (deactivate-mark))
-      (when (active-minibuffer-window)
-        (abort-recursive-edit)))
+  (defun my-test-keys-insert-mode-escape ()
+    (interactive)
+    (cond
+     ;; 1. Deactivate any active text selection
+     ((region-active-p) (deactivate-mark))
+     
+     ;; 2. Exit the minibuffer if it's open
+     ((active-minibuffer-window) (abort-recursive-edit))
 
-    (define-key my-test-keys-minor-mode-map (kbd "<escape>")     'my-test-keys-command-mode-escape))
+     ;; 3. FIX: Clear the "waiting for key" state of the 'g' goto menu
+     ;; This prevents the prefix command error you mentioned
+     (overriding-terminal-local-map
+      (setq overriding-terminal-local-map nil)
+      (message "Quit prefix command"))
+
+     ;; 4. If in Ranger, Dired, or your unified File Manager mode, call ranger-close
+     ((derived-mode-p 'ranger-mode 'dired-mode 'my-file-manager-mode)
+      (ranger-close))
+
+     ;; 5. Default: Switch back to Command Mode
+     (t (my-test-keys-command-mode-activate))))
+
 
   ;;(add-to-list 'emulation-mode-map-alists '(my-modal-keys-minor-mode . ,my-modal-keys-minor-mode-map))
 
@@ -962,11 +994,11 @@ Store customize options in a separate file:
   (defun me/delete-current-text-block ()
     "Cut the current text block plus blank lines, or selection, and copy to `kill-ring'.
 
-      If cursor is between blank lines, delete following blank lines.
+          If cursor is between blank lines, delete following blank lines.
 
-      URL `http://xahlee.info/emacs/emacs/emacs_delete_block.html'
-      Created: 2017-07-09
-      Version: 2023-10-09"
+          URL `http://xahlee.info/emacs/emacs/emacs_delete_block.html'
+          Created: 2017-07-09
+          Version: 2023-10-09"
     (interactive)
     (let (xp1 xp2)
       (if (region-active-p)
@@ -994,7 +1026,7 @@ Store customize options in a separate file:
 
   (defun me/copy-current-text-block ()
     "Copy the current text block without surrounding blank lines to `kill-ring`.
-      If cursor is between blank lines, copy the following text block."
+          If cursor is between blank lines, copy the following text block."
     (interactive)
     (let (xp1 xp2)
       (save-excursion
@@ -1142,7 +1174,7 @@ Store customize options in a separate file:
 
   (defun my-next-buffer ()
     "Move to next buffer.
-            Press l will do it again, press h will move to previous buffer. Press other key to exit."
+                Press l will do it again, press h will move to previous buffer. Press other key to exit."
     (interactive)
     (let ((skip-buffers '("*Messages*" "*Scratch*" "*Async-native-compile-log*")))
       (next-buffer)
@@ -1154,7 +1186,7 @@ Store customize options in a separate file:
 
   (defun my-previous-buffer ()
     "move cursor to previous buffer.
-         Press h will do it again, press l will move to next buffer. Press other key to exit."
+             Press h will do it again, press l will move to next buffer. Press other key to exit."
     (interactive)
     (let ((skip-buffers '("*Messages*" "*Scratch*" "*Async-native-compile-log*")))
       (next-buffer)
@@ -1258,20 +1290,20 @@ Store customize options in a separate file:
 
 
 
-      ;;; (funcall my-test-keys-command-mode--deactivate-func) This is all thats needed to deactivate command mode
+          ;;; (funcall my-test-keys-command-mode--deactivate-func) This is all thats needed to deactivate command mode
 
   (defun my-test-keys-insert-mode-activate ()
     "Activate insertion mode."
     (interactive)
     (my-test-keys-insert-mode-init)
-  					;(run-hooks 'xah-fly-insert-mode-activate-hook)
+      					;(run-hooks 'xah-fly-insert-mode-activate-hook)
     )
 
   (defun my-test-keys-command-mode-activate ()
     "Activate commandion mode."
     (interactive)
     (my-test-keys-command-mode-init)
-  					;(run-hooks 'xah-fly-command-mode-activate-hook)
+      					;(run-hooks 'xah-fly-command-mode-activate-hook)
     )
 
   (defun my-test-keys-mode-toggle ()
